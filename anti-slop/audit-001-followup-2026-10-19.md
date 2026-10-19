@@ -26,7 +26,7 @@ Mode: **after** (session override). Nomor yang disetujui pemilik: **1 sampai 15*
 
 | No | Prioritas | Aturan | Temuan |
 |---|---|---|---|
-| 29 | HIGH | R-23 | Logo bergradient berhuruf "a" dan favicon-nya dibuat agent tanpa instruksi. Butuh keputusan pemilik: pakai file logo AiYO asli, atau wordmark teks saja tanpa simbol. |
+| 29 | HIGH | R-23 | Logo bergradient berhuruf "a" dan favicon-nya dibuat agent tanpa instruksi. **Selesai** atas keputusan pemilik: header dan footer jadi wordmark teks "AiYO Design System" tanpa simbol; favicon jadi kotak slate polos tanpa huruf. |
 | 30 | LOW | R-21 | Situs showcase tidak punya toggle terang/gelap, padahal palet gelap sudah ada dan lolos uji. |
 
 ## Click-through (R-35)
@@ -51,7 +51,7 @@ Keterbatasan: pane browser tersembunyi selama tes, jadi transisi CSS dan screens
 | R-03 mobile | PASS | Lebar 375 di 375px; pagination muat; padding mobile 64px. |
 | R-17 angka tanpa sumber | PASS* | "30+ komponen" benar (29 UI + 6 blok). *Angka di hero graphic: pengecualian pemilik yang tercatat. |
 | R-18 testimoni fiktif | PASS* | *Testimoni contoh: pengecualian pemilik yang tercatat. |
-| R-23 aset tanpa instruksi | **FAIL** | Temuan 29: logo dan favicon. |
+| R-23 aset tanpa instruksi | PASS | Temuan 29 selesai: wordmark teks dan favicon netral, sesuai keputusan pemilik. |
 | R-24 link ke tujuan tidak ada | PASS | 31 anchor, 0 rusak; 6 file 200. |
 | R-25 kontras | PASS | 268 elemen teks, terang dan gelap: 0 gagal; 34 pasangan token lolos. |
 | R-26 kontrol mati | PASS | Click-through di atas. |
@@ -92,4 +92,4 @@ C-1 sampai C-3: tidak ada temuan. **C-4: ya** (temuan 28, konten tersembunyi sam
 
 ## Kesimpulan
 
-Semua nomor yang disetujui (1 sampai 15) selesai dan terverifikasi. Gate **belum bersih**: Hard Gate masih punya temuan 29 (logo) yang butuh keputusan pemilik, dan blok 2 sampai 4 masih punya temuan 16 sampai 24, 28, dan 30 yang belum disetujui untuk diperbaiki. Menurut aturan anti-slop, hasil ini belum boleh disebut deliverable yang bersih sampai sisa temuan diputuskan.
+Semua nomor yang disetujui (1 sampai 15) selesai dan terverifikasi. Hard Gate (blok 1) sekarang **bersih**, dengan pengecualian pemilik yang tercatat. Gate secara keseluruhan **belum bersih**: blok 2 sampai 4 masih punya temuan 16 sampai 24, 28, dan 30 yang belum disetujui untuk diperbaiki. Menurut aturan anti-slop, hasil ini belum boleh disebut deliverable yang bersih sampai sisa temuan diputuskan.

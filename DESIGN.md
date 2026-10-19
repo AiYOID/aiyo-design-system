@@ -558,7 +558,7 @@ Rules:
 ### 12.1 Landing page (section order)
 Build only the sections the product's content needs (antislop C-3). Every block that shows numbers, people or customers uses real data, or the section is left out.
 
-1. **Nav**: sticky, `bg-background/80 backdrop-blur border-b` (the only backdrop blur in the system), logo left, ghost links to sections that exist, primary `md` CTA right.
+1. **Nav**: sticky, `bg-background/80 backdrop-blur border-b` (the only backdrop blur in the system), text wordmark left (no symbol until an approved logo file exists), ghost links to sections that exist, primary `md` CTA right.
 2. **Hero**: asymmetric `1.1fr/0.9fr`, a plain SectionLabel that adds information the H1 does not, Calistoga H1 with a gradient last word and underline, lede, a primary `lg` button (the screen's one `data-arrow` CTA) and a secondary `lg` button, `HeroGraphic` (lg+).
 3. **Logos / social proof**: only real, verifiable customers. If there are none, leave it out.
 4. **Features**: SectionHeader plus a grid of `Card variant="interactive"` with `IconTile`s. Vary the treatment when one feature carries more weight.

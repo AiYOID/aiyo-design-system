@@ -116,15 +116,11 @@ export function Demo({
   )
 }
 
+/** Text-only wordmark. No symbol until there is an approved AiYO logo file (R-23). */
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-primary-diagonal font-display text-lg leading-none text-primary-foreground shadow-accent">
-        a
-      </span>
-      <span className="font-display text-xl leading-none tracking-[-0.01em]">
-        AiYO <span className="text-gradient">Design System</span>
-      </span>
+    <span className={cn("font-display text-xl leading-none tracking-[-0.01em]", className)}>
+      AiYO <span className="text-gradient">Design System</span>
     </span>
   )
 }
