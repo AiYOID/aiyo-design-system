@@ -1,0 +1,163 @@
+{
+  "$description": "AiYO Design System — 'Minimalist Modern'. W3C Design Tokens (DTCG) format. Source of truth for CSS is src/styles/aiyo.css. Note: brand colour is named 'primary' (shadcn naming); 'accent' is the subtle hover surface.",
+  "color": {
+    "$type": "color",
+    "light": {
+      "$description": "Default palette (:root).",
+      "background": { "$value": "#FAFAFA" },
+      "foreground": { "$value": "#0F172A" },
+      "card": { "$value": "#FFFFFF" },
+      "card-foreground": { "$value": "#0F172A" },
+      "popover": { "$value": "#FFFFFF" },
+      "popover-foreground": { "$value": "#0F172A" },
+      "primary": { "$value": "#0052FF", "$description": "Electric Blue — the single brand accent." },
+      "primary-end": { "$value": "#4D7CFF", "$description": "Gradient endpoint." },
+      "primary-foreground": { "$value": "#FFFFFF" },
+      "secondary": { "$value": "#F1F5F9" },
+      "secondary-foreground": { "$value": "#0F172A" },
+      "muted": { "$value": "#F1F5F9" },
+      "muted-foreground": { "$value": "#64748B" },
+      "accent": { "$value": "#F1F5F9", "$description": "Hover surface (shadcn semantics). NOT the brand colour." },
+      "accent-foreground": { "$value": "#0F172A" },
+      "border": { "$value": "#E2E8F0" },
+      "input": { "$value": "#E2E8F0" },
+      "ring": { "$value": "{color.light.primary}" },
+      "success": { "$value": "#059669" },
+      "success-foreground": { "$value": "#FFFFFF" },
+      "warning": { "$value": "#D97706" },
+      "warning-foreground": { "$value": "#FFFFFF" },
+      "destructive": { "$value": "#DC2626" },
+      "destructive-foreground": { "$value": "#FFFFFF" },
+      "info": { "$value": "#0052FF" },
+      "info-foreground": { "$value": "#FFFFFF" }
+    },
+    "inverted": {
+      "$description": "Deep-slate palette applied by .inverted (a section) or .dark (whole app).",
+      "background": { "$value": "#0F172A" },
+      "foreground": { "$value": "#F8FAFC" },
+      "card": { "$value": "#1E293B" },
+      "card-foreground": { "$value": "#F8FAFC" },
+      "popover": { "$value": "#1E293B" },
+      "popover-foreground": { "$value": "#F8FAFC" },
+      "primary": { "$value": "#3B72FF", "$description": "Lighter for AA contrast on slate." },
+      "primary-end": { "$value": "#6B93FF" },
+      "primary-foreground": { "$value": "#FFFFFF" },
+      "secondary": { "$value": "#1E293B" },
+      "secondary-foreground": { "$value": "#F8FAFC" },
+      "muted": { "$value": "#1E293B" },
+      "muted-foreground": { "$value": "#94A3B8" },
+      "accent": { "$value": "#1E293B" },
+      "accent-foreground": { "$value": "#F8FAFC" },
+      "border": { "$value": "#FFFFFF1A", "$description": "rgb(255 255 255 / 0.10)" },
+      "input": { "$value": "#FFFFFF24", "$description": "rgb(255 255 255 / 0.14)" },
+      "ring": { "$value": "#6B93FF" },
+      "success": { "$value": "#10B981" },
+      "warning": { "$value": "#F59E0B" },
+      "destructive": { "$value": "#EF4444" },
+      "info": { "$value": "#6B93FF" }
+    }
+  },
+  "gradient": {
+    "$type": "gradient",
+    "primary": {
+      "$description": "linear-gradient(to right, primary, primary-end). Diagonal variant uses 135deg.",
+      "$value": [
+        { "color": "{color.light.primary}", "position": 0 },
+        { "color": "{color.light.primary-end}", "position": 1 }
+      ]
+    }
+  },
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "display": { "$value": ["Calistoga", "Georgia", "serif"], "$description": "H1/H2 and stat numerals only, weight normal." },
+      "sans": { "$value": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"], "$description": "All UI and body text." },
+      "mono": { "$value": ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"], "$description": "Section labels, badges, table heads." }
+    },
+    "weight": {
+      "$type": "fontWeight",
+      "regular": { "$value": 400 },
+      "medium": { "$value": 500 },
+      "semibold": { "$value": 600 },
+      "bold": { "$value": 700 }
+    }
+  },
+  "typography": {
+    "$type": "typography",
+    "hero": {
+      "$description": "Hero H1. Scales 2.75rem (mobile) → 5.25rem (lg). Last word uses gradient text + underline.",
+      "$value": { "fontFamily": "{font.family.display}", "fontWeight": 400, "fontSize": { "value": 5.25, "unit": "rem" }, "lineHeight": 1.05, "letterSpacing": { "value": -0.02, "unit": "em" } },
+      "$extensions": { "id.aiyo.responsive": { "min": "2.75rem", "max": "5.25rem" } }
+    },
+    "h2": {
+      "$description": "Section headline. Scales 2.25rem → 3.25rem.",
+      "$value": { "fontFamily": "{font.family.display}", "fontWeight": 400, "fontSize": { "value": 3.25, "unit": "rem" }, "lineHeight": 1.15, "letterSpacing": { "value": -0.02, "unit": "em" } },
+      "$extensions": { "id.aiyo.responsive": { "min": "2.25rem", "max": "3.25rem" } }
+    },
+    "card-title": {
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 1.25, "unit": "rem" }, "lineHeight": 1.375, "letterSpacing": { "value": -0.01, "unit": "em" } }
+    },
+    "lede": {
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 1.125, "unit": "rem" }, "lineHeight": 1.75, "letterSpacing": { "value": 0, "unit": "em" } },
+      "$extensions": { "id.aiyo.responsive": { "min": "1rem", "max": "1.125rem" } }
+    },
+    "body": {
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 1, "unit": "rem" }, "lineHeight": 1.625, "letterSpacing": { "value": 0, "unit": "em" } }
+    },
+    "small": {
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 0.875, "unit": "rem" }, "lineHeight": 1.5, "letterSpacing": { "value": 0, "unit": "em" } }
+    },
+    "label": {
+      "$description": "Mono uppercase label (section labels, badges, table heads). Apply text-transform: uppercase.",
+      "$value": { "fontFamily": "{font.family.mono}", "fontWeight": 400, "fontSize": { "value": 0.75, "unit": "rem" }, "lineHeight": 1, "letterSpacing": { "value": 0.15, "unit": "em" } }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": { "$value": { "value": 6, "unit": "px" } },
+    "md": { "$value": { "value": 8, "unit": "px" } },
+    "lg": { "$value": { "value": 10, "unit": "px" } },
+    "xl": { "$value": { "value": 12, "unit": "px" }, "$description": "Default control radius (buttons, inputs)." },
+    "2xl": { "$value": { "value": 16, "unit": "px" }, "$description": "Cards, dialogs, tables." },
+    "3xl": { "$value": { "value": 24, "unit": "px" } },
+    "full": { "$value": { "value": 9999, "unit": "px" } }
+  },
+  "shadow": {
+    "$type": "shadow",
+    "sm": { "$value": { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 1, "unit": "px" }, "blur": { "value": 3, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "md": { "$value": { "color": "#00000012", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 4, "unit": "px" }, "blur": { "value": 6, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "lg": { "$value": { "color": "#00000014", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 10, "unit": "px" }, "blur": { "value": 15, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "xl": { "$value": { "color": "#0000001A", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 20, "unit": "px" }, "blur": { "value": 25, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "accent": { "$value": { "color": "#0052FF40", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 4, "unit": "px" }, "blur": { "value": 14, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
+    "accent-lg": { "$value": { "color": "#0052FF59", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 8, "unit": "px" }, "blur": { "value": 24, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } }
+  },
+  "motion": {
+    "easing": {
+      "$type": "cubicBezier",
+      "out-expo": { "$value": [0.16, 1, 0.3, 1], "$description": "The AiYO easing curve, used everywhere." }
+    },
+    "duration": {
+      "$type": "duration",
+      "fast": { "$value": { "value": 200, "unit": "ms" }, "$description": "Hover, press, overlays." },
+      "base": { "$value": { "value": 300, "unit": "ms" }, "$description": "Card hover, accordion." },
+      "entrance": { "$value": { "value": 700, "unit": "ms" }, "$description": "fadeInUp entrance (28px)." },
+      "stagger": { "$value": { "value": 100, "unit": "ms" } },
+      "pulse": { "$value": { "value": 2000, "unit": "ms" } },
+      "breathe": { "$value": { "value": 3000, "unit": "ms" } },
+      "float": { "$value": { "value": 5000, "unit": "ms" }, "$description": "±10px; delayed variant 4s." },
+      "ring": { "$value": { "value": 60000, "unit": "ms" }, "$description": "Slow decorative ring spin." }
+    },
+    "distance": {
+      "$type": "dimension",
+      "entrance": { "$value": { "value": 28, "unit": "px" } },
+      "float": { "$value": { "value": 10, "unit": "px" } }
+    }
+  },
+  "layout": {
+    "$type": "dimension",
+    "container-max": { "$value": { "value": 72, "unit": "rem" }, "$description": "Tailwind max-w-6xl." },
+    "touch-target-min": { "$value": { "value": 44, "unit": "px" } },
+    "control-height": { "$value": { "value": 48, "unit": "px" }, "$description": "Input default h-12." },
+    "button-height": { "$value": { "value": 44, "unit": "px" }, "$description": "Button md h-11." }
+  }
+}

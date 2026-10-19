@@ -1,0 +1,25 @@
+# AiYO Design System
+
+> The AiYO Design System is called "Minimalist Modern": structure gives clarity, bold details give character. It is built with React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui conventions (cva, `cn`, radix-ui, lucide-react) and `motion`. It has one brand accent, the Electric Blue gradient #0052FF → #4D7CFF, named `primary` in code (`accent` is only a hover surface). It uses Calistoga for display headlines, Inter for UI and body text, and JetBrains Mono for labels. Components are copied into projects shadcn style, from `@/components/ui/*`.
+
+Key rules for agents:
+
+- Use tokens (`bg-background`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-card`, `bg-gradient-primary`), never raw hex.
+- Use one accent color only. Never use `bg-accent` for brand.
+- Calistoga is for H1/H2 only. Every section opens with SectionLabel → H2 → muted lede.
+- Container `max-w-6xl`, sections `py-24 md:py-32`, asymmetric grids. Landing pages need at least one inverted (deep slate) section with dot texture.
+- Controls `rounded-xl`, cards `rounded-2xl`. Inputs h-12, buttons h-11 and up, touch targets at least 44px.
+- Motion uses ease [0.16,1,0.3,1], 0.7s fade-up entrances and 200–300ms hovers, and respects prefers-reduced-motion.
+
+## Docs
+
+- [DESIGN.md](./DESIGN.md): the canonical spec. Tokens, typography, layout, surfaces, every component with its import path and props, blocks, motion, responsive rules, accessibility, do/don't, and landing and dashboard page recipes.
+- [AGENTS.md](./AGENTS.md): short instructions for AI coding agents. How to install, the hard rules, and a snippet to paste into a project's CLAUDE.md or AGENTS.md.
+
+## Tokens
+
+- [aiyo.tokens.json](./aiyo.tokens.json): W3C Design Tokens (DTCG) for color (light and inverted), typography, radius, shadow and motion.
+
+## Optional
+
+- [llms-full.txt](./llms-full.txt): DESIGN.md and AGENTS.md concatenated into one file, for loading the full context at once.
