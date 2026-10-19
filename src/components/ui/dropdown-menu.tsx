@@ -33,7 +33,7 @@ function DropdownMenuItem({
       className={cn(
         "relative flex cursor-pointer select-none items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors",
         "focus:bg-muted data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
-        variant === "destructive" && "text-destructive focus:bg-destructive/10 [&_svg]:text-destructive",
+        variant === "destructive" && "text-destructive-text focus:bg-destructive/10 [&_svg]:text-destructive-text",
         className,
       )}
       {...props}

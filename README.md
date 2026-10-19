@@ -57,7 +57,7 @@ During the build, the docs (`DESIGN.md`, `AGENTS.md`, `aiyo.tokens.json`, `llms.
    ```
 5. For dark mode, add `class="dark"` to `<html>`. To flip a single section, add `class="inverted"` to it.
 
-> **Naming:** the brand color is `primary` (Electric Blue `#0052FF → #4D7CFF`). `accent` keeps its shadcn meaning, a subtle hover surface. Never use `bg-accent` for brand.
+> **Naming:** the brand color is `primary` (Electric Blue `#0052FF → #3366FF`). `accent` keeps its shadcn meaning, a subtle hover surface. Never use `bg-accent` for brand.
 
 ## For AI agents
 

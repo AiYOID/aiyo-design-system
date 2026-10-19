@@ -25,7 +25,7 @@ function Stat({ className, label, value, trend, trendDirection = "up", hint, ...
               "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold",
               trendDirection === "up"
                 ? "bg-gradient-primary text-primary-foreground shadow-accent"
-                : "bg-destructive/10 text-destructive",
+                : "bg-destructive/10 text-destructive-text",
             )}
           >
             <TrendIcon className="size-3.5" />

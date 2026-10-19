@@ -15,7 +15,7 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 2
 
 > **Structure gives clarity. Bold details give character.** Use few elements and execute each with confidence.
 
-- **One accent:** the Electric Blue gradient `#0052FF → #4D7CFF`. Everything else is slate and white.
+- **One accent:** the Electric Blue gradient `#0052FF → #3366FF`. Everything else is slate and white.
 - **Three typefaces, each with one job:** Calistoga for display headlines, Inter for all UI and body text, and JetBrains Mono for labels.
 - **Generous space and asymmetric grids.** Every landing page needs at least one deep-slate *inverted* section.
 - **Depth comes from contrast, not decoration.** Solid deep-slate sections, hairline borders and shadows used only as elevation markers. No dot grids, no blurred glows.
@@ -42,20 +42,21 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 2
 | `--card` / `--popover` | `#FFFFFF` | `bg-card`, `bg-popover` | Cards, menus, dialogs |
 | `--card-foreground` / `--popover-foreground` | `#0F172A` | `text-card-foreground` | |
 | `--primary` | `#0052FF` | `bg-primary`, `text-primary`, `border-primary` | Brand, links, focus |
-| `--primary-end` | `#4D7CFF` | `to-primary-end` | Gradient endpoint |
+| `--primary-end` | `#3366FF` | `to-primary-end` | Gradient endpoint |
 | `--primary-foreground` | `#FFFFFF` | `text-primary-foreground` | Text on primary |
 | `--secondary` | `#F1F5F9` | `bg-secondary` | Secondary fills |
 | `--muted` | `#F1F5F9` | `bg-muted` | Quiet fills, tracks, table head |
-| `--muted-foreground` | `#64748B` | `text-muted-foreground` | Ledes, helper text, captions |
+| `--muted-foreground` | `#5B6B80` | `text-muted-foreground` | Ledes, helper text, captions |
 | `--accent` | `#F1F5F9` | `bg-accent` | Hover surface only |
 | `--border` | `#E2E8F0` | `border-border` | All hairlines (the default border color) |
 | `--input` | `#E2E8F0` | `border-input` | Control borders |
 | `--ring` | `#0052FF` | `ring-ring` / `focus-ring` | Focus indicator |
-| `--success` | `#059669` | `bg-success`, `text-success` | Positive status |
-| `--warning` | `#D97706` | `text-warning` | Caution |
-| `--destructive` | `#DC2626` | `bg-destructive`, `text-destructive` | Errors, delete |
+| `--success` | `#059669` | `bg-success`, icons | Positive status (fills, bars, icons) |
+| `--warning` | `#D97706` | `bg-warning`, icons | Caution |
+| `--destructive` | `#DC2626` | `bg-destructive`, icons | Errors, delete |
 | `--info` | `#0052FF` | `text-info` | Informational |
 | `*-foreground` (status) | `#FFFFFF` | `text-success-foreground`, … | Text on solid status fills |
+| `--success-text` / `--warning-text` / `--destructive-text` | `#047857` / `#92400E` / `#B91C1C` | `text-success-text`, … | Status **text**: badge labels on tints, field errors. The base status colours fail AA as 12px text, so text always uses these. |
 
 ### 2.3 Colors: inverted / dark (`.inverted`, `.dark`)
 
@@ -67,11 +68,14 @@ Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree 
 | `--foreground` | `#F8FAFC` |
 | `--card` / `--popover` / `--secondary` / `--muted` / `--accent` | `#1E293B` |
 | `--muted-foreground` | `#94A3B8` |
-| `--primary` | `#3B72FF` (lighter, for AA on slate) |
-| `--primary-end` / `--ring` / `--info` | `#6B93FF` |
+| `--primary` / `--info` | `#7AA0FF` (7.06:1 on slate) |
+| `--primary-end` / `--ring` | `#9DB8FF` |
+| `--primary-foreground` and status `*-foreground` | `#0F172A` (on slate no blue passes AA against both white text and the background, so filled primary turns light with dark text) |
 | `--border` | `rgb(255 255 255 / 0.10)` |
 | `--input` | `rgb(255 255 255 / 0.14)` |
-| `--success` / `--warning` / `--destructive` | `#10B981` / `#F59E0B` / `#EF4444` |
+| `--success` / `--warning` / `--destructive` | `#34D399` / `#FBBF24` / `#F87171` |
+| `--success-text` / `--warning-text` / `--destructive-text` | `#6EE7B7` / `#FCD34D` / `#FCA5A5` |
+| `--gradient-primary`, `--gradient-primary-diagonal` | Redeclared in this block, so gradients use the light blues above |
 
 ### 2.4 Gradients and signature utilities
 
@@ -80,7 +84,7 @@ Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree 
 | `bg-gradient-primary` | `linear-gradient(to right, primary, primary-end)`: buttons, switches, progress, badges |
 | `bg-gradient-primary-diagonal` | Same gradient at 135°: icon tiles, avatars, checkboxes |
 | `text-gradient` | Paints text with the gradient. Prefer the `<GradientText>` component. |
-| `focus-ring` | `0 0 0 2px background, 0 0 0 4px ring`. Use it as `focus-visible:focus-ring`. |
+| `focus-ring` | `outline: 2px solid ring; outline-offset: 2px`. Every interactive element already gets this from the global `:focus-visible` rule; the utility is only for custom elements. It is an outline, so state shadows (checked, active) can never cover it. |
 
 ### 2.5 Radius (`--radius: 0.75rem`)
 
@@ -511,8 +515,8 @@ Rules:
 
 ## 10. Accessibility
 
-- Meet WCAG AA. Primary on white is about 5.7:1. Primary on slate uses the lighter `#3B72FF`. Muted-foreground `#64748B` passes on `#FAFAFA` and white for body sizes.
-- Every interactive element shows a focus ring: `focus-visible:focus-ring` (2px primary with a 2px offset). Never remove it.
+- Meet WCAG AA for text, checked per token pair in both palettes: white on the gradient 4.68:1 or more, primary on white 5.75:1, muted text 4.97:1 or more, status text 4.88:1 or more, and on slate primary 7.06:1. Inverted and dark sections use light primary with dark text. Muted-foreground `#5B6B80` passes on `#FAFAFA` and white for body sizes.
+- Every interactive element shows a focus outline (2px ring colour, 2px offset) from the global `:focus-visible` rule in `aiyo.css`. Never set `outline: none` on an interactive element without an equally visible replacement.
 - Touch targets must be at least 44 × 44px.
 - Icon-only buttons need an `aria-label`. Decorative icons and graphics get `aria-hidden`.
 - Use `Field` for forms. It wires the label, `aria-describedby` and `aria-invalid` for you.
@@ -610,7 +614,12 @@ These rules apply to every app, admin and dashboard page. The showcase site demo
 Every list page has this structure, in this order:
 1. **`PageHeader`** with `title`, `description` and a primary **"Add <Thing>"** `Button` with a `Plus` icon in `actions`.
 2. **Toolbar:** a search `Input` with a `Search` icon, plus filters (`Select`, etc.).
-3. **`Table`.** Row actions go in a `DropdownMenu` (an icon button with `MoreHorizontal` and an `aria-label`) in the **last column**. When there are no results, show an empty-state row (or card) instead of an empty table.
+3. **`Table`.** Row actions go in a `DropdownMenu` (an icon button with `MoreHorizontal` and an `aria-label`) in the **last column**. Only list actions that work; leave out the rest.
+   Every list handles **four states**, each with a cause and one next action:
+   - **Loading:** skeleton rows shaped like the real rows, `aria-busy` on the table and a screen-reader text ("Loading merchants…").
+   - **Error:** what failed and a "Try again" button.
+   - **Empty (first run):** why it is empty and the action that fills it ("Add the first merchant").
+   - **Filtered to nothing:** what was searched and a "Clear search and filter" button.
 4. **`Pagination`**, **always present, even with a single page.** Default `pageSize` is 10.
 
 State rules:
@@ -741,7 +750,7 @@ Where this system used a pattern antislop names, the owner decided to keep it or
 
 | Pattern | Rule | Reason |
 |---|---|---|
-| Electric Blue gradient `#0052FF → #4D7CFF` | R-01 | It is the brand identity and marks the single primary action level. |
+| Electric Blue gradient `#0052FF → #3366FF` | R-01 | It is the brand identity and marks the single primary action level. |
 | Uppercase JetBrains Mono labels with wide tracking (section labels, table heads) | R-06 | A deliberate typographic voice and the system's identity motif, kept small at 12px. |
 | Lucide icons | R-04 | Matches the shadcn/ui ecosystem used across AiYO projects. Pick each icon for relevance; never sparkle, magic, robot or lightning as feature icons. |
 | Shadows | R-12 | Elevation markers only: cards `md`, overlays `xl`, accent shadow on the primary CTA. |

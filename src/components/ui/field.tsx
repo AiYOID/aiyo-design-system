@@ -39,7 +39,7 @@ function Field({ className, label, hint, error, htmlFor, required, children, ...
       )}
       {control}
       {(error || hint) && (
-        <p id={messageId} className={cn("text-xs leading-relaxed", error ? "text-destructive" : "text-muted-foreground")}>
+        <p id={messageId} className={cn("text-xs leading-relaxed", error ? "text-destructive-text" : "text-muted-foreground")}>
           {error || hint}
         </p>
       )}

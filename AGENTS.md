@@ -25,7 +25,7 @@ The target project needs React 19, Vite, TypeScript and Tailwind CSS v4 (`@tailw
 
 ## Hard rules
 
-1. **The brand color is `primary`** (Electric Blue `#0052FF → #4D7CFF`, `bg-gradient-primary`). **`accent` is NOT the brand.** It is the shadcn hover surface (`#F1F5F9`). Never use `bg-accent` for brand.
+1. **The brand color is `primary`** (Electric Blue `#0052FF → #3366FF`, `bg-gradient-primary`). **`accent` is NOT the brand.** It is the shadcn hover surface (`#F1F5F9`). Never use `bg-accent` for brand.
 2. **Use one accent color only.** Do not introduce purple, teal or any other second accent. `success`, `warning`, `destructive` and `info` are for status only.
 3. **Use tokens, not raw values.** Write `bg-background`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-card`. No hex codes in components and no pure black text.
 4. **Fonts:** Calistoga (`font-display`, normal weight) only for H1/H2 and stat numerals. Inter for everything else. JetBrains Mono (`font-mono text-xs uppercase tracking-[0.15em]`) for section labels, badges and table heads.
@@ -38,7 +38,7 @@ The target project needs React 19, Vite, TypeScript and Tailwind CSS v4 (`@tailw
 11. **Gradients** go on buttons, icon tiles, small fills and one headline word (`<GradientText>`). Never on large body or page backgrounds.
 12. **Motion:** ease `[0.16,1,0.3,1]`. Entrances use `<Reveal>` / `<RevealGroup>` (0.7s, 28px, stagger 0.1s, once). Hover and press feedback take 200 to 300ms. Overlays pop in, accordions slide. Always respect `prefers-reduced-motion`.
 13. **Responsive:** design mobile first. Hide decorative graphics below `lg` (`hidden lg:block`). Touch targets must be at least 44px.
-14. **Accessibility:** meet WCAG AA. Keep the `focus-visible:focus-ring` on everything interactive, give icon-only buttons an `aria-label`, and put `aria-hidden` on decoration.
+14. **Accessibility:** meet WCAG AA. Keep the visible focus outline on everything interactive (global `:focus-visible` rule; never `outline: none` without a replacement), give icon-only buttons an `aria-label`, and put `aria-hidden` on decoration.
 15. **Extend, don't fork.** Add variants with `cva` in the component file and merge classes with `cn()`. Don't override tokens per page.
 
 ### Dropped patterns (owner decision, DESIGN.md §14)
@@ -73,7 +73,7 @@ The showcase site demos a settings page, a list page and a create page in its **
 - [ ] Every interactive element has a focus ring and a target of at least 44px.
 - [ ] The layout works at 375px, 768px and 1280px.
 - [ ] Reduced motion is respected.
-- [ ] App pages: `PageHeader`; settings with 3+ sections use vertical Tabs; every list has search, Table, empty state and `Pagination`; small forms in a Dialog, large forms on their own page; delete is confirmed.
+- [ ] App pages: `PageHeader`; settings with 3+ sections use vertical Tabs; every list has search, Table, loading / error / empty states and `Pagination`; small forms in a Dialog, large forms on their own page; delete is confirmed.
 - [ ] The antislop Delivery Gate passes, with evidence.
 
 ---
@@ -99,9 +99,10 @@ This project uses the **AiYO Design System** ("Minimalist Modern"). Spec: https:
 - Controls `rounded-xl`, cards `rounded-2xl`; inputs h-12; buttons h-11+ (h-9 only dense desktop); touch targets ≥ 44px.
 - Motion: ease [0.16,1,0.3,1], `<Reveal>`/`<RevealGroup>` entrances, 200 to 300ms hovers, no endless decorative loops,
   respect prefers-reduced-motion. `data-arrow` only on the one primary CTA per screen. Backdrop blur only on the navbar.
-- WCAG AA, visible `focus-visible:focus-ring`, hide decorative graphics below `lg`.
+- WCAG AA, visible focus outline on every control, hide decorative graphics below `lg`.
+- Status text uses `text-success-text` / `text-warning-text` / `text-destructive-text`, never the base status colour.
 - App pages: `<PageHeader>` (Inter titles, not Calistoga). Settings with 3+ sub-sections → vertical `Tabs`, one Card per tab.
-- Every list page: PageHeader + "Add <Thing>" → search/filters → Table (row actions in a `DropdownMenu`, empty state) → `Pagination`
+- Every list page: PageHeader + "Add <Thing>" → search/filters → Table (row actions in a `DropdownMenu`, loading / error / empty states) → `Pagination`
   (always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side when data comes from an API).
 - Add/edit: Dialog for ≤6 fields in one section; otherwise a dedicated page (PageHeader `back` → FormSection → FormActions).
   Delete always confirms in a Dialog with a `destructive` button.

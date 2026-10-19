@@ -11,9 +11,9 @@ function Container({ className, ...props }: React.ComponentProps<"div">) {
 const sectionVariants = cva("relative isolate", {
   variants: {
     spacing: {
-      default: "py-24 md:py-32",
-      lg: "py-28 md:py-44",
-      sm: "py-16 md:py-20",
+      default: "py-16 md:py-32",
+      lg: "py-20 md:py-44",
+      sm: "py-12 md:py-20",
     },
   },
   defaultVariants: { spacing: "default" },

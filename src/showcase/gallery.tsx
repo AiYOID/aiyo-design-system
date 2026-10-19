@@ -263,7 +263,7 @@ export function Gallery() {
               title="Input, Textarea & Field"
               description="h-12 by default, rounded-xl, focus ring in primary with an offset. Field wires up label, hint, error and aria attributes for you."
               code={`<Field label="Email" htmlFor="email" hint="We'll never share it." required>
-  <Input id="email" type="email" placeholder="you@aiyo.id" />
+  <Input id="email" type="email" placeholder="email@example.com" />
 </Field>
 <Field label="Merchant ID" htmlFor="mid" error="Merchant ID is required">
   <Input id="mid" />
@@ -273,7 +273,7 @@ export function Gallery() {
             >
               <div className="mx-auto grid w-full max-w-xl gap-6 sm:grid-cols-2">
                 <Field label="Email" htmlFor="demo-email" hint="We'll never share it." required>
-                  <Input id="demo-email" type="email" placeholder="you@aiyo.id" />
+                  <Input id="demo-email" type="email" placeholder="email@example.com" />
                 </Field>
                 <Field label="Merchant ID" htmlFor="demo-mid" error="Merchant ID is required">
                   <Input id="demo-mid" placeholder="MID-0000" />
@@ -403,6 +403,7 @@ export function Gallery() {
 
             <Demo
               id="dialog"
+              sample
               title="Dialog"
               description="Solid slate overlay (no blur), pops in with the AiYO ease. Footer buttons stack on mobile with the primary action first in reading order."
               code={`<Dialog>
@@ -426,7 +427,7 @@ export function Gallery() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Confirm payout</DialogTitle>
-                    <DialogDescription>Rp 12.500.000 will be sent to BCA ••• 4821. This can't be undone.</DialogDescription>
+                    <DialogDescription>[Amount] will be sent to [bank account]. This can't be undone.</DialogDescription>
                   </DialogHeader>
                   <Field label="PIN" htmlFor="demo-pin">
                     <Input id="demo-pin" type="password" inputMode="numeric" placeholder="••••••" />
@@ -540,6 +541,7 @@ export function Gallery() {
 
             <Demo
               id="alert"
+              sample
               title="Alert"
               description="Notices carry a 3px colour bar on the left. Info uses the brand gradient."
               code={`<Alert>
@@ -558,7 +560,7 @@ export function Gallery() {
               <Alert variant="success">
                 <CircleCheck />
                 <AlertTitle>Payment received</AlertTitle>
-                <AlertDescription>Invoice INV-2026-0412 is now paid.</AlertDescription>
+                <AlertDescription>Invoice [number] is now paid.</AlertDescription>
               </Alert>
               <Alert variant="warning">
                 <TriangleAlert />
@@ -574,6 +576,7 @@ export function Gallery() {
 
             <Demo
               id="progress"
+              sample
               title="Progress, Spinner & Skeleton"
               description="Progress fills with the gradient. Skeletons mirror the real layout's shape."
               code={`<Progress value={64} />
@@ -628,6 +631,7 @@ export function Gallery() {
 
             <Demo
               id="stat"
+              sample
               title="Stat"
               description="Metrics in Calistoga at display size, with a gradient trend badge. Looks best inside an inverted section."
               code={`<Stat label="Monthly volume" value="Rp 4,2M" trend="+18%" />
@@ -641,6 +645,7 @@ export function Gallery() {
 
             <Demo
               id="table"
+              sample
               title="Table"
               description="Tables float in a card. Mono uppercase column heads; rows get a faint primary wash on hover."
               code={`<Table>
@@ -664,9 +669,9 @@ export function Gallery() {
                 </TableHeader>
                 <TableBody>
                   {[
-                    ["INV-0412", "Toko Sinar Jaya", "success", "Paid", "Rp 1.250.000"],
-                    ["INV-0411", "Kopi Senja", "warning", "Pending", "Rp 480.000"],
-                    ["INV-0410", "Apotek Sehat", "destructive", "Failed", "Rp 2.100.000"],
+                    ["INV-0003", "Sample customer C", "success", "Paid", "Rp 1.250.000"],
+                    ["INV-0002", "Sample customer B", "warning", "Pending", "Rp 480.000"],
+                    ["INV-0001", "Sample customer A", "destructive", "Failed", "Rp 2.100.000"],
                   ].map(([id, cust, v, s, amt]) => (
                     <TableRow key={id}>
                       <TableCell className="font-mono text-xs">{id}</TableCell>
@@ -683,6 +688,7 @@ export function Gallery() {
 
             <Demo
               id="pagination"
+              sample
               title="Pagination"
               description="Mandatory under every data table, even with one page. Shows the range, rows per page, and pages with ellipses. The current page wears the gradient."
               code={`<Pagination

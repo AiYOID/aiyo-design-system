@@ -16,8 +16,8 @@ This skill gives direction. antislop is the filter on top of it: read `skills/an
 - Dependencies: `class-variance-authority clsx tailwind-merge radix-ui lucide-react motion`.
 
 ## Rules
-1. **The brand color is `primary`**: Electric Blue `#0052FF → #4D7CFF` (`bg-gradient-primary`, `text-primary`). `accent` is the shadcn hover surface (#F1F5F9), so **never use `bg-accent` for brand.** Use one accent color only.
-2. Use tokens only: `bg-background` (#FAFAFA), `text-foreground` (#0F172A, never pure black), `text-muted-foreground` (#64748B), `bg-muted`, `border-border`, `bg-card`. Status colors (`success`, `warning`, `destructive`, `info`) are for status only.
+1. **The brand color is `primary`**: Electric Blue `#0052FF → #3366FF` (`bg-gradient-primary`, `text-primary`). `accent` is the shadcn hover surface (#F1F5F9), so **never use `bg-accent` for brand.** Use one accent color only.
+2. Use tokens only: `bg-background` (#FAFAFA), `text-foreground` (#0F172A, never pure black), `text-muted-foreground` (#5B6B80), `bg-muted`, `border-border`, `bg-card`. Status colors (`success`, `warning`, `destructive`, `info`) are for status only.
 3. Typography:
    - Hero H1: `font-display text-[2.75rem] lg:text-[5.25rem] leading-[1.05] tracking-[-0.02em]`, with the last word in `<GradientText underline>`.
    - H2: `font-display text-[2.25rem] md:text-[3.25rem] leading-[1.15]`.
@@ -36,7 +36,7 @@ This skill gives direction. antislop is the filter on top of it: read `skills/an
     - No endless decorative motion: no floating cards, rotating rings, breathing orbs or pulsing dots. `HeroGraphic` is static.
     - Always respect reduced motion.
 11. Responsive: mobile first, hide decorative graphics below `lg`, touch targets at least 44px.
-12. Accessibility: WCAG AA, keep `focus-visible:focus-ring`, `aria-label` on icon-only buttons, `aria-hidden` on decoration.
+12. Accessibility: WCAG AA, keep the visible focus outline (global `:focus-visible` rule), status text via `text-*-text` tokens, `aria-label` on icon-only buttons, `aria-hidden` on decoration.
 
 ## App page rules (mandatory, DESIGN.md §13)
 13. App page titles use `<PageHeader title description back actions>` from `@/components/blocks/page-header` (Inter semibold 2xl/3xl, never Calistoga).

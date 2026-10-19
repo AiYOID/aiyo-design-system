@@ -14,10 +14,13 @@ type PricingCardProps = {
   cta: string
   /** Gradient border, lifted above its siblings, primary CTA. */
   highlighted?: boolean
+  /** The plan the user has picked. The CTA turns into a confirmation. */
+  selected?: boolean
+  onSelect?: () => void
   className?: string
 }
 
-function PricingCard({ name, price, period, description, features, cta, highlighted = false, className }: PricingCardProps) {
+function PricingCard({ name, price, period, description, features, cta, highlighted = false, selected = false, onSelect, className }: PricingCardProps) {
   return (
     <div className={cn("h-full", highlighted && "md:-translate-y-4", className)}>
       <Card featured={highlighted} variant={highlighted ? "elevated" : "default"} className="h-full gap-8 p-8">
@@ -47,8 +50,20 @@ function PricingCard({ name, price, period, description, features, cta, highligh
             </li>
           ))}
         </ul>
-        <Button variant={highlighted ? "primary" : "secondary"} size="lg" className="mt-auto w-full">
-          {cta}
+        <Button
+          variant={highlighted ? "primary" : "secondary"}
+          size="lg"
+          className="mt-auto w-full"
+          aria-pressed={selected}
+          onClick={onSelect}
+        >
+          {selected ? (
+            <>
+              <Check /> Selected
+            </>
+          ) : (
+            cta
+          )}
         </Button>
       </Card>
     </div>

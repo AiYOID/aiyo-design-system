@@ -1,6 +1,6 @@
 # AiYO Design System
 
-> The AiYO Design System is called "Minimalist Modern": structure gives clarity, bold details give character. It is built with React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui conventions (cva, `cn`, radix-ui, lucide-react) and `motion`. It has one brand accent, the Electric Blue gradient #0052FF → #4D7CFF, named `primary` in code (`accent` is only a hover surface). It uses Calistoga for display headlines, Inter for UI and body text, and JetBrains Mono for labels. Components are copied into projects shadcn style, from `@/components/ui/*`. DESIGN.md gives direction; the vendored antislop skills are the filter on top of it. Dials: ENERGY 2 / RHYTHM 2 / MOTION 2.
+> The AiYO Design System is called "Minimalist Modern": structure gives clarity, bold details give character. It is built with React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui conventions (cva, `cn`, radix-ui, lucide-react) and `motion`. It has one brand accent, the Electric Blue gradient #0052FF → #3366FF, named `primary` in code (`accent` is only a hover surface). It uses Calistoga for display headlines, Inter for UI and body text, and JetBrains Mono for labels. Components are copied into projects shadcn style, from `@/components/ui/*`. DESIGN.md gives direction; the vendored antislop skills are the filter on top of it. Dials: ENERGY 2 / RHYTHM 2 / MOTION 2.
 
 Key rules for agents:
 
@@ -14,7 +14,7 @@ Key rules for agents:
 - `data-arrow` only on the one primary CTA per screen. Backdrop blur only on the sticky navbar.
 - Numbers, testimonials, logos and pricing tiers use real data only; otherwise leave the section out. The showcase's sample content is a labelled exception.
 - App pages (mandatory): titles use `PageHeader` (Inter, not Calistoga). Settings pages with 3+ sub-sections use vertical `Tabs`, one Card per tab.
-- Every list page: PageHeader with "Add <Thing>" → search and filters → Table (row actions in a DropdownMenu, empty state) → `Pagination`, always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side for API data.
+- Every list page: PageHeader with "Add <Thing>" → search and filters → Table (row actions in a DropdownMenu, loading / error / empty states) → `Pagination`, always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side for API data.
 - Add/edit in a Dialog only for ≤6 fields in one section with no uploads; otherwise a dedicated page (PageHeader `back` → FormSection → FormActions). Delete always confirms in a Dialog with a destructive button. The showcase's App Patterns section (`#app-patterns`) demos all of this.
 
 ## Docs

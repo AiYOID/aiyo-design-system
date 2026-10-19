@@ -85,7 +85,7 @@ function Navbar() {
 /* -------------------------------------------------------------------- Hero */
 function Hero() {
   return (
-    <section id="top" className="relative isolate overflow-hidden pb-24 pt-36 md:pb-32 md:pt-44">
+    <section id="top" className="relative isolate overflow-hidden pb-16 pt-28 md:pb-32 md:pt-44">
       <Container className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
         <RevealGroup className="flex flex-col items-start gap-8">
           <RevealItem>
@@ -114,7 +114,7 @@ function Hero() {
             </Button>
           </RevealItem>
           <RevealItem className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-2 text-sm text-muted-foreground">
-            {["React 19 + Tailwind v4", "shadcn/ui compatible", "WCAG AA"].map((t) => (
+            {["React 19 + Tailwind v4", "shadcn/ui compatible", "AA text contrast"].map((t) => (
               <span key={t} className="inline-flex items-center gap-2">
                 <span className="size-1.5 rounded-full bg-primary" /> {t}
               </span>
@@ -179,12 +179,12 @@ function Principles() {
 /* ------------------------------------------------------------- Foundations */
 const COLORS = [
   { name: "primary", hex: "#0052FF", note: "Electric Blue. CTAs, links, focus" },
-  { name: "primary-end", hex: "#4D7CFF", note: "Gradient endpoint" },
+  { name: "primary-end", hex: "#3366FF", note: "Gradient endpoint" },
   { name: "foreground", hex: "#0F172A", note: "Text, inverted sections" },
   { name: "background", hex: "#FAFAFA", note: "Canvas" },
   { name: "card", hex: "#FFFFFF", note: "Elevated surfaces" },
   { name: "muted", hex: "#F1F5F9", note: "Fills, hover surface" },
-  { name: "muted-foreground", hex: "#64748B", note: "Secondary text" },
+  { name: "muted-foreground", hex: "#5B6B80", note: "Secondary text" },
   { name: "border", hex: "#E2E8F0", note: "Hairlines" },
 ]
 const STATUS = [
@@ -239,9 +239,9 @@ function Foundations() {
           </RevealGroup>
           <Reveal className="flex flex-col gap-4">
             <div className="relative flex min-h-56 flex-1 flex-col justify-end overflow-hidden rounded-tl-[4rem] rounded-br-[4rem] rounded-tr-2xl rounded-bl-2xl bg-gradient-primary-diagonal p-8 text-primary-foreground shadow-accent-lg">
-              <span className="font-mono text-xs uppercase tracking-[0.15em] text-white/80">The signature gradient</span>
-              <span className="mt-2 font-display text-3xl">#0052FF → #4D7CFF</span>
-              <code className="mt-3 font-mono text-xs text-white/80">bg-gradient-primary · text-gradient</code>
+              <span className="font-mono text-xs uppercase tracking-[0.15em] text-white">The signature gradient</span>
+              <span className="mt-2 font-display text-3xl">#0052FF → #3366FF</span>
+              <code className="mt-3 font-mono text-xs text-white">bg-gradient-primary · text-gradient</code>
             </div>
             <div className="grid grid-cols-4 gap-3">
               {STATUS.map((s) => (
@@ -351,7 +351,7 @@ function Stats() {
             { label: "Components", value: "30+", hint: "Radix-based, typed" },
             { label: "Accent colour", value: "1", hint: "Electric Blue gradient" },
             { label: "Typefaces", value: "3", hint: "Display · UI · Mono" },
-            { label: "Contrast", value: "AA", hint: "5.7 : 1 primary on white" },
+            { label: "Text contrast", value: "AA", hint: "Every token pair checked, 4.5 : 1 or more" },
           ].map((s) => (
             <RevealItem key={s.label} className="md:px-8 md:first:pl-0">
               <Stat label={s.label} value={s.value} hint={s.hint} />
@@ -365,6 +365,7 @@ function Stats() {
 
 /* ---------------------------------------------------------------- Patterns */
 function Patterns() {
+  const [plan, setPlan] = React.useState<string | null>(null)
   return (
     <Section id="patterns" className="border-t border-border">
       <Container className="flex flex-col gap-28">
@@ -398,11 +399,13 @@ function Patterns() {
           <PatternTitle name="Pricing" file="blocks/pricing-card.tsx" />
           <RevealGroup className="grid items-stretch gap-6 pt-4 md:grid-cols-3">
             <RevealItem>
-              <PricingCard name="Starter" price="Rp 0" period="/bulan" description="For trying things out." features={["1 outlet", "QRIS payments", "Email support"]} cta="Start free" />
+              <PricingCard selected={plan === "Starter"} onSelect={() => setPlan("Starter")} name="Starter" price="Rp 0" period="/bulan" description="For trying things out." features={["1 outlet", "QRIS payments", "Email support"]} cta="Start free" />
             </RevealItem>
             <RevealItem>
               <PricingCard
                 highlighted
+                selected={plan === "Growth"}
+                onSelect={() => setPlan("Growth")}
                 name="Growth"
                 price="Rp 249rb"
                 period="/bulan"
@@ -412,7 +415,7 @@ function Patterns() {
               />
             </RevealItem>
             <RevealItem>
-              <PricingCard name="Enterprise" price="Custom" description="For chains and platforms." features={["Unlimited outlets", "Dedicated manager", "Custom SLA"]} cta="Contact sales" />
+              <PricingCard selected={plan === "Enterprise"} onSelect={() => setPlan("Enterprise")} name="Enterprise" price="Custom" description="For chains and platforms." features={["Unlimited outlets", "Dedicated manager", "Custom SLA"]} cta="Contact sales" />
             </RevealItem>
           </RevealGroup>
         </div>
@@ -465,7 +468,7 @@ Read DESIGN.md and AGENTS.md first, and follow them exactly:
 function Agents() {
   return (
     <Section id="agents" className="border-t border-border">
-      <Container className="grid gap-16 lg:grid-cols-[0.9fr_1.1fr]">
+      <Container className="grid gap-16 lg:grid-cols-[0.9fr_1.1fr] [&>*]:min-w-0">
         <Reveal className="flex flex-col gap-8 lg:sticky lg:top-28 lg:self-start">
           <SectionHeader
             label="For AI Agents"

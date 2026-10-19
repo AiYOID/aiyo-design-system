@@ -100,7 +100,7 @@ function Pagination({
         </button>
         {getPageItems(current, pageCount).map((item, i) =>
           item === "ellipsis" ? (
-            <span key={`e${i}`} aria-hidden className="inline-flex size-9 items-center justify-center text-muted-foreground">
+            <span key={`e${i}`} aria-hidden className="hidden size-9 items-center justify-center text-muted-foreground sm:inline-flex">
               …
             </span>
           ) : (
@@ -112,6 +112,7 @@ function Pagination({
               aria-current={item === current ? "page" : undefined}
               className={cn(
                 pageButton,
+                "hidden sm:inline-flex",
                 item === current
                   ? "bg-gradient-primary text-primary-foreground shadow-accent"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -121,6 +122,10 @@ function Pagination({
             </button>
           ),
         )}
+        {/* Below sm the page numbers do not fit, so the position is spelled out instead. */}
+        <span className="min-w-24 px-2 text-center text-sm tabular-nums text-muted-foreground sm:hidden">
+          Page <span className="font-medium text-foreground">{current}</span> of {pageCount}
+        </span>
         <button
           type="button"
           className={cn(pageButton, "border border-border hover:bg-muted")}

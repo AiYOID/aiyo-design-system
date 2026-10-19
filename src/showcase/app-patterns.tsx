@@ -2,16 +2,18 @@ import * as React from "react"
 import {
   Bell,
   Check,
-  FileText,
   Inbox,
   Lock,
   MapPin,
   MoreHorizontal,
   Pencil,
   Plus,
+  RotateCw,
   Search,
   ShieldCheck,
+  Store,
   Trash2,
+  TriangleAlert,
   User,
   X,
 } from "lucide-react"
@@ -29,7 +31,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   DropdownMenu,
@@ -46,10 +47,12 @@ import { Label } from "@/components/ui/label"
 import { Pagination } from "@/components/ui/pagination"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Reveal } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 import { CodeBlock } from "./shared"
 
 /* A mock app window so each pattern reads as a real screen. */
@@ -90,7 +93,161 @@ function PatternIntro({ index, title, rules }: { index: string; title: string; r
   )
 }
 
-/* ---------------------------------------------------------------- Settings */
+/* Settings */
+
+/** Inline confirmation next to a form's submit button. Announced to screen readers. */
+function SavedNote({ message }: { message: string | null }) {
+  return (
+    <p role="status" aria-live="polite" className="mr-auto flex items-center gap-2 text-sm text-success-text">
+      {message && (
+        <>
+          <Check className="size-4" /> {message}
+        </>
+      )}
+    </p>
+  )
+}
+
+function useSaved() {
+  const [message, setMessage] = React.useState<string | null>(null)
+  const timer = React.useRef<number>(undefined)
+  const show = (m: string) => {
+    setMessage(m)
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => setMessage(null), 4000)
+  }
+  return { message, show }
+}
+
+function SettingsForm({
+  title,
+  description,
+  submitLabel,
+  savedMessage,
+  contentClassName,
+  children,
+}: {
+  title: string
+  description: string
+  submitLabel: string
+  savedMessage: string
+  contentClassName?: string
+  children: React.ReactNode
+}) {
+  const saved = useSaved()
+  return (
+    <Card>
+      <form
+        className="flex flex-1 flex-col"
+        onSubmit={(e) => {
+          e.preventDefault()
+          saved.show(savedMessage)
+        }}
+      >
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
+        <CardContent className={cn("grid gap-5", contentClassName)}>{children}</CardContent>
+        <CardFooter className="flex-wrap justify-end">
+          <SavedNote message={saved.message} />
+          <Button type="submit">{submitLabel}</Button>
+        </CardFooter>
+      </form>
+    </Card>
+  )
+}
+
+function ProfileCard() {
+  const [photo, setPhoto] = React.useState<string | null>(null)
+  const fileInput = React.useRef<HTMLInputElement>(null)
+  return (
+    <SettingsForm
+      title="Profile"
+      description="How you appear across AiYO products."
+      submitLabel="Save changes"
+      savedMessage="Profile saved. This demo keeps nothing after a reload."
+      contentClassName="sm:grid-cols-2"
+    >
+      <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
+        <Avatar className="size-14">
+          <AvatarFallback className="text-base">
+            <User className="size-6" />
+          </AvatarFallback>
+        </Avatar>
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          tabIndex={-1}
+          aria-hidden
+          onChange={(e) => setPhoto(e.target.files?.[0]?.name ?? null)}
+        />
+        <Button type="button" variant="secondary" size="sm" onClick={() => fileInput.current?.click()}>
+          Change photo
+        </Button>
+        <span className="text-sm text-muted-foreground" aria-live="polite">
+          {photo ? `Selected: ${photo}` : "PNG or JPG, square works best."}
+        </span>
+      </div>
+      <Field label="Full name" htmlFor="st-name">
+        <Input id="st-name" placeholder="Your full name" autoComplete="name" />
+      </Field>
+      <Field label="Phone" htmlFor="st-phone">
+        <Input id="st-phone" type="tel" placeholder="+62…" autoComplete="tel" />
+      </Field>
+    </SettingsForm>
+  )
+}
+
+function PasswordCard() {
+  const saved = useSaved()
+  const [errors, setErrors] = React.useState<{ current?: string; next?: string; confirm?: string }>({})
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const f = new FormData(e.currentTarget)
+    const current = String(f.get("current") ?? "")
+    const next = String(f.get("next") ?? "")
+    const confirm = String(f.get("confirm") ?? "")
+    const found = {
+      current: current ? undefined : "Enter your current password.",
+      next: next.length >= 8 ? undefined : "Use at least 8 characters.",
+      confirm: confirm === next ? undefined : "The two new passwords don't match.",
+    }
+    setErrors(found)
+    if (!found.current && !found.next && !found.confirm) {
+      e.currentTarget.reset()
+      saved.show("Password updated. This demo sends nothing.")
+    }
+  }
+  return (
+    <Card>
+      <form onSubmit={submit} noValidate className="flex flex-1 flex-col">
+        <CardHeader>
+          <CardTitle>Change password</CardTitle>
+          <CardDescription>Use at least 8 characters with a mix of letters and numbers.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid max-w-md gap-5">
+          <Field label="Current password" htmlFor="st-cur" error={errors.current}>
+            <Input id="st-cur" name="current" type="password" autoComplete="current-password" />
+          </Field>
+          <Field label="New password" htmlFor="st-new" hint="Minimum 8 characters." error={errors.next}>
+            <Input id="st-new" name="next" type="password" autoComplete="new-password" />
+          </Field>
+          <Field label="Confirm new password" htmlFor="st-conf" error={errors.confirm}>
+            <Input id="st-conf" name="confirm" type="password" autoComplete="new-password" />
+          </Field>
+        </CardContent>
+        <CardFooter className="flex-wrap justify-end">
+          <SavedNote message={saved.message} />
+          <Button type="submit">Update password</Button>
+        </CardFooter>
+      </form>
+    </Card>
+  )
+}
+
 function SettingsDemo() {
   return (
     <AppFrame url="app.aiyo.id/settings">
@@ -115,77 +272,31 @@ function SettingsDemo() {
         </TabsList>
 
         <TabsContent value="profile">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile</CardTitle>
-              <CardDescription>How you appear across AiYO products.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-5 sm:grid-cols-2">
-              <div className="flex items-center gap-4 sm:col-span-2">
-                <Avatar className="size-14">
-                  <AvatarFallback className="text-base">AP</AvatarFallback>
-                </Avatar>
-                <Button variant="secondary" size="sm">
-                  Change photo
-                </Button>
-              </div>
-              <Field label="Full name" htmlFor="st-name">
-                <Input id="st-name" defaultValue="Aji Prakoso" />
-              </Field>
-              <Field label="Phone" htmlFor="st-phone">
-                <Input id="st-phone" defaultValue="+62 812 0000 0000" />
-              </Field>
-            </CardContent>
-            <CardFooter className="justify-end">
-              <Button>Save changes</Button>
-            </CardFooter>
-          </Card>
+          <ProfileCard />
         </TabsContent>
 
         <TabsContent value="password">
-          <Card>
-            <CardHeader>
-              <CardTitle>Change password</CardTitle>
-              <CardDescription>Use at least 8 characters with a mix of letters and numbers.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid max-w-md gap-5">
-              <Field label="Current password" htmlFor="st-cur">
-                <Input id="st-cur" type="password" placeholder="••••••••" />
-              </Field>
-              <Field label="New password" htmlFor="st-new" hint="Minimum 8 characters.">
-                <Input id="st-new" type="password" placeholder="••••••••" />
-              </Field>
-              <Field label="Confirm new password" htmlFor="st-conf">
-                <Input id="st-conf" type="password" placeholder="••••••••" />
-              </Field>
-            </CardContent>
-            <CardFooter className="justify-end">
-              <Button>Update password</Button>
-            </CardFooter>
-          </Card>
+          <PasswordCard />
         </TabsContent>
 
         <TabsContent value="address">
-          <Card>
-            <CardHeader>
-              <CardTitle>Address</CardTitle>
-              <CardDescription>Used for invoices and settlement documents.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-5 sm:grid-cols-2">
-              <Field label="Street" htmlFor="st-street" className="sm:col-span-2">
-                <Textarea id="st-street" defaultValue="Jl. Sudirman No. 1" className="min-h-20" />
-              </Field>
-              <Field label="City" htmlFor="st-city">
-                <Input id="st-city" defaultValue="Jakarta Selatan" />
-              </Field>
-              <Field label="Postal code" htmlFor="st-zip">
-                <Input id="st-zip" defaultValue="12190" />
-              </Field>
-            </CardContent>
-            <CardFooter className="justify-end">
-              <Button>Save address</Button>
-            </CardFooter>
-          </Card>
+          <SettingsForm
+            title="Address"
+            description="Used for invoices and settlement documents."
+            submitLabel="Save address"
+            savedMessage="Address saved. This demo keeps nothing after a reload."
+            contentClassName="sm:grid-cols-2"
+          >
+            <Field label="Street" htmlFor="st-street" className="sm:col-span-2">
+              <Textarea id="st-street" placeholder="Street, number, building" className="min-h-20" />
+            </Field>
+            <Field label="City" htmlFor="st-city">
+              <Input id="st-city" placeholder="City" />
+            </Field>
+            <Field label="Postal code" htmlFor="st-zip">
+              <Input id="st-zip" inputMode="numeric" placeholder="5 digits" />
+            </Field>
+          </SettingsForm>
         </TabsContent>
 
         <TabsContent value="notifications">
@@ -237,15 +348,15 @@ function SettingsDemo() {
   )
 }
 
-/* ---------------------------------------------------------------- List page */
+/* List page */
 type Merchant = { id: string; name: string; city: string; status: "active" | "pending" | "suspended"; volume: number }
+type DataState = "ready" | "loading" | "error" | "empty"
 
+// Sample rows, labelled as such in the UI. Real pages load these from the API.
 const CITIES = ["Jakarta", "Bandung", "Surabaya", "Medan", "Makassar", "Yogyakarta", "Semarang"]
-const NAMES = ["Toko", "Kopi", "Warung", "Apotek", "Bengkel", "Laundry", "Bakery", "Mart", "Studio", "Klinik"]
-const SUFFIX = ["Sinar Jaya", "Senja", "Makmur", "Sehat", "Barokah", "Bersih", "Manis", "Sentosa", "Kreatif", "Prima", "Abadi"]
 const SEED: Merchant[] = Array.from({ length: 57 }, (_, i) => ({
-  id: `MRC-${String(1000 + i)}`,
-  name: `${NAMES[i % NAMES.length]} ${SUFFIX[(i * 7) % SUFFIX.length]}`,
+  id: `MRC-${String(i + 1).padStart(4, "0")}`,
+  name: `Sample merchant ${String(i + 1).padStart(2, "0")}`,
   city: CITIES[(i * 3) % CITIES.length],
   status: i % 9 === 4 ? "suspended" : i % 5 === 2 ? "pending" : "active",
   volume: ((i * 7919) % 97) * 1_250_000 + 500_000,
@@ -253,54 +364,60 @@ const SEED: Merchant[] = Array.from({ length: 57 }, (_, i) => ({
 const STATUS_BADGE = { active: "success", pending: "warning", suspended: "destructive" } as const
 const rupiah = (n: number) => "Rp " + n.toLocaleString("id-ID")
 
-function AddMerchantDialog({ onAdd }: { onAdd: (m: Merchant) => void }) {
-  const [open, setOpen] = React.useState(false)
+/** Add and edit share one small form (≤6 fields), so both open in a modal. */
+function MerchantDialog({
+  open,
+  onOpenChange,
+  merchant,
+  onSave,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  merchant: Merchant | null
+  onSave: (m: Merchant) => void
+}) {
+  const editing = merchant !== null
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const f = new FormData(e.currentTarget)
-    onAdd({
-      id: `MRC-${Math.floor(2000 + Math.random() * 7000)}`,
-      name: String(f.get("name") || "New merchant"),
+    onSave({
+      id: merchant?.id ?? `MRC-${String(Math.floor(1000 + Math.random() * 9000))}`,
+      name: String(f.get("name")),
       city: String(f.get("city") || "Jakarta"),
-      status: "pending",
-      volume: 0,
+      status: merchant?.status ?? "pending",
+      volume: merchant?.volume ?? 0,
     })
-    setOpen(false)
+    onOpenChange(false)
   }
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus /> Add merchant
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add merchant</DialogTitle>
+          <DialogTitle>{editing ? "Edit merchant" : "Add merchant"}</DialogTitle>
           <DialogDescription>A short form (≤6 fields), so it opens in a modal.</DialogDescription>
         </DialogHeader>
-        <form id="add-merchant" onSubmit={submit} className="grid gap-5">
+        <form id="merchant-form" key={merchant?.id ?? "new"} onSubmit={submit} className="grid gap-5">
           <Field label="Merchant name" htmlFor="am-name" required>
-            <Input id="am-name" name="name" placeholder="Toko Sinar Jaya" required />
+            <Input id="am-name" name="name" placeholder="Business name" defaultValue={merchant?.name} required />
           </Field>
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="City" htmlFor="am-city">
-              <Input id="am-city" name="city" placeholder="Jakarta" />
+              <Input id="am-city" name="city" placeholder="City" defaultValue={merchant?.city} />
             </Field>
             <Field label="Phone" htmlFor="am-phone">
-              <Input id="am-phone" name="phone" placeholder="+62…" />
+              <Input id="am-phone" name="phone" type="tel" placeholder="+62…" />
             </Field>
           </div>
           <Field label="Email" htmlFor="am-email">
-            <Input id="am-email" name="email" type="email" placeholder="owner@toko.id" />
+            <Input id="am-email" name="email" type="email" placeholder="email@example.com" />
           </Field>
         </form>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
-          <Button type="submit" form="add-merchant">
-            Save merchant
+          <Button type="submit" form="merchant-form">
+            {editing ? "Save changes" : "Save merchant"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -329,20 +446,40 @@ function DeleteDialog({ merchant, onConfirm, onClose }: { merchant: Merchant | n
   )
 }
 
+/** One full-width row that replaces the data rows for the loading, error and empty states. */
+function StateRow({ children }: { children: React.ReactNode }) {
+  return (
+    <TableRow className="hover:bg-transparent">
+      <TableCell colSpan={6} className="py-14 whitespace-normal">
+        <div className="flex flex-col items-center gap-3 text-center">{children}</div>
+      </TableCell>
+    </TableRow>
+  )
+}
+
 function ListPageDemo() {
   const [rows, setRows] = React.useState(SEED)
   const [query, setQuery] = React.useState("")
   const [status, setStatus] = React.useState("all")
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(10)
+  const [dataState, setDataState] = React.useState<DataState>("ready")
+  const [dialog, setDialog] = React.useState<{ open: boolean; merchant: Merchant | null }>({ open: false, merchant: null })
   const [toDelete, setToDelete] = React.useState<Merchant | null>(null)
 
-  const filtered = rows.filter(
+  const source = dataState === "empty" ? [] : rows
+  const filtered = source.filter(
     (m) =>
       (status === "all" || m.status === status) &&
       (m.name.toLowerCase().includes(query.toLowerCase()) || m.id.toLowerCase().includes(query.toLowerCase())),
   )
   const visible = filtered.slice((page - 1) * pageSize, page * pageSize)
+  const filteredOut = source.length > 0 && filtered.length === 0
+
+  const retry = () => {
+    setDataState("loading")
+    window.setTimeout(() => setDataState("ready"), 900)
+  }
 
   return (
     <AppFrame url="app.aiyo.id/merchants">
@@ -351,12 +488,9 @@ function ListPageDemo() {
           title="Merchants"
           description="Every merchant registered on AiYO."
           actions={
-            <AddMerchantDialog
-              onAdd={(m) => {
-                setRows((r) => [m, ...r])
-                setPage(1)
-              }}
-            />
+            <Button onClick={() => setDialog({ open: true, merchant: null })}>
+              <Plus /> Add merchant
+            </Button>
           }
         />
 
@@ -404,7 +538,8 @@ function ListPageDemo() {
           </Select>
         </div>
 
-        <Table>
+        <Table aria-busy={dataState === "loading"}>
+          <TableCaption className="text-left px-5">Sample data for this demo. Real pages load rows from the API.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
@@ -418,18 +553,60 @@ function ListPageDemo() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visible.length === 0 ? (
-              <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={6} className="py-14">
-                  <div className="flex flex-col items-center gap-3 text-center">
-                    <IconTile variant="soft">
-                      <Inbox />
-                    </IconTile>
-                    <div className="font-medium">No merchants found</div>
-                    <div className="text-sm text-muted-foreground">Try another keyword or clear the filter.</div>
-                  </div>
-                </TableCell>
-              </TableRow>
+            {dataState === "loading" ? (
+              Array.from({ length: Math.min(pageSize, 5) }).map((_, i) => (
+                <TableRow key={i} className="hover:bg-transparent">
+                  <TableCell colSpan={6}>
+                    {i === 0 && <span className="sr-only">Loading merchants…</span>}
+                    <div className="flex items-center gap-6">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 flex-1" />
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-6 w-16 rounded-full" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : dataState === "error" ? (
+              <StateRow>
+                <IconTile variant="muted">
+                  <TriangleAlert className="text-destructive-text" />
+                </IconTile>
+                <div className="font-medium">Couldn't load merchants</div>
+                <div className="max-w-sm text-sm text-muted-foreground">The server didn't respond. Check your connection, then try again.</div>
+                <Button variant="secondary" size="sm" onClick={retry}>
+                  <RotateCw /> Try again
+                </Button>
+              </StateRow>
+            ) : source.length === 0 ? (
+              <StateRow>
+                <IconTile variant="soft">
+                  <Store />
+                </IconTile>
+                <div className="font-medium">No merchants yet</div>
+                <div className="max-w-sm text-sm text-muted-foreground">Merchants you add show up here, with their status and volume.</div>
+                <Button size="sm" onClick={() => setDialog({ open: true, merchant: null })}>
+                  <Plus /> Add the first merchant
+                </Button>
+              </StateRow>
+            ) : filteredOut ? (
+              <StateRow>
+                <IconTile variant="soft">
+                  <Inbox />
+                </IconTile>
+                <div className="font-medium">No merchants match</div>
+                <div className="text-sm text-muted-foreground">Nothing matches "{query || status}". Try another keyword or clear the filter.</div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setQuery("")
+                    setStatus("all")
+                  }}
+                >
+                  Clear search and filter
+                </Button>
+              </StateRow>
             ) : (
               visible.map((m) => (
                 <TableRow key={m.id}>
@@ -450,11 +627,8 @@ function ListPageDemo() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => setDialog({ open: true, merchant: m })}>
                           <Pencil /> Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <FileText /> View invoices
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem variant="destructive" onSelect={() => setToDelete(m)}>
@@ -469,8 +643,36 @@ function ListPageDemo() {
           </TableBody>
         </Table>
 
-        <Pagination page={page} pageSize={pageSize} total={filtered.length} onPageChange={setPage} onPageSizeChange={setPageSize} />
+        <Pagination
+          page={page}
+          pageSize={pageSize}
+          total={dataState === "ready" || dataState === "empty" ? filtered.length : 0}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-border p-3">
+          <span className="text-sm text-muted-foreground">Preview state</span>
+          <Tabs value={dataState} onValueChange={(v) => (v === "loading" ? retry() : setDataState(v as DataState))}>
+            <TabsList>
+              <TabsTrigger value="ready">Data</TabsTrigger>
+              <TabsTrigger value="loading">Loading</TabsTrigger>
+              <TabsTrigger value="error">Error</TabsTrigger>
+              <TabsTrigger value="empty">Empty</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
+      <MerchantDialog
+        open={dialog.open}
+        merchant={dialog.merchant}
+        onOpenChange={(open) => setDialog((d) => ({ ...d, open }))}
+        onSave={(m) => {
+          setDataState("ready")
+          setRows((r) => (r.some((x) => x.id === m.id) ? r.map((x) => (x.id === m.id ? m : x)) : [m, ...r]))
+          if (!dialog.merchant) setPage(1)
+        }}
+      />
       <DeleteDialog
         merchant={toDelete}
         onClose={() => setToDelete(null)}
@@ -483,11 +685,36 @@ function ListPageDemo() {
   )
 }
 
-/* ---------------------------------------------------------------- Create page */
+/* Create page */
+type Line = { id: number }
+
 function CreatePageDemo() {
+  const [lines, setLines] = React.useState<Line[]>([{ id: 1 }])
+  const [nameError, setNameError] = React.useState<string>()
+  const [result, setResult] = React.useState<"created" | "discarded" | null>(null)
+  const formRef = React.useRef<HTMLFormElement>(null)
+
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const name = String(new FormData(e.currentTarget).get("customer") ?? "").trim()
+    if (!name) {
+      setNameError("Enter the customer's name.")
+      setResult(null)
+      return
+    }
+    setNameError(undefined)
+    setResult("created")
+  }
+  const cancel = () => {
+    formRef.current?.reset()
+    setLines([{ id: 1 }])
+    setNameError(undefined)
+    setResult("discarded")
+  }
+
   return (
     <AppFrame url="app.aiyo.id/invoices/new">
-      <div className="flex flex-col gap-10">
+      <form ref={formRef} onSubmit={submit} noValidate className="flex flex-col gap-10">
         <PageHeader
           back={{ href: "#app-patterns", label: "Invoices" }}
           title="New invoice"
@@ -495,33 +722,46 @@ function CreatePageDemo() {
         />
         <FormSection title="Customer" description="Who receives this invoice.">
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Customer name" htmlFor="ci-name" required>
-              <Input id="ci-name" placeholder="PT Maju Bersama" />
+            <Field label="Customer name" htmlFor="ci-name" required error={nameError}>
+              <Input id="ci-name" name="customer" placeholder="Company or person" />
             </Field>
             <Field label="Email" htmlFor="ci-email">
-              <Input id="ci-email" type="email" placeholder="finance@maju.id" />
+              <Input id="ci-email" type="email" placeholder="email@example.com" />
             </Field>
             <Field label="NPWP" htmlFor="ci-npwp">
-              <Input id="ci-npwp" placeholder="00.000.000.0-000.000" />
+              <Input id="ci-npwp" inputMode="numeric" placeholder="15 or 16 digits" />
             </Field>
             <Field label="Phone" htmlFor="ci-phone">
-              <Input id="ci-phone" placeholder="+62…" />
+              <Input id="ci-phone" type="tel" placeholder="+62…" />
             </Field>
           </div>
         </FormSection>
         <FormSection title="Line items" description="Products or services billed.">
           <div className="grid gap-3">
-            {[
-              ["Langganan POS Growth", "1", "249.000"],
-              ["Perangkat EDC", "2", "1.750.000"],
-            ].map(([item, qty, price]) => (
-              <div key={item} className="grid grid-cols-[1fr_4rem_8rem] gap-3">
-                <Input size="sm" defaultValue={item} aria-label="Item" />
-                <Input size="sm" defaultValue={qty} aria-label="Qty" className="text-center" />
-                <Input size="sm" defaultValue={price} aria-label="Price" className="text-right" />
+            {lines.map((line, i) => (
+              <div key={line.id} className="grid grid-cols-[1fr_4rem_7rem_2.25rem] gap-2 sm:gap-3">
+                <Input size="sm" aria-label={`Item ${i + 1}`} placeholder="Item name" />
+                <Input size="sm" aria-label={`Quantity ${i + 1}`} inputMode="numeric" defaultValue="1" className="text-center" />
+                <Input size="sm" aria-label={`Price ${i + 1}`} inputMode="numeric" placeholder="0" className="text-right" />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Remove line ${i + 1}`}
+                  disabled={lines.length === 1}
+                  onClick={() => setLines((l) => l.filter((x) => x.id !== line.id))}
+                >
+                  <X />
+                </Button>
               </div>
             ))}
-            <Button variant="ghost" size="sm" className="w-fit">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-fit"
+              onClick={() => setLines((l) => [...l, { id: Math.max(...l.map((x) => x.id)) + 1 }])}
+            >
               <Plus /> Add line
             </Button>
           </div>
@@ -529,21 +769,31 @@ function CreatePageDemo() {
         <FormSection title="Payment" description="Terms and notes shown on the invoice.">
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Due date" htmlFor="ci-due">
-              <Input id="ci-due" type="date" defaultValue="2026-11-19" />
+              <Input id="ci-due" type="date" />
             </Field>
             <Field label="Method" htmlFor="ci-method">
-              <Input id="ci-method" defaultValue="Virtual Account BCA" />
+              <Input id="ci-method" placeholder="e.g. virtual account" />
             </Field>
             <Field label="Notes" htmlFor="ci-notes" className="sm:col-span-2">
-              <Textarea id="ci-notes" placeholder="Thank you for your business." className="min-h-20" />
+              <Textarea id="ci-notes" placeholder="Shown at the bottom of the invoice." className="min-h-20" />
             </Field>
           </div>
         </FormSection>
         <FormActions>
-          <Button variant="secondary">Cancel</Button>
-          <Button>Create invoice</Button>
+          <p role="status" aria-live="polite" className="mr-auto flex items-center gap-2 text-sm text-muted-foreground">
+            {result === "created" && (
+              <span className="flex items-center gap-2 text-success-text">
+                <Check className="size-4" /> Invoice created. This demo saves nothing.
+              </span>
+            )}
+            {result === "discarded" && "Changes discarded."}
+          </p>
+          <Button type="button" variant="secondary" onClick={cancel}>
+            Cancel
+          </Button>
+          <Button type="submit">Create invoice</Button>
         </FormActions>
-      </div>
+      </form>
     </AppFrame>
   )
 }

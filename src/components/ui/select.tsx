@@ -19,7 +19,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       className={cn(
         fieldControl,
-        "flex cursor-pointer items-center justify-between gap-2 text-left data-placeholder:text-muted-foreground/60 [&>span]:truncate",
+        "flex cursor-pointer items-center justify-between gap-2 text-left data-placeholder:text-muted-foreground [&>span]:truncate",
         size === "sm" && "h-9 rounded-lg px-3",
         size === "md" && "h-12 px-4",
         size === "lg" && "h-14 px-5 text-base",
