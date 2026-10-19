@@ -35,12 +35,22 @@ The full spec is in `DESIGN.md` in the aiyo-design-system repo, also served at `
 11. Responsive: mobile first, hide decorative graphics below `lg`, touch targets at least 44px.
 12. Accessibility: WCAG AA, keep `focus-visible:focus-ring`, `aria-label` on icon-only buttons, `aria-hidden` on decoration.
 
+## App page rules (mandatory, DESIGN.md §13)
+13. App page titles use `<PageHeader title description back actions>` from `@/components/blocks/page-header` (Inter semibold 2xl/3xl, never Calistoga).
+14. Settings / profile pages with 3+ sub-sections: vertical `<Tabs orientation="vertical">`, one `Card` per tab. Never stack many cards down one long page.
+15. Every list / data page: `PageHeader` (primary "Add <Thing>" with a `Plus` icon in `actions`) → toolbar (search `Input` with a `Search` icon, plus filters) → `Table` → `<Pagination page pageSize total onPageChange onPageSizeChange>` from `@/components/ui/pagination`.
+    - Pagination is always shown, even with one page. Default `pageSize` 10, pages 1-based.
+    - Reset to page 1 on search, filter or page-size change. Use server-side pagination for API data (send `page`/`pageSize`, read `total`).
+    - Empty-state row or card when there are no results. Row actions in a `DropdownMenu` (`MoreHorizontal` icon button) in the last column.
+16. Add / edit: a `Dialog` for small forms (≤6 fields, one section, no uploads, no nested line items) with Cancel (`secondary`) + Save. Otherwise a dedicated page (`/things/new`, `/things/:id/edit`): `PageHeader` with `back` → `FormSection`s → `FormActions` (sticky bottom bar). Delete always confirms in a Dialog with a `destructive` button.
+
 ## Page recipes
 - **Landing:** Nav → Hero (asymmetric, HeroGraphic lg+) → Logos → Features (interactive cards with IconTile) → Benefits (1.2fr/0.8fr) → How it works (`Steps`, inverted) → Stats + `TestimonialCard` → Pricing (`PricingCard`, middle one `highlighted`) → FAQ (`Accordion`) → Final CTA → Footer.
-- **Dashboard:** sidebar and top bar shell, Inter `text-2xl font-semibold` page titles, a KPI row of `Stat` in Cards, a `Table` with `Badge` statuses and row `DropdownMenu`, `Field` forms in Cards, and `Alert`/`Dialog`/`Progress` for feedback. Dense `sm` sizes are allowed on desktop. Use `.dark` on `<html>` for dark mode.
+- **Dashboard:** sidebar and top bar shell, `PageHeader` titles, a KPI row of `Stat` in Cards, list pages per rule 15, forms per rule 16, settings per rule 14, and `Alert`/`Dialog`/`Progress` for feedback. Dense `sm` sizes are allowed on desktop. Use `.dark` on `<html>` for dark mode.
+- The showcase site's **App Patterns** section (`#app-patterns`) demos a settings page, a list page and a create page.
 
 ## Before finishing
-Check that there are no hex colors, no `bg-accent` used as brand, and no second accent. Confirm the section header pattern, focus rings, 44px targets, layout at 375, 768 and 1280px, and reduced motion.
+Check that there are no hex colors, no `bg-accent` used as brand, and no second accent. Confirm the section header pattern, focus rings, 44px targets, layout at 375, 768 and 1280px, and reduced motion. On app pages, confirm the rules 13–16 (PageHeader, vertical Tabs, Pagination on every list, Dialog vs dedicated page, delete confirmation).
 
 ## Installing this skill
 Copy the `skills/aiyo-design/` folder to `~/.claude/skills/aiyo-design/` (all projects) or `<project>/.claude/skills/aiyo-design/` (one project). Claude Code then loads it automatically whenever you build AiYO UI.

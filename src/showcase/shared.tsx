@@ -103,7 +103,7 @@ export function Logo({ className }: { className?: string }) {
         a
       </span>
       <span className="font-display text-xl leading-none tracking-[-0.01em]">
-        AiYO<span className="text-gradient"> DS</span>
+        AiYO <span className="text-gradient">Design System</span>
       </span>
     </span>
   )

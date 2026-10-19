@@ -10,10 +10,13 @@ Key rules for agents:
 - Container `max-w-6xl`, sections `py-24 md:py-32`, asymmetric grids. Landing pages need at least one inverted (deep slate) section with dot texture.
 - Controls `rounded-xl`, cards `rounded-2xl`. Inputs h-12, buttons h-11 and up, touch targets at least 44px.
 - Motion uses ease [0.16,1,0.3,1], 0.7s fade-up entrances and 200–300ms hovers, and respects prefers-reduced-motion.
+- App pages (mandatory): titles use `PageHeader` (Inter, not Calistoga). Settings pages with 3+ sub-sections use vertical `Tabs`, one Card per tab.
+- Every list page: PageHeader with "Add <Thing>" → search and filters → Table (row actions in a DropdownMenu, empty state) → `Pagination`, always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side for API data.
+- Add/edit in a Dialog only for ≤6 fields in one section with no uploads; otherwise a dedicated page (PageHeader `back` → FormSection → FormActions). Delete always confirms in a Dialog with a destructive button. The showcase's App Patterns section (`#app-patterns`) demos all of this.
 
 ## Docs
 
-- [DESIGN.md](./DESIGN.md): the canonical spec. Tokens, typography, layout, surfaces, every component with its import path and props, blocks, motion, responsive rules, accessibility, do/don't, and landing and dashboard page recipes.
+- [DESIGN.md](./DESIGN.md): the canonical spec. Tokens, typography, layout, surfaces, every component with its import path and props, blocks, motion, responsive rules, accessibility, do/don't, landing and dashboard page recipes, and the mandatory app page rules (settings, list and form pages).
 - [AGENTS.md](./AGENTS.md): short instructions for AI coding agents. How to install, the hard rules, and a snippet to paste into a project's CLAUDE.md or AGENTS.md.
 
 ## Tokens

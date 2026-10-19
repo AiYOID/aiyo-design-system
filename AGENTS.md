@@ -36,6 +36,23 @@ The target project needs React 19, Vite, TypeScript and Tailwind CSS v4 (`@tailw
 14. **Accessibility:** meet WCAG AA. Keep the `focus-visible:focus-ring` on everything interactive, give icon-only buttons an `aria-label`, and put `aria-hidden` on decoration.
 15. **Extend, don't fork.** Add variants with `cva` in the component file and merge classes with `cn()`. Don't override tokens per page.
 
+### App pages (mandatory, see DESIGN.md §13)
+
+16. **App page titles** use `<PageHeader title description back actions>` (`@/components/blocks/page-header`): Inter semibold 2xl/3xl. Calistoga stays for marketing H1/H2.
+17. **Settings / profile pages** with 3+ sub-sections (password, address, notifications…) use **vertical `Tabs`** (`orientation="vertical"`) with **one `Card` per tab**. Never stack many cards down one long page.
+18. **Every list / data page:** `PageHeader` (primary "Add <Thing>" button with a `Plus` icon in `actions`) → toolbar (search `Input` with a `Search` icon, plus filters) → `Table` → `Pagination` (`@/components/ui/pagination`).
+    - Pagination is **always present**, even with a single page. Default `pageSize` is 10. Pages are 1-based.
+    - Reset to page 1 when the search, a filter or the page size changes.
+    - Data from an API uses **server-side pagination**: send `page` and `pageSize`, read `total`.
+    - Show an empty-state row or card when there are no results.
+    - Row actions go in a `DropdownMenu` (icon button with `MoreHorizontal` and an `aria-label`) in the last column.
+19. **Add / edit data:**
+    - **Dialog** when the form is small: ≤6 fields, one section, no file uploads, no nested line items. `DialogFooter` with Cancel (`secondary`) + Save (primary).
+    - **Dedicated page** (`/things/new`, `/things/:id/edit`) when it is large: >6 fields, multiple sections, file uploads, nested line items or tables, or a shareable URL. Build it with `PageHeader` with `back` → `FormSection` blocks → `FormActions`.
+    - The same rule applies to edit. **Delete always confirms** in a `Dialog` with a `destructive` button.
+
+The showcase site demos a settings page, a list page and a create page in its **App Patterns** section (`#app-patterns`).
+
 ## Before you finish a UI task
 
 - [ ] There are no hex colors, no `bg-accent` used as brand, and no second accent.
@@ -43,6 +60,7 @@ The target project needs React 19, Vite, TypeScript and Tailwind CSS v4 (`@tailw
 - [ ] Every interactive element has a focus ring and a target of at least 44px.
 - [ ] The layout works at 375px, 768px and 1280px.
 - [ ] Reduced motion is respected.
+- [ ] App pages: `PageHeader`; settings with 3+ sections use vertical Tabs; every list has search, Table, empty state and `Pagination`; small forms in a Dialog, large forms on their own page; delete is confirmed.
 
 ---
 
@@ -64,5 +82,10 @@ This project uses the **AiYO Design System** ("Minimalist Modern"). Spec: https:
 - Controls `rounded-xl`, cards `rounded-2xl`; inputs h-12; buttons h-11+ (h-9 only dense desktop); touch targets ≥ 44px.
 - Motion: ease [0.16,1,0.3,1], `<Reveal>`/`<RevealGroup>` entrances, 200–300ms hovers, respect prefers-reduced-motion.
 - WCAG AA, visible `focus-visible:focus-ring`, hide decorative graphics below `lg`.
+- App pages: `<PageHeader>` (Inter titles, not Calistoga). Settings with 3+ sub-sections → vertical `Tabs`, one Card per tab.
+- Every list page: PageHeader + "Add <Thing>" → search/filters → Table (row actions in a `DropdownMenu`, empty state) → `Pagination`
+  (always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side when data comes from an API).
+- Add/edit: Dialog for ≤6 fields in one section; otherwise a dedicated page (PageHeader `back` → FormSection → FormActions).
+  Delete always confirms in a Dialog with a `destructive` button.
 ```
 

@@ -9,8 +9,8 @@ The AiYO Design System, "Minimalist Modern", is a shared set of tokens, React co
 | Path | Contents |
 |---|---|
 | `src/styles/aiyo.css` | All design tokens (colors, inverted/dark palette, radius, shadows, fonts, keyframes) and utilities (`bg-gradient-primary`, `text-gradient`, `texture-dots`, `focus-ring`) |
-| `src/components/ui/` | Base components: Button, Badge, SectionLabel, GradientText, IconTile, Card, Input, Textarea, Label, Field, Select, Checkbox, RadioGroup, Switch, Tabs, Accordion, Dialog, Tooltip, DropdownMenu, Alert, Avatar, Progress, Table, Skeleton, Separator, Kbd, Spinner, Stat |
-| `src/components/blocks/` | Page blocks: Container, Section, SectionHeader, Glow (all in `section.tsx`), HeroGraphic, Steps, PricingCard, TestimonialCard |
+| `src/components/ui/` | Base components: Button, Badge, SectionLabel, GradientText, IconTile, Card, Input, Textarea, Label, Field, Select, Checkbox, RadioGroup, Switch, Tabs, Accordion, Dialog, Tooltip, DropdownMenu, Alert, Avatar, Progress, Table, Pagination, Skeleton, Separator, Kbd, Spinner, Stat |
+| `src/components/blocks/` | Page blocks: Container, Section, SectionHeader, Glow (all in `section.tsx`), HeroGraphic, Steps, PricingCard, TestimonialCard, PageHeader, FormSection, FormActions (all in `page-header.tsx`) |
 | `src/lib/utils.ts` | `cn()` (clsx + tailwind-merge) |
 | `src/lib/motion.tsx` | `easeOut`, `fadeInUp`, `fadeIn`, `stagger`, `viewport`, `Reveal`, `RevealGroup`, `RevealItem` |
 | `src/showcase/` | The showcase site |

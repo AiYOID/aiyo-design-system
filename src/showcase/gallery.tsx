@@ -48,6 +48,7 @@ import { IconTile } from "@/components/ui/icon-tile"
 import { Input } from "@/components/ui/input"
 import { Kbd } from "@/components/ui/kbd"
 import { Label } from "@/components/ui/label"
+import { Pagination } from "@/components/ui/pagination"
 import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { SectionLabel } from "@/components/ui/section-label"
@@ -69,7 +70,7 @@ const GROUPS = [
   { label: "Surfaces", items: [["card", "Card"], ["dialog", "Dialog"]] },
   { label: "Navigation", items: [["tabs", "Tabs"], ["accordion", "Accordion"], ["dropdown", "Dropdown Menu"]] },
   { label: "Feedback", items: [["alert", "Alert"], ["progress", "Progress · Spinner · Skeleton"], ["tooltip", "Tooltip · Kbd"]] },
-  { label: "Data", items: [["stat", "Stat"], ["table", "Table"], ["avatar", "Avatar"]] },
+  { label: "Data", items: [["stat", "Stat"], ["table", "Table"], ["pagination", "Pagination"], ["avatar", "Avatar"]] },
 ] as const
 
 function useActiveId(ids: string[]) {
@@ -96,6 +97,8 @@ const ALL_IDS = GROUPS.flatMap((g) => g.items.map(([id]) => id))
 export function Gallery() {
   const active = useActiveId(ALL_IDS)
   const [plan, setPlan] = React.useState("pro")
+  const [page, setPage] = React.useState(4)
+  const [pageSize, setPageSize] = React.useState(10)
 
   return (
     <Section id="components">
@@ -448,7 +451,7 @@ export function Gallery() {
             <Demo
               id="tabs"
               title="Tabs"
-              description="Segmented control on a muted track; the active tab becomes a small white card."
+              description="Segmented control on a muted track; the active tab becomes a small white card. Use orientation vertical for side navigation on settings-style pages (see App Patterns)."
               code={`<Tabs defaultValue="overview">
   <TabsList>
     <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -679,6 +682,22 @@ export function Gallery() {
                   ))}
                 </TableBody>
               </Table>
+            </Demo>
+
+            <Demo
+              id="pagination"
+              title="Pagination"
+              description="Mandatory under every data table, even with one page. Shows the range, rows per page, and pages with ellipses. The current page wears the gradient."
+              code={`<Pagination
+  page={page}
+  pageSize={pageSize}
+  total={248}
+  onPageChange={setPage}
+  onPageSizeChange={setPageSize}
+/>`}
+              previewClassName="block"
+            >
+              <Pagination page={page} pageSize={pageSize} total={248} onPageChange={setPage} onPageSizeChange={setPageSize} />
             </Demo>
 
             <Demo

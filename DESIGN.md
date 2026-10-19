@@ -122,6 +122,7 @@ Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree 
 |---|---|---|
 | **Hero H1** | Calistoga, normal weight | `font-display text-[2.75rem] leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-[5.25rem]`. Put the last word in `<GradientText underline>`. |
 | **Section H2** | Calistoga | `font-display text-[2.25rem] leading-[1.15] tracking-[-0.02em] md:text-[3.25rem]` |
+| App page title (H1) | Inter semibold | `text-2xl md:text-3xl font-semibold tracking-[-0.01em]` via `<PageHeader>`. Never Calistoga in app UI. |
 | H3 / card title | Inter semibold | `text-lg md:text-xl font-semibold tracking-[-0.01em] leading-snug` |
 | Lede | Inter | `text-base md:text-lg leading-relaxed text-muted-foreground` (1.625 to 1.75) |
 | Body | Inter | `text-base leading-relaxed` |
@@ -257,6 +258,18 @@ Exports `Tabs`, `TabsList` (muted pill track), `TabsTrigger` (the active one get
 <Tabs defaultValue="a"><TabsList><TabsTrigger value="a">Overview</TabsTrigger><TabsTrigger value="b">API</TabsTrigger></TabsList>
 <TabsContent value="a">…</TabsContent></Tabs>
 ```
+**Vertical tabs** (`orientation="vertical"`): on md and up, `TabsList` becomes a sticky left nav column (~15rem) with left-aligned triggers. The active trigger is a white card with a gradient bar on its left edge. Below md it collapses into a horizontally scrollable tab row on top. Use it for settings and profile pages with 3+ sub-sections, one `Card` per tab (see §13).
+```tsx
+<Tabs defaultValue="password" orientation="vertical">
+  <TabsList>
+    <TabsTrigger value="profile"><User /> Profile</TabsTrigger>
+    <TabsTrigger value="password"><Lock /> Password</TabsTrigger>
+    <TabsTrigger value="address"><MapPin /> Address</TabsTrigger>
+  </TabsList>
+  <TabsContent value="profile"><Card>…</Card></TabsContent>
+  …
+</Tabs>
+```
 
 ### Accordion: `@/components/ui/accordion`
 Exports `Accordion`, `AccordionItem`, `AccordionTrigger` (a plus icon that rotates 45° and fills with the gradient when open) and `AccordionContent`. Use it for FAQs.
@@ -315,6 +328,23 @@ Exports `Table` (wrapped in a `rounded-2xl` card), `TableHeader`, `TableBody`, `
 <TableBody><TableRow><TableCell>Acme</TableCell><TableCell><Badge variant="success">Active</Badge></TableCell></TableRow></TableBody></Table>
 ```
 
+### Pagination: `@/components/ui/pagination`
+Goes under every data table (see §13). It shows "Showing 11–20 of 248", a rows-per-page select, prev/next buttons (labelled for screen readers) and page numbers with ellipsis.
+| Prop | Type | Notes |
+|---|---|---|
+| `page` | `number` | 1-based current page |
+| `pageSize` | `number` | Rows per page. Default to 10. |
+| `total` | `number` | Total row count (from the API on server-side lists) |
+| `onPageChange` | `(page: number) => void` | Called with the new page |
+| `onPageSizeChange` | `(size: number) => void` | Changing the size also calls `onPageChange(1)` |
+| `pageSizeOptions` | `number[]` | Default `[10, 20, 50, 100]` |
+```tsx
+const [page, setPage] = useState(1)
+const [pageSize, setPageSize] = useState(10)
+<Pagination page={page} pageSize={pageSize} total={total}
+  onPageChange={setPage} onPageSizeChange={setPageSize} pageSizeOptions={[10, 20, 50, 100]} />
+```
+
 ### Skeleton / Separator / Kbd / Spinner
 | Component | Import | Notes |
 |---|---|---|
@@ -348,11 +378,34 @@ The blocks are page-level compositions built from the UI components. `Container`
 | `Steps` | `@/components/blocks/steps` | `steps: { title, description }[]`. A "how it works" list: stacked on mobile, a horizontal row with gradient arrow connectors on md and up. |
 | `PricingCard` | `@/components/blocks/pricing-card` | `name`, `price`, `period?`, `description`, `features: string[]`, `cta`. Set `highlighted` for the gradient stroke, a lift and a primary CTA. |
 | `TestimonialCard` | `@/components/blocks/testimonial-card` | `quote`, `name`, `role`. Has a gradient top bar, a large gradient quote mark and an initials avatar. |
+| `PageHeader` | `@/components/blocks/page-header` | App page title. `title`, `description?`, `back?: { href: string; label: string }` (renders a "← label" link above the title), `actions?: ReactNode` (right-aligned on desktop, full width below). Uses **Inter semibold** `text-2xl md:text-3xl`, not Calistoga. |
+| `FormSection` | `@/components/blocks/page-header` | `title`, `description?`, `children`. On lg it is two columns: title and description on the left (1/3), the fields in a `Card` on the right (2/3). Stacked on mobile. |
+| `FormActions` | `@/components/blocks/page-header` | Sticky bottom bar (`sticky bottom-0`, blurred background, top border) with right-aligned children: Cancel (`secondary`), then the primary Save. |
 
 ```tsx
 <Steps steps={[{ title: "Connect", description: "Link your data." }, { title: "Automate", description: "Set rules once." }]} />
 <PricingCard name="Pro" price="$29" period="/mo" description="For growing teams" features={["Unlimited projects"]} cta="Start trial" highlighted />
 <TestimonialCard quote="It just works." name="Ana Putri" role="CTO, Acme" />
+```
+
+### App page blocks (PageHeader, FormSection, FormActions)
+```tsx
+import { PageHeader, FormSection, FormActions } from "@/components/blocks/page-header"
+
+<PageHeader title="Customers" description="Everyone who has bought from you."
+  actions={<Button><Plus /> Add customer</Button>} />
+
+<PageHeader title="New customer" back={{ href: "/customers", label: "Customers" }} />
+<FormSection title="Contact" description="How we reach this customer.">
+  <div className="grid gap-5 md:grid-cols-2">
+    <Field label="Name" htmlFor="name" required><Input id="name" /></Field>
+    <Field label="Email" htmlFor="email"><Input id="email" type="email" /></Field>
+  </div>
+</FormSection>
+<FormActions>
+  <Button variant="secondary">Cancel</Button>
+  <Button>Save customer</Button>
+</FormActions>
 ```
 
 ### Section header pattern (required for every major section)
@@ -491,6 +544,9 @@ Rules:
 | Use ease `[0.16,1,0.3,1]` with 200–300ms hovers | Use bouncy springs or long hover transitions |
 | Hide decorative graphics below `lg` | Squeeze hero illustrations onto phones |
 | Use the status colors only for status | Use `success` green as a decorative color |
+| Put 3+ settings sub-sections in vertical `Tabs`, one Card each | Stack many cards down one long settings page |
+| End every list with `Pagination` (even with one page) | Ship a table without pagination, or with an infinite unbounded list |
+| Use a Dialog for ≤6-field forms and a dedicated page for larger ones | Cram a multi-section or upload form into a modal |
 
 ---
 
@@ -512,11 +568,139 @@ Rules:
 ### 12.2 Admin / dashboard page (same tokens, denser)
 - **Shell:** `bg-background`, a sidebar (`w-64 border-r bg-card`, ghost nav items `h-10 rounded-lg`, active item `bg-muted text-foreground` with a 2px primary indicator) and a top bar (`h-16 border-b`, search `Input size="sm"` with `Kbd`, Avatar menu).
 - **Content:** `max-w-7xl` (or fluid) with `p-6 lg:p-8` and `gap-6` grids.
-- **Page header:** H1 in **Inter** `text-2xl font-semibold tracking-[-0.01em]` (Calistoga is for marketing heroes and sections; an optional small mono SectionLabel goes above), muted description, actions on the right (`Button size="sm"|"md"`).
+- **Page header:** always `<PageHeader title description actions>`: H1 in **Inter** semibold `text-2xl md:text-3xl` (Calistoga is for marketing H1/H2 only), muted description, actions on the right. Detail and form pages add `back`.
 - **KPI row:** `grid gap-5 sm:grid-cols-2 xl:grid-cols-4` of `Card` > `CardContent` > `Stat`.
-- **Data:** `Table` with mono heads, `Badge` status cells, a `DropdownMenu` row-actions trigger (`Button variant="ghost" size="icon-sm"`) and a `Skeleton` while loading.
-- **Forms:** `Card` sections with `Field`s in a `grid gap-5 md:grid-cols-2`, and a footer with secondary and primary buttons.
+- **List pages:** PageHeader (primary "Add <Thing>" with a `Plus` icon) → toolbar (search `Input` with a `Search` icon, plus filters) → `Table` → `Pagination` (always present, default `pageSize` 10). See §13.2.
+- **Data:** `Table` with mono heads, `Badge` status cells, a `DropdownMenu` row-actions trigger (`Button variant="ghost" size="icon-sm"` with `MoreHorizontal`) in the last column, an empty-state row when there are no results, and a `Skeleton` while loading.
+- **Settings / profile:** 3+ sub-sections go in vertical `Tabs`, one `Card` per tab. See §13.1.
+- **Forms:** small forms (≤6 fields) in a `Dialog`; large forms on a dedicated page built from `PageHeader back` → `FormSection`s → `FormActions`. See §13.3.
 - **Feedback:** `Alert` for page-level messages, `Dialog` to confirm destructive actions (destructive button), `Progress` and `Spinner` for async work.
 - **Dense sizing is allowed:** button `sm` (h-9), input `sm` (h-9) and tab triggers h-9, **on desktop only**.
 - **Dark mode:** put `.dark` on `<html>`. Everything re-themes.
 - **Motion:** keep it minimal. No scroll entrances on data views, only hover and overlay transitions.
+
+---
+
+## 13. App page rules (mandatory)
+
+These rules apply to every app, admin and dashboard page. The showcase site demos all three patterns (a settings page, a list page and a create page) in its **App Patterns** section (`#app-patterns`).
+
+### 13.1 Settings and profile pages
+- When one page has **3 or more sub-sections** (for example profile, change password, change address, notifications), use **vertical `Tabs`** (`orientation="vertical"`) with **one `Card` per tab**.
+- **Never stack many cards vertically on one long page.**
+```tsx
+<PageHeader title="Account settings" description="Manage your profile and security." />
+<Tabs defaultValue="profile" orientation="vertical">
+  <TabsList>
+    <TabsTrigger value="profile"><User /> Profile</TabsTrigger>
+    <TabsTrigger value="password"><Lock /> Password</TabsTrigger>
+    <TabsTrigger value="address"><MapPin /> Address</TabsTrigger>
+  </TabsList>
+  <TabsContent value="password">
+    <Card><CardHeader><CardTitle>Change password</CardTitle></CardHeader>
+      <CardContent className="grid gap-5">…Fields…</CardContent>
+      <CardFooter className="justify-end"><Button>Update password</Button></CardFooter></Card>
+  </TabsContent>
+  …
+</Tabs>
+```
+
+### 13.2 List and data pages
+Every list page has this structure, in this order:
+1. **`PageHeader`** with `title`, `description` and a primary **"Add <Thing>"** `Button` with a `Plus` icon in `actions`.
+2. **Toolbar:** a search `Input` with a `Search` icon, plus filters (`Select`, etc.).
+3. **`Table`.** Row actions go in a `DropdownMenu` (an icon button with `MoreHorizontal` and an `aria-label`) in the **last column**. When there are no results, show an empty-state row (or card) instead of an empty table.
+4. **`Pagination`**, **always present, even with a single page.** Default `pageSize` is 10.
+
+State rules:
+- **Reset to page 1** whenever the search, a filter or the page size changes.
+- When the data comes from an API, use **server-side pagination**: send `page` and `pageSize`, and read `total` from the response.
+```tsx
+const [query, setQuery] = useState("")
+const [page, setPage] = useState(1)
+const [pageSize, setPageSize] = useState(10)
+// const { rows, total } = useCustomers({ query, page, pageSize })
+
+<PageHeader title="Customers" description="Everyone who has bought from you."
+  actions={<Button onClick={openCreate}><Plus /> Add customer</Button>} />
+<div className="flex flex-wrap items-center gap-3">
+  <div className="relative w-full sm:max-w-xs">
+    <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+    <Input className="pl-9" placeholder="Search customers" aria-label="Search customers"
+      value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} />
+  </div>
+  {/* filters: also setPage(1) on change */}
+</div>
+<Table>
+  <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Status</TableHead><TableHead className="w-12" /></TableRow></TableHeader>
+  <TableBody>
+    {rows.length === 0 ? (
+      <TableRow><TableCell colSpan={3} className="py-12 text-center text-muted-foreground">No customers found.</TableCell></TableRow>
+    ) : rows.map((r) => (
+      <TableRow key={r.id}>
+        <TableCell>{r.name}</TableCell>
+        <TableCell><Badge variant="success">Active</Badge></TableCell>
+        <TableCell>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon-sm" aria-label={`Actions for ${r.name}`}><MoreHorizontal /></Button></DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem><Pencil />Edit</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive"><Trash2 />Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+<Pagination page={page} pageSize={pageSize} total={total} onPageChange={setPage} onPageSizeChange={setPageSize} />
+```
+
+### 13.3 Add / edit data: Dialog or dedicated page
+| Use a **Dialog (modal)** when the form is small | Use a **dedicated page** (`/things/new`, `/things/:id/edit`) when the form is large |
+|---|---|
+| ≤ 6 fields | > 6 fields |
+| One section | Multiple sections |
+| No file uploads | File uploads |
+| No nested line items | Nested line items or tables |
+| | The URL needs to be shareable |
+| `DialogFooter` with Cancel (`secondary`) + Save (primary) | `PageHeader` with `back` → `FormSection` blocks → `FormActions` |
+
+- The same rule applies to **edit**.
+- **Delete always asks for confirmation** in a `Dialog` with a `destructive` button.
+```tsx
+// Small form: Dialog
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent>
+    <DialogHeader><DialogTitle>Add tag</DialogTitle></DialogHeader>
+    <div className="grid gap-5">…≤ 6 Fields…</div>
+    <DialogFooter>
+      <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+      <Button>Save</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
+// Large form: /customers/new
+<PageHeader title="New customer" description="…" back={{ href: "/customers", label: "Customers" }} />
+<div className="grid gap-8">
+  <FormSection title="Contact" description="…">…Fields…</FormSection>
+  <FormSection title="Billing address" description="…">…Fields…</FormSection>
+  <FormSection title="Documents">…file upload…</FormSection>
+</div>
+<FormActions>
+  <Button variant="secondary">Cancel</Button>
+  <Button>Save customer</Button>
+</FormActions>
+
+// Delete confirmation
+<DialogContent>
+  <DialogHeader><DialogTitle>Delete customer?</DialogTitle>
+    <DialogDescription>This cannot be undone.</DialogDescription></DialogHeader>
+  <DialogFooter>
+    <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
+    <Button variant="destructive">Delete</Button>
+  </DialogFooter>
+</DialogContent>
+```

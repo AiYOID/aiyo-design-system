@@ -16,13 +16,15 @@ import { Stat } from "@/components/ui/stat"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Reveal, RevealGroup, RevealItem } from "@/lib/motion"
 import { cn } from "@/lib/utils"
+import { AppPatterns } from "./showcase/app-patterns"
 import { Gallery } from "./showcase/gallery"
 import { CodeBlock, CopyButton, Logo, useCopy } from "./showcase/shared"
 
 const NAV = [
   ["Foundations", "#foundations"],
   ["Components", "#components"],
-  ["Patterns", "#patterns"],
+  ["App Patterns", "#app-patterns"],
+  ["Landing", "#patterns"],
   ["For AI Agents", "#agents"],
 ] as const
 
@@ -373,7 +375,7 @@ function Patterns() {
       <Container className="flex flex-col gap-28">
         <Reveal>
           <SectionHeader
-            label="Patterns"
+            label="Landing Patterns"
             title={
               <>
                 Blocks that compose into <GradientText>pages</GradientText>
@@ -565,6 +567,7 @@ export default function App() {
         <Foundations />
         <Stats />
         <Gallery />
+        <AppPatterns />
         <Patterns />
         <Agents />
         <FinalCta />
