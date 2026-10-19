@@ -66,4 +66,3 @@ This project uses the **AiYO Design System** ("Minimalist Modern"). Spec: https:
 - WCAG AA, visible `focus-visible:focus-ring`, hide decorative graphics below `lg`.
 ```
 
-Replace `https://aiyoid.github.io/aiyo-design-system` with the GitHub Pages URL of the showcase site.
