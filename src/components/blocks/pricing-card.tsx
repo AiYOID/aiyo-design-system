@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ArrowRight, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -48,7 +48,7 @@ function PricingCard({ name, price, period, description, features, cta, highligh
           ))}
         </ul>
         <Button variant={highlighted ? "primary" : "secondary"} size="lg" className="mt-auto w-full">
-          {cta} <ArrowRight data-arrow />
+          {cta}
         </Button>
       </Card>
     </div>

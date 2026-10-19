@@ -5,6 +5,9 @@ This is the full spec for the AiYO Design System. It is written for AI coding ag
 - **Stack:** React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui conventions (`cva`, `cn` from tailwind-merge, `radix-ui`, `lucide-react`) and `motion` (`motion/react`).
 - **Distribution:** components are copied into your project, shadcn style, and imported via the alias `@/components/ui/*`.
 - **Machine-readable tokens:** `tokens/aiyo.tokens.json` (W3C DTCG format).
+- **Anti-slop filter:** this file gives direction; `skills/antislop/SKILL.md` is the filter applied on top of it. See §14 for the owner's decisions.
+
+Dial: ENERGY 2 / RHYTHM 2 / MOTION 2
 
 ---
 
@@ -15,8 +18,8 @@ This is the full spec for the AiYO Design System. It is written for AI coding ag
 - **One accent:** the Electric Blue gradient `#0052FF → #4D7CFF`. Everything else is slate and white.
 - **Three typefaces, each with one job:** Calistoga for display headlines, Inter for all UI and body text, and JetBrains Mono for labels.
 - **Generous space and asymmetric grids.** Every landing page needs at least one deep-slate *inverted* section.
-- **Surfaces are never flat.** Add subtle texture (dot grids, corner glows) and soft layered shadows.
-- **Motion is quiet and purposeful.** Every animation uses the ease `cubic-bezier(0.16, 1, 0.3, 1)` and respects `prefers-reduced-motion`.
+- **Depth comes from contrast, not decoration.** Solid deep-slate sections, hairline borders and shadows used only as elevation markers. No dot grids, no blurred glows.
+- **Motion is quiet and purposeful.** Content enters once on scroll and controls answer hover and press. Nothing loops for decoration. Every animation uses the ease `cubic-bezier(0.16, 1, 0.3, 1)` and respects `prefers-reduced-motion`.
 
 ---
 
@@ -77,8 +80,6 @@ Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree 
 | `bg-gradient-primary` | `linear-gradient(to right, primary, primary-end)`: buttons, switches, progress, badges |
 | `bg-gradient-primary-diagonal` | Same gradient at 135°: icon tiles, avatars, checkboxes |
 | `text-gradient` | Paints text with the gradient. Prefer the `<GradientText>` component. |
-| `texture-dots` | White 1px dot grid, 32px spacing, 3% opacity. For inverted sections. |
-| `texture-dots-dark` | Slate dot grid, 24px spacing, 6% opacity. For light sections. |
 | `focus-ring` | `0 0 0 2px background, 0 0 0 4px ring`. Use it as `focus-visible:focus-ring`. |
 
 ### 2.5 Radius (`--radius: 0.75rem`)
@@ -91,7 +92,7 @@ Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree 
 | **`rounded-xl`** | **12px** | **Default for buttons, inputs, selects, alerts and popovers** |
 | **`rounded-2xl`** | **16px** | **Cards, dialogs, tables** |
 | `rounded-3xl` | 24px | Large showcase panels, hero graphics |
-| `rounded-full` | pill | Badges, section labels, avatars, switches |
+| `rounded-full` | pill | Badges, avatars, switches |
 
 ### 2.6 Shadows
 
@@ -103,6 +104,8 @@ Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree 
 | `shadow-xl` | `0 20px 25px rgb(0 0 0/.10)` | Hovered cards, dialogs, menus |
 | `shadow-accent` | `0 4px 14px rgb(0 82 255/.25)` | Primary-tinted resting lift (gradient icon tiles, badges) |
 | `shadow-accent-lg` | `0 8px 24px rgb(0 82 255/.35)` | Primary button hover, featured card |
+
+Shadows mark elevation only: cards `shadow-md`, overlays (dialogs, menus) `shadow-xl`, and the accent shadow on the primary CTA. Everything else sits flat.
 
 ### 2.7 Fonts
 
@@ -149,7 +152,7 @@ Rules:
 | Benefits grid | `lg:grid-cols-[1.2fr_0.8fr]` |
 | Feature grid | `sm:grid-cols-2 lg:grid-cols-3` |
 | Alignment | Left-aligned by default. Center only short CTA blocks or pricing headers. |
-| Inverted section | At least one per landing page: `<Section inverted>` with `texture-dots` and two corner `<Glow>`s |
+| Inverted section | At least one per landing page: `<Section inverted>`, a solid deep slate section (no texture, no glows) |
 
 ---
 
@@ -161,9 +164,7 @@ Rules:
 | Card | `<Card>`: `rounded-2xl border bg-card shadow-md` |
 | Interactive card | `<Card variant="interactive">`: lifts `-translate-y-1` with `shadow-xl` and a faint primary wash on hover |
 | Featured card | `<Card featured>`: 2px gradient stroke and `shadow-accent-lg` |
-| Inverted section | `.inverted` gives slate-900 bg plus an `absolute inset-0 texture-dots` layer plus corner glows (`<Glow>`) |
-| Light texture | Optionally put `texture-dots-dark` behind hero graphics |
-| Glow | `<Glow className="-left-40 -top-40 opacity-[0.18]" />`: a 480px primary orb blurred 150px, placed in a corner. Decorative and `aria-hidden`. |
+| Inverted section | `.inverted` gives a solid slate-900 background. No texture layer, no glows. |
 | Testimonial | `<TestimonialCard>`: card with a gradient top bar and a large gradient quote mark |
 
 ---
@@ -179,10 +180,10 @@ All components set `data-slot`, accept `className` (merged with `cn`) and forwar
 | `size` | `sm` h-9 (dense desktop only) · `md` h-11 · `lg` h-12 · `xl` h-14 · `icon` 44px · `icon-sm` 36px | `md` |
 | `asChild` | Renders the child (for example `<a>`) through Radix Slot | `false` |
 
-Primary hover adds `-translate-y-0.5`, `shadow-accent-lg` and `brightness-110`. Active adds `scale-[0.98]`. An icon with `data-arrow` slides right on hover.
+Primary hover adds `-translate-y-0.5`, `shadow-accent-lg` and `brightness-110`. Active adds `scale-[0.98]`. An icon with `data-arrow` slides right on hover. Use the arrow only on the ONE primary CTA per screen; every other button goes without it.
 ```tsx
 import { ArrowRight } from "lucide-react"
-<Button size="lg">Get started <ArrowRight data-arrow /></Button>
+<Button size="lg">Start free trial <ArrowRight data-arrow /></Button>
 <Button variant="secondary" size="lg">Book a demo</Button>
 <Button asChild variant="link"><a href="/docs">Read the docs</a></Button>
 ```
@@ -194,9 +195,9 @@ import { ArrowRight } from "lucide-react"
 ```
 
 ### SectionLabel: `@/components/ui/section-label`
-A pill with a primary dot and uppercase mono text. Opens every major section. Set `pulse` for "live" or "new".
+A plain small label: JetBrains Mono, 12px (`text-xs`), uppercase, `tracking-[0.15em]`, `text-primary`. No border, no background, no dot. Opens every major section. There is no `pulse` prop: a dot is allowed only where it marks a real live state, and then it belongs in status UI, not in a section label.
 ```tsx
-<SectionLabel pulse>Now in beta</SectionLabel>
+<SectionLabel>Pricing</SectionLabel>
 ```
 
 ### GradientText: `@/components/ui/gradient-text`
@@ -280,7 +281,7 @@ Exports `Accordion`, `AccordionItem`, `AccordionTrigger` (a plus icon that rotat
 ```
 
 ### Dialog: `@/components/ui/dialog`
-Exports `Dialog`, `DialogTrigger`, `DialogContent` (`showClose` defaults to true), `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` and `DialogClose`. It uses a blurred `foreground/40` overlay, `rounded-2xl` and the `pop-in` animation.
+Exports `Dialog`, `DialogTrigger`, `DialogContent` (`showClose` defaults to true), `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` and `DialogClose`. It uses a solid `foreground/40` overlay (no backdrop blur), `rounded-2xl` and the `pop-in` animation.
 ```tsx
 <Dialog><DialogTrigger asChild><Button>Open</Button></DialogTrigger>
   <DialogContent><DialogHeader><DialogTitle>Invite</DialogTitle><DialogDescription>…</DialogDescription></DialogHeader>
@@ -366,21 +367,20 @@ Props: `label`, `value`, `trend` (for example `"+12.4%"`), `trendDirection` `up|
 
 ## 7. Blocks and patterns (`@/components/blocks/*`)
 
-The blocks are page-level compositions built from the UI components. `Container`, `Section`, `SectionHeader` and `Glow` all live in `section.tsx`.
+The blocks are page-level compositions built from the UI components. `Container`, `Section` and `SectionHeader` all live in `section.tsx`.
 
 | Block | Import | Props / purpose |
 |---|---|---|
 | `Container` | `@/components/blocks/section` | `mx-auto w-full max-w-6xl px-5 sm:px-8` content column |
-| `Section` | `@/components/blocks/section` | `spacing`: `default` (`py-24 md:py-32`) · `lg` (`py-28 md:py-44`, for hero and showcase sections) · `sm` (`py-16 md:py-20`). Set `inverted` for deep slate with `texture-dots` and two corner Glows. Base classes: `relative isolate overflow-hidden`. |
-| `SectionHeader` | `@/components/blocks/section` | `label`, `pulse`, `title` (Calistoga H2), `description` (muted lede), `align` (`left` by default, or `center`) |
-| `Glow` | `@/components/blocks/section` | A 480px primary orb (`bg-primary opacity-[0.06] blur-[150px]`, absolute, `aria-hidden`). Position and strength go in `className`. |
-| `HeroGraphic` | `@/components/blocks/hero-graphic` | Animated hero visual: 60s ring, floating cards (4–5s, ±10px) and a pulse dot. Use `className="hidden lg:block"`. |
+| `Section` | `@/components/blocks/section` | `spacing`: `default` (`py-24 md:py-32`) · `lg` (`py-28 md:py-44`, for hero and showcase sections) · `sm` (`py-16 md:py-20`). Set `inverted` for a solid deep slate section. Base classes: `relative isolate overflow-hidden`. |
+| `SectionHeader` | `@/components/blocks/section` | `label`, `title` (Calistoga H2), `description` (muted lede), `align` (`left` by default, or `center`) |
+| `HeroGraphic` | `@/components/blocks/hero-graphic` | Static hero visual: a still composition of sample product cards. No loops, no rings, no dot grid. Its numbers are labelled example data for the showcase (see §14.3). Use `className="hidden lg:block"`. |
 | `Steps` | `@/components/blocks/steps` | `steps: { title, description }[]`. A "how it works" list: stacked on mobile, a horizontal row with gradient arrow connectors on md and up. |
 | `PricingCard` | `@/components/blocks/pricing-card` | `name`, `price`, `period?`, `description`, `features: string[]`, `cta`. Set `highlighted` for the gradient stroke, a lift and a primary CTA. |
 | `TestimonialCard` | `@/components/blocks/testimonial-card` | `quote`, `name`, `role`. Has a gradient top bar, a large gradient quote mark and an initials avatar. |
 | `PageHeader` | `@/components/blocks/page-header` | App page title. `title`, `description?`, `back?: { href: string; label: string }` (renders a "← label" link above the title), `actions?: ReactNode` (right-aligned on desktop, full width below). Uses **Inter semibold** `text-2xl md:text-3xl`, not Calistoga. |
 | `FormSection` | `@/components/blocks/page-header` | `title`, `description?`, `children`. On lg it is two columns: title and description on the left (1/3), the fields in a `Card` on the right (2/3). Stacked on mobile. |
-| `FormActions` | `@/components/blocks/page-header` | Sticky bottom bar (`sticky bottom-0`, blurred background, top border) with right-aligned children: Cancel (`secondary`), then the primary Save. |
+| `FormActions` | `@/components/blocks/page-header` | Sticky bottom bar (`sticky bottom-0`, solid background, top border) with right-aligned children: Cancel (`secondary`), then the primary Save. |
 
 ```tsx
 <Steps steps={[{ title: "Connect", description: "Link your data." }, { title: "Automate", description: "Set rules once." }]} />
@@ -434,13 +434,13 @@ import { PageHeader, FormSection, FormActions } from "@/components/blocks/page-h
 <Section spacing="lg">
   <Container className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
     <Reveal className="flex flex-col items-start gap-8">
-      <SectionLabel pulse>Now available</SectionLabel>
+      <SectionLabel>Workflow automation</SectionLabel>
       <h1 className="font-display text-[2.75rem] leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-[5.25rem]">
         Work that runs <GradientText underline>itself</GradientText>
       </h1>
       <p className="max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">Lede…</p>
       <div className="flex flex-wrap gap-3">
-        <Button size="lg">Start free <ArrowRight data-arrow /></Button>
+        <Button size="lg">Start free <ArrowRight data-arrow /></Button> {/* the screen's one arrow */}
         <Button size="lg" variant="secondary">Book a demo</Button>
       </div>
     </Reveal>
@@ -461,9 +461,6 @@ import { PageHeader, FormSection, FormActions } from "@/components/blocks/page-h
 This is the manual equivalent of `<Section inverted>`:
 ```tsx
 <section className="inverted relative isolate overflow-hidden py-24 md:py-32">
-  <div aria-hidden className="texture-dots pointer-events-none absolute inset-0 -z-10" />
-  <Glow className="-left-40 -top-40 -z-10 opacity-[0.18]" />
-  <Glow className="-bottom-48 -right-40 -z-10 opacity-[0.12]" />
   <Container>…</Container>
 </section>
 ```
@@ -490,10 +487,8 @@ All three render a plain `<div>` when the user prefers reduced motion.
 | Hover / press | 200–300ms | `transition-all duration-200` (buttons), `duration-300` (cards) |
 | Overlays | 0.2s | `animate-pop-in`, `animate-fade-in` |
 | Accordion | 0.3s / 0.2s | `animate-accordion-down` / `-up` |
-| Ring | 60s linear infinite | `animate-spin-slow` |
-| Float | 5s, or 4s with a 1s delay, ±10px | `animate-float`, `animate-float-delayed` |
-| Pulse dot | 2s | `animate-pulse-dot` |
-| Breathe | 3s | `animate-breathe` |
+
+That is the whole motion vocabulary (MOTION dial 2). There is no endless decorative motion: no floating cards, rotating rings, breathing orbs or pulsing dots. The tokens `animate-spin-slow`, `animate-float`, `animate-float-delayed`, `animate-pulse-dot` and `animate-breathe` no longer exist. The only loops left are loading indicators (`Spinner`, `Skeleton`), which mark a real state.
 
 Rules:
 - `aiyo.css` already shortens CSS animations to near zero under `prefers-reduced-motion`. For JS motion, use the helpers or `useReducedMotion()`.
@@ -506,7 +501,7 @@ Rules:
 
 - Design mobile first. The breakpoints are Tailwind's (`sm` 640, `md` 768, `lg` 1024, `xl` 1280).
 - Grids collapse to one column below `sm` or `md`. Asymmetric hero and benefit grids start at `lg`.
-- **Hide decorative graphics below `lg`** (`hidden lg:block`). This covers HeroGraphic, floating cards and large glows.
+- **Hide decorative graphics below `lg`** (`hidden lg:block`). This covers HeroGraphic and other illustrative panels.
 - Headline scale: the hero goes 2.75rem → 5.25rem and the H2 2.25rem → 3.25rem.
 - Every touch target is at least 44px. Use button `md` (h-11) or larger on touch. `sm` (h-9) is for dense desktop tooling only.
 - Inputs use `text-base` on mobile (which avoids iOS zoom) and `md:text-sm` on desktop.
@@ -537,11 +532,15 @@ Rules:
 | Use Calistoga for H1/H2 (and stat numerals) | Use Calistoga for body, buttons, labels or UI |
 | Open each section with SectionLabel → H2 → lede | Drop headlines in without a label or lede |
 | Use asymmetric grids and left-aligned copy | Center everything |
-| Add an inverted section with dot texture and glows | Ship flat, sterile pages without texture |
+| Add a solid deep-slate inverted section for contrast and rhythm | Add dot-grid textures or blurred glows to make a section look designed |
 | Use gradients on buttons, icons, accents and small fills | Put gradients on large body or page backgrounds |
 | Use `rounded-xl` controls and `rounded-2xl` cards | Mix arbitrary radii |
-| Use soft neutral shadows plus `shadow-accent` on primary | Use heavy black shadows or colored shadows other than primary |
-| Use ease `[0.16,1,0.3,1]` with 200–300ms hovers | Use bouncy springs or long hover transitions |
+| Use shadows as elevation markers: cards `md`, overlays `xl`, accent on the primary CTA | Shadow every element, or use colored shadows other than primary |
+| Use ease `[0.16,1,0.3,1]` with 200 to 300ms hovers | Use bouncy springs or long hover transitions |
+| Animate entrances (once) and hover/press feedback | Loop decorative motion: floating cards, rotating rings, pulsing dots |
+| Use a plain mono `SectionLabel` | Wrap labels in a pill with a pulsing dot |
+| Put the `data-arrow` icon on the one primary CTA per screen | Add arrows to every button |
+| Keep backdrop blur on the sticky navbar only | Blur dialog overlays, cards, sidebars or form bars |
 | Hide decorative graphics below `lg` | Squeeze hero illustrations onto phones |
 | Use the status colors only for status | Use `success` green as a decorative color |
 | Put 3+ settings sub-sections in vertical `Tabs`, one Card each | Stack many cards down one long settings page |
@@ -553,17 +552,19 @@ Rules:
 ## 12. Page recipes
 
 ### 12.1 Landing page (section order)
-1. **Nav**: sticky, `bg-background/80 backdrop-blur border-b`, logo left, ghost links, primary `md` CTA right.
-2. **Hero**: asymmetric `1.1fr/0.9fr`, SectionLabel (pulse), Calistoga H1 with a gradient last word and underline, lede, primary and secondary `lg` buttons, `HeroGraphic` (lg+).
-3. **Logos / social proof**: a mono label ("Trusted by") and a muted logo row.
-4. **Features**: SectionHeader plus a 3-column grid of `Card variant="interactive"` with `IconTile`s.
-5. **Benefits / deep dive**: asymmetric `1.2fr/0.8fr`, copy plus a screenshot or Stat cluster.
-6. **How it works**: `Steps`, on an **inverted** section with dot texture and corner glows.
-7. **Stats / testimonials**: a `Stat` row, then a grid of `TestimonialCard`s.
-8. **Pricing**: 3 `PricingCard`s. The middle one is `highlighted`.
-9. **FAQ**: `Accordion` in a narrow column, with the SectionHeader on the left on lg.
+Build only the sections the product's content needs (antislop C-3). Every block that shows numbers, people or customers uses real data, or the section is left out.
+
+1. **Nav**: sticky, `bg-background/80 backdrop-blur border-b` (the only backdrop blur in the system), logo left, ghost links to sections that exist, primary `md` CTA right.
+2. **Hero**: asymmetric `1.1fr/0.9fr`, a plain SectionLabel that adds information the H1 does not, Calistoga H1 with a gradient last word and underline, lede, a primary `lg` button (the screen's one `data-arrow` CTA) and a secondary `lg` button, `HeroGraphic` (lg+).
+3. **Logos / social proof**: only real, verifiable customers. If there are none, leave it out.
+4. **Features**: SectionHeader plus a grid of `Card variant="interactive"` with `IconTile`s. Vary the treatment when one feature carries more weight.
+5. **Benefits / deep dive**: asymmetric `1.2fr/0.8fr`, copy plus a real screenshot or Stat cluster.
+6. **How it works**: `Steps` on a solid **inverted** section, with as many steps as the real process has.
+7. **Stats / testimonials**: a `Stat` row, then `TestimonialCard`s, real data only.
+8. **Pricing**: one `PricingCard` per real tier. Highlight a tier only with a written reason.
+9. **FAQ**: `Accordion` with questions real users ask, in a narrow column with the SectionHeader on the left on lg.
 10. **Final CTA**: an inverted or featured block with a short H2 and one primary `xl` button.
-11. **Footer**: muted text, mono column labels, border-top.
+11. **Footer**: muted text, mono column labels, border-top. Group links by what the product actually has.
 
 ### 12.2 Admin / dashboard page (same tokens, denser)
 - **Shell:** `bg-background`, a sidebar (`w-64 border-r bg-card`, ghost nav items `h-10 rounded-lg`, active item `bg-muted text-foreground` with a 2px primary indicator) and a top bar (`h-16 border-b`, search `Input size="sm"` with `Kbd`, Avatar menu).
@@ -704,3 +705,46 @@ const [pageSize, setPageSize] = useState(10)
   </DialogFooter>
 </DialogContent>
 ```
+
+---
+
+## 14. Anti-slop filter and decisions
+
+### 14.1 How the filter fits
+AiYO vendors the antislop skills (MIT, release 3.2.21) in `skills/antislop*`. The model has three parts:
+
+| File | Role |
+|---|---|
+| `DESIGN.md` (this file) | **Direction**: identity, palette, typography, mood, dials |
+| `skills/antislop/SKILL.md` + the skill for the task | **Filter**: rejects technique without purpose, requires liveliness, ends with the Delivery Gate |
+| `AGENTS.md` / `CLAUDE.md` | **Routing**: tells the agent to read this file first, then the filter |
+
+Task skills: `antislop-ui` (visual), `antislop-copywriting` (copy), `antislop-human` (contrast, keyboard, focus, states; ships `contrast-check.py`), `antislop-layoutmobile` (breakpoints, tap targets) and `antislop-code` (code comments).
+
+Dials for AiYO products: **ENERGY 2 / RHYTHM 2 / MOTION 2**. Balanced energy, consistent sections with a few breaks (asymmetric grids, one inverted section), scroll entrances plus hover feedback. Before building, declare a Design Read, for example: *"Reading this as: B2B SaaS landing for small-business owners, in the AiYO Minimalist Modern style, dial ENERGY 2 / RHYTHM 2 / MOTION 2."* Run the Delivery Gate before delivering.
+
+### 14.2 Decision log (R-37)
+Where this system used a pattern antislop names, the owner decided to keep it or drop it. The code matches these decisions.
+
+**Dropped**
+
+| Pattern | Rule | What changed |
+|---|---|---|
+| Pill `SectionLabel` with a pulsing dot | R-09, R-31 | `SectionLabel` is a plain label: JetBrains Mono 12px, uppercase, 0.15em tracking, `text-primary`, no border, background or dot. The `pulse` prop is gone from `SectionLabel` and `SectionHeader`. A dot only marks a real live state. |
+| Endless decorative motion (floating cards, rotating ring, breathing orb, pulsing dots) | R-19 | `animate-spin-slow`, `animate-float`, `animate-float-delayed`, `animate-pulse-dot` and `animate-breathe` are deleted from `aiyo.css`. Motion is scroll entrance, hover/press feedback, overlay pop-in and accordion (MOTION 2). `HeroGraphic` is static. |
+| Dot-grid texture and blurred glows on inverted sections | R-07, R-13 | `texture-dots`, `texture-dots-dark` and `<Glow>` are removed. `<Section inverted>` is solid deep slate. |
+| Arrows on buttons by default | R-08 | `data-arrow` stays, for the ONE primary CTA per screen only. |
+
+**Dose caps** (R-10): backdrop blur only on the sticky navbar. The Dialog overlay and `FormActions` are solid.
+
+**Kept on purpose** (R-31 reasons)
+
+| Pattern | Rule | Reason |
+|---|---|---|
+| Electric Blue gradient `#0052FF → #4D7CFF` | R-01 | It is the brand identity and marks the single primary action level. |
+| Uppercase JetBrains Mono labels with wide tracking (section labels, table heads) | R-06 | A deliberate typographic voice and the system's identity motif, kept small at 12px. |
+| Lucide icons | R-04 | Matches the shadcn/ui ecosystem used across AiYO projects. Pick each icon for relevance; never sparkle, magic, robot or lightning as feature icons. |
+| Shadows | R-12 | Elevation markers only: cards `md`, overlays `xl`, accent shadow on the primary CTA. |
+
+### 14.3 Exception: showcase sample content
+The showcase site keeps sample content: the hero graphic numbers, sample testimonials, and the 3-tier pricing with a highlighted tier. It is clearly labelled as example data. This is an owner override of R-17, R-18 and R-38 **for the showcase only**. In real AiYO products these blocks use real data only; otherwise leave the section out.

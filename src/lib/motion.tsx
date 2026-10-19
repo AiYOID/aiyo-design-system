@@ -1,7 +1,7 @@
 import * as React from "react"
 import { motion, useReducedMotion, type HTMLMotionProps, type Variants } from "motion/react"
 
-/** The AiYO easing curve — fast start, long confident settle. */
+/** The AiYO easing curve: fast start, long confident settle. */
 export const easeOut = [0.16, 1, 0.3, 1] as const
 
 export const fadeInUp: Variants = {

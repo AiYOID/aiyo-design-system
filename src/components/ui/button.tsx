@@ -10,7 +10,7 @@ const buttonVariants = cva(
     "focus-visible:focus-ring active:scale-[0.98]",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-    // Any icon marked `data-arrow` slides right on hover
+    // An icon marked `data-arrow` slides right on hover. Use it on one primary CTA per screen only.
     "[&_[data-arrow]]:transition-transform [&_[data-arrow]]:duration-200 hover:[&_[data-arrow]]:translate-x-1",
   ],
   {

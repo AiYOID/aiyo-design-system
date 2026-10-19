@@ -82,7 +82,6 @@ export function Demo({
         </TabsList>
         <TabsContent value="preview">
           <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-            <div aria-hidden className="texture-dots-dark pointer-events-none absolute inset-0" />
             <div className={cn("relative flex min-h-48 flex-wrap items-center justify-center gap-4 p-6 md:p-10", previewClassName)}>
               {children}
             </div>

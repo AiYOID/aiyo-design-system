@@ -10,10 +10,11 @@ import {
   Plus,
   Search,
   Settings,
-  Sparkles,
   TriangleAlert,
   User,
-  Zap,
+  Receipt,
+  Store,
+  Wallet,
 } from "lucide-react"
 import { Container, SectionHeader, Section } from "@/components/blocks/section"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -142,10 +143,10 @@ export function Gallery() {
             <Demo
               id="button"
               title="Button"
-              description="Primary is the signature gradient and lifts on hover; arrows marked data-arrow slide right. Secondary is the outline partner. Ghost for low-emphasis, inverted for dark-on-light emphasis. Sizes sm (dense desktop only) to xl (hero CTA)."
+              description="Primary is the signature gradient and lifts on hover. An arrow marked data-arrow slides right, reserved for the one main CTA on a screen. Secondary is the outline partner. Ghost for low-emphasis, inverted for dark-on-light emphasis. Sizes sm (dense desktop only) to xl (hero CTA)."
               code={`import { Button } from "@/components/ui/button"
 
-<Button>Get started <ArrowRight data-arrow /></Button>
+<Button>Create invoice <ArrowRight data-arrow /></Button> {/* arrow: main CTA only */}
 <Button variant="secondary">Documentation</Button>
 <Button variant="ghost">Cancel</Button>
 <Button variant="inverted">Talk to sales</Button>
@@ -156,7 +157,7 @@ export function Gallery() {
               <div className="flex flex-col items-center gap-6">
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <Button>
-                    Get started <ArrowRight data-arrow />
+                    Create invoice <ArrowRight data-arrow />
                   </Button>
                   <Button variant="secondary">Documentation</Button>
                   <Button variant="ghost">Cancel</Button>
@@ -169,7 +170,7 @@ export function Gallery() {
                   <Button size="md">Medium</Button>
                   <Button size="lg">Large</Button>
                   <Button size="xl">
-                    Extra large <ArrowRight data-arrow />
+                    Extra large
                   </Button>
                   <Button size="icon" variant="secondary" aria-label="Add">
                     <Plus />
@@ -185,21 +186,21 @@ export function Gallery() {
               id="icon-tile"
               title="Icon Tile"
               description="Feature icons sit on a full gradient, not a translucent wash. Scales up 10% when its group parent is hovered."
-              code={`<IconTile><Zap /></IconTile>
-<IconTile variant="soft" size="lg"><Sparkles /></IconTile>
+              code={`<IconTile><Receipt /></IconTile>
+<IconTile variant="soft" size="lg"><Wallet /></IconTile>
 <IconTile variant="muted" size="sm"><Settings /></IconTile>`}
             >
               <IconTile size="sm">
-                <Zap />
+                <Receipt />
               </IconTile>
               <IconTile>
-                <Zap />
+                <Receipt />
               </IconTile>
               <IconTile size="lg">
-                <Zap />
+                <Receipt />
               </IconTile>
               <IconTile variant="soft" size="lg">
-                <Sparkles />
+                <Wallet />
               </IconTile>
               <IconTile variant="muted" size="lg">
                 <Settings />
@@ -218,9 +219,7 @@ export function Gallery() {
 <Badge variant="destructive">Failed</Badge>`}
             >
               <Badge>Draft</Badge>
-              <Badge variant="primary">
-                <Sparkles /> Featured
-              </Badge>
+              <Badge variant="primary">Featured</Badge>
               <Badge variant="soft">New</Badge>
               <Badge variant="outline">v1.0</Badge>
               <Badge variant="success">
@@ -233,12 +232,10 @@ export function Gallery() {
             <Demo
               id="section-label"
               title="Section Label"
-              description="Opens every major section: accent dot plus uppercase JetBrains Mono, 0.15em tracking. Add pulse for live or new things."
-              code={`<SectionLabel>Features</SectionLabel>
-<SectionLabel pulse>Now in beta</SectionLabel>`}
+              description="Names a marketing section above its headline: plain uppercase JetBrains Mono, 0.15em tracking. No pill and no dot; it marks no state."
+              code={`<SectionLabel>Settlement</SectionLabel>`}
             >
-              <SectionLabel>Features</SectionLabel>
-              <SectionLabel pulse>Now in beta</SectionLabel>
+              <SectionLabel>Settlement</SectionLabel>
             </Demo>
 
             <Demo
@@ -362,7 +359,7 @@ export function Gallery() {
               description="White, 1px border, rounded-2xl. default (shadow-md), elevated (shadow-xl), interactive (lifts with a faint primary wash) and featured (2px gradient stroke)."
               code={`<Card variant="interactive">
   <CardHeader>
-    <IconTile><Zap /></IconTile>
+    <IconTile><Store /></IconTile>
     <CardTitle>Instant settlement</CardTitle>
     <CardDescription>Funds land in seconds.</CardDescription>
   </CardHeader>
@@ -373,7 +370,7 @@ export function Gallery() {
               <Card variant="interactive">
                 <CardHeader>
                   <IconTile className="mb-3">
-                    <Zap />
+                    <Store />
                   </IconTile>
                   <CardTitle>Interactive</CardTitle>
                   <CardDescription>Hover me: I lift, my shadow deepens, my icon grows.</CardDescription>
@@ -407,7 +404,7 @@ export function Gallery() {
             <Demo
               id="dialog"
               title="Dialog"
-              description="Blurred slate overlay, pops in with the AiYO ease. Footer buttons stack on mobile with the primary action first in reading order."
+              description="Solid slate overlay (no blur), pops in with the AiYO ease. Footer buttons stack on mobile with the primary action first in reading order."
               code={`<Dialog>
   <DialogTrigger asChild><Button>Open dialog</Button></DialogTrigger>
   <DialogContent>
@@ -440,7 +437,7 @@ export function Gallery() {
                     </DialogClose>
                     <DialogClose asChild>
                       <Button>
-                        Confirm payout <ArrowRight data-arrow />
+                        Confirm payout
                       </Button>
                     </DialogClose>
                   </DialogFooter>

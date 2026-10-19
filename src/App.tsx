@@ -1,6 +1,6 @@
 import * as React from "react"
-import { ArrowRight, Bot, Braces, FileText, Layers, Menu, Package, Palette, Sparkles, Terminal, Wand, X, Zap } from "lucide-react"
-import { Container, Glow, Section, SectionHeader } from "@/components/blocks/section"
+import { ArrowRight, Bot, Braces, Columns2, FileText, Layers, Menu, MousePointerClick, Package, Palette, Terminal, X } from "lucide-react"
+import { Container, Section, SectionHeader } from "@/components/blocks/section"
 import { HeroGraphic } from "@/components/blocks/hero-graphic"
 import { PricingCard } from "@/components/blocks/pricing-card"
 import { Steps } from "@/components/blocks/steps"
@@ -59,7 +59,7 @@ function Navbar() {
         <div className="hidden md:block">
           <Button asChild size="sm">
             <a href="./DESIGN.md">
-              DESIGN.md <ArrowRight data-arrow />
+              DESIGN.md
             </a>
           </Button>
         </div>
@@ -86,12 +86,10 @@ function Navbar() {
 function Hero() {
   return (
     <section id="top" className="relative isolate overflow-hidden pb-24 pt-36 md:pb-32 md:pt-44">
-      <Glow className="-right-40 -top-40 -z-10 opacity-[0.08]" />
-      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgb(0_82_255/0.06),transparent_55%)]" />
       <Container className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
         <RevealGroup className="flex flex-col items-start gap-8">
           <RevealItem>
-            <SectionLabel pulse>Design System · v1.0</SectionLabel>
+            <SectionLabel>AiYO Design System · v1.0</SectionLabel>
           </RevealItem>
           <RevealItem>
             <h1 className="font-display text-[2.75rem] leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-[5.25rem]">
@@ -138,9 +136,9 @@ const PRINCIPLES = [
     title: "Clarity through structure",
     body: "Generous whitespace directs attention. Every element on screen has earned its place, and the ones that remain are executed with confidence.",
   },
-  { icon: Zap, title: "One electric accent", body: "Colour is concentrated into the Electric Blue gradient, so wherever it appears, the eye follows." },
-  { icon: Sparkles, title: "Alive, not busy", body: "Lifts, pulses and slow floats make the UI feel responsive. Motion communicates; it never decorates." },
-  { icon: Wand, title: "Asymmetry on purpose", body: "1.1fr / 0.9fr heroes, offset cards, elevated tiers. Break the grid deliberately to guide the eye." },
+  { icon: Palette, title: "One electric accent", body: "Colour is concentrated into the Electric Blue gradient, so wherever it appears, the eye follows." },
+  { icon: MousePointerClick, title: "Motion answers the user", body: "Content eases in once as you scroll, and controls respond to hover and press. Nothing moves on a loop." },
+  { icon: Columns2, title: "Asymmetry on purpose", body: "1.1fr / 0.9fr heroes, offset cards, elevated tiers. Break the grid deliberately to guide the eye." },
 ]
 
 function Principles() {
@@ -241,7 +239,6 @@ function Foundations() {
           </RevealGroup>
           <Reveal className="flex flex-col gap-4">
             <div className="relative flex min-h-56 flex-1 flex-col justify-end overflow-hidden rounded-tl-[4rem] rounded-br-[4rem] rounded-tr-2xl rounded-bl-2xl bg-gradient-primary-diagonal p-8 text-primary-foreground shadow-accent-lg">
-              <div aria-hidden className="absolute -right-10 -top-10 size-48 animate-spin-slow rounded-full border-2 border-dashed border-white/30" />
               <span className="font-mono text-xs uppercase tracking-[0.15em] text-white/80">The signature gradient</span>
               <span className="mt-2 font-display text-3xl">#0052FF → #4D7CFF</span>
               <code className="mt-3 font-mono text-xs text-white/80">bg-gradient-primary · text-gradient</code>
@@ -324,21 +321,19 @@ function Foundations() {
             <h3 className="font-semibold">Motion</h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col items-center gap-2">
-                <span className="relative flex size-14 items-center justify-center rounded-xl bg-card shadow-sm">
-                  <span className="absolute size-3 animate-pulse-dot rounded-full bg-primary" />
-                </span>
-                <span className="font-mono text-[10px] text-muted-foreground">pulse 2s</span>
+                <span className="size-14 animate-fade-in-up rounded-xl bg-gradient-primary-diagonal" />
+                <span className="font-mono text-[10px] text-muted-foreground">enter 700ms</span>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <span className="size-14 animate-float rounded-xl bg-gradient-primary-diagonal shadow-accent" />
-                <span className="font-mono text-[10px] text-muted-foreground">float 5s</span>
+                <span className="size-14 cursor-pointer rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" />
+                <span className="font-mono text-[10px] text-muted-foreground">hover lift</span>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <span className="size-14 animate-[spin_8s_linear_infinite] rounded-full border-2 border-dashed border-primary/50" />
-                <span className="font-mono text-[10px] text-muted-foreground">ring 60s</span>
+                <span className="size-14 cursor-pointer rounded-xl bg-primary transition-transform duration-200 active:scale-[0.92]" />
+                <span className="font-mono text-[10px] text-muted-foreground">press 0.98</span>
               </div>
             </div>
-            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">ease [0.16, 1, 0.3, 1] · enter 700ms · hover 200–300ms · stagger 100ms</p>
+            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">ease [0.16, 1, 0.3, 1] · enter once, 700ms · hover 200 to 300ms · no loops</p>
           </Reveal>
         </div>
       </Container>
@@ -474,7 +469,6 @@ function Agents() {
         <Reveal className="flex flex-col gap-8 lg:sticky lg:top-28 lg:self-start">
           <SectionHeader
             label="For AI Agents"
-            pulse
             title={
               <>
                 Docs your agent can <GradientText>actually read</GradientText>
@@ -490,12 +484,9 @@ function Agents() {
               <a href={f.href} className="block h-full rounded-2xl focus-visible:focus-ring">
                 <Card variant="interactive" className="h-full">
                   <CardHeader className="gap-4">
-                    <div className="flex items-center justify-between">
-                      <IconTile size="sm">
-                        <f.icon />
-                      </IconTile>
-                      <ArrowRight className="size-4 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1 group-hover:text-primary" />
-                    </div>
+                    <IconTile size="sm">
+                      <f.icon />
+                    </IconTile>
                     <CardTitle className="font-mono text-base md:text-base">{f.name}</CardTitle>
                     <CardDescription>{f.body}</CardDescription>
                   </CardHeader>
@@ -516,7 +507,7 @@ function FinalCta() {
     <Section inverted spacing="lg">
       <Container>
         <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center">
-          <SectionLabel pulse>Get started</SectionLabel>
+          <SectionLabel>Get started</SectionLabel>
           <h2 className="font-display text-[2.5rem] leading-[1.1] tracking-[-0.02em] md:text-6xl">
             Start building the <GradientText>AiYO way</GradientText>
           </h2>
@@ -530,7 +521,7 @@ function FinalCta() {
             </div>
             <Button asChild size="lg" className="h-12 w-full sm:w-auto">
               <a href="./README.md">
-                Read the guide <ArrowRight data-arrow />
+                Read the guide
               </a>
             </Button>
           </div>

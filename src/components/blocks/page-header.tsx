@@ -63,7 +63,7 @@ function FormActions({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="form-actions"
       className={cn(
-        "sticky bottom-0 z-10 -mx-5 flex flex-col-reverse gap-3 border-t border-border bg-background/85 px-5 py-4 backdrop-blur-xl sm:mx-0 sm:flex-row sm:justify-end sm:rounded-b-2xl sm:px-0",
+        "sticky bottom-0 z-10 -mx-5 flex flex-col-reverse gap-3 border-t border-border bg-background px-5 py-4 sm:mx-0 sm:flex-row sm:justify-end sm:rounded-b-2xl sm:px-0",
         className,
       )}
       {...props}
