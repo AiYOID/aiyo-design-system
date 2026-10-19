@@ -52,8 +52,8 @@ Paste this into any AiYO project:
 
 ```md
 ## UI / Design system
-This project uses the **AiYO Design System** ("Minimalist Modern"). Spec: <SITE_URL>/DESIGN.md
-(LLM index: <SITE_URL>/llms.txt, tokens: <SITE_URL>/aiyo.tokens.json).
+This project uses the **AiYO Design System** ("Minimalist Modern"). Spec: https://aiyoid.github.io/aiyo-design-system/DESIGN.md
+(LLM index: https://aiyoid.github.io/aiyo-design-system/llms.txt, tokens: https://aiyoid.github.io/aiyo-design-system/aiyo.tokens.json).
 
 - Tokens live in `src/styles/aiyo.css`; components in `src/components/ui/*` (shadcn-style, `cn()` from `@/lib/utils`);
   motion helpers in `src/lib/motion.tsx`. Reuse these before writing new UI.
@@ -66,4 +66,4 @@ This project uses the **AiYO Design System** ("Minimalist Modern"). Spec: <SITE_
 - WCAG AA, visible `focus-visible:focus-ring`, hide decorative graphics below `lg`.
 ```
 
-Replace `<SITE_URL>` with the GitHub Pages URL of the showcase site.
+Replace `https://aiyoid.github.io/aiyo-design-system` with the GitHub Pages URL of the showcase site.
