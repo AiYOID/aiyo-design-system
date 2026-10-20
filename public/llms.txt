@@ -1,26 +1,31 @@
 # AiYO Design System
 
-> The AiYO Design System is called "Minimalist Modern": structure gives clarity, bold details give character. It is built with React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui conventions (cva, `cn`, radix-ui, lucide-react) and `motion`. It has one brand accent, the Electric Blue gradient #0052FF → #3366FF, named `primary` in code (`accent` is only a hover surface). It uses Calistoga for display headlines, Inter for UI and body text, and JetBrains Mono for labels. Components are copied into projects shadcn style, from `@/components/ui/*`. DESIGN.md gives direction; the vendored antislop skills are the filter on top of it. Dials: ENERGY 2 / RHYTHM 2 / MOTION 2.
+> The AiYO Design System v2, "Minimalist Modern", is the AiYO brand theme for HeroUI v3 plus the page blocks and app patterns every AiYO product shares. Components come from `@heroui/react` (v3, built on React Aria) and are used directly, never copied or wrapped. One CSS file, `aiyo.css`, writes the AiYO palette into HeroUI's variables. The brand colour is Electric Blue #0052FF, named `accent` (HeroUI naming; there is no `primary` token). Type is Geist Sans for everything and Geist Mono for labels. Icons come from `@gravity-ui/icons`. AiYO blocks live in `src/components/aiyo/*`. DESIGN.md gives direction; the vendored antislop skills are the filter on top of it. Dials: ENERGY 2 / RHYTHM 2 / MOTION 2.
 
 Key rules for agents:
 
 - For UI work: read DESIGN.md for direction, then the antislop core skill as the filter plus the skill for the task, and run its Delivery Gate before delivering.
-- Use tokens (`bg-background`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-card`, `bg-gradient-primary`), never raw hex.
-- Use one accent color only. Never use `bg-accent` for brand.
-- Calistoga is for H1/H2 only. Every section opens with SectionLabel → H2 → muted lede. SectionLabel is a plain JetBrains Mono label (12px, uppercase, 0.15em tracking, primary color): no pill, no border, no dot, no `pulse` prop.
-- Container `max-w-6xl`, sections `py-24 md:py-32`, asymmetric grids. Landing pages need at least one inverted section: solid deep slate, no dot-grid texture, no blurred glows.
-- Controls `rounded-xl`, cards `rounded-2xl`. Inputs h-12, buttons h-11 and up, touch targets at least 44px. Shadows mark elevation only (cards md, overlays xl, accent on the primary CTA).
-- Motion uses ease [0.16,1,0.3,1]: 0.7s fade-up entrances (once), 200 to 300ms hover and press feedback, overlay pop-in and accordion. No endless decorative motion (no floating cards, rotating rings or pulsing dots). Respects prefers-reduced-motion.
-- `data-arrow` only on the one primary CTA per screen. Backdrop blur only on the sticky navbar.
+- Use HeroUI components from `@heroui/react` with `onPress` / `onAction`, and ids (plus `textValue`) on collection items. Never restyle their colours or radii per page; theme changes go in aiyo.css.
+- Use tokens (`bg-background`, `text-foreground`, `text-muted`, `bg-surface`, `bg-default`, `border-separator`, `text-accent`, `text-*-soft-foreground` for status text), never raw hex. One accent colour only.
+- Geist only: `heading-hero` and `heading-section` for marketing headings, `label-caps` (Geist Mono 12px uppercase) for labels. Every marketing section opens with SectionHeader: a plain mono label (no pill, no dot) → H2 → muted lede.
+- Container `max-w-6xl`, asymmetric grids, left-aligned copy. Landing pages need at least one inverted section: solid deep slate, no dot grids, no glows.
+- Gradient only on one headline word (GradientText, 24px or larger), the one leading IconTile and one data highlight. HeroUI's three elevation levels only.
+- Motion: `<Reveal>` for marketing entrances (once), HeroUI motion for controls, no endless decorative motion, prefers-reduced-motion respected. `data-arrow` only on the one primary CTA per screen. Backdrop blur only on the sticky navbar.
+- WCAG AA in light and dark, visible focus everywhere, 44px touch targets (aiyo.css handles HeroUI controls).
 - Numbers, testimonials, logos and pricing tiers use real data only; otherwise leave the section out. The showcase's sample content is a labelled exception.
-- App pages (mandatory): titles use `PageHeader` (Inter, not Calistoga). Settings pages with 3+ sub-sections use vertical `Tabs`, one Card per tab.
-- Every list page: PageHeader with "Add <Thing>" → search and filters → Table (row actions in a DropdownMenu, loading / error / empty states) → `Pagination`, always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side for API data.
-- Add/edit in a Dialog only for ≤6 fields in one section with no uploads; otherwise a dedicated page (PageHeader `back` → FormSection → FormActions). Delete always confirms in a Dialog with a destructive button. The showcase's App Patterns section (`#app-patterns`) demos all of this.
+- App pages (mandatory): `PageHeader` titles. Settings with 3+ sub-sections use `Tabs variant="secondary"` (vertical on md+), one Card per tab.
+- Every list page: PageHeader with "Add <Thing>" → SearchField and filters → Table (row actions in a Dropdown; loading, error and empty states) → `DataPagination`, always shown, pageSize 10, reset to page 1 on search/filter/size change, server-side for API data.
+- Add/edit in a Modal only for ≤6 fields in one section with no uploads; otherwise a dedicated page (PageHeader `back` → FormSection → FormActions). Delete always confirms in an AlertDialog with a danger button. The showcase's App patterns section (`#app-patterns`) runs all of this.
 
 ## Docs
 
-- [DESIGN.md](./DESIGN.md): the canonical spec. Tokens, typography, layout, surfaces, every component with its import path and props, blocks, motion, responsive rules, accessibility, do/don't, landing and dashboard page recipes, the mandatory app page rules (settings, list and form pages), and the anti-slop decision log (§14).
+- [DESIGN.md](./DESIGN.md): the canonical spec. Tokens (light, dark, inverted), the AiYO adjustments to HeroUI, typography, layout, HeroUI usage rules and recipes, AiYO blocks with props, motion, responsive rules, accessibility, do/don't, landing and dashboard page recipes, the mandatory app page rules, the anti-slop decision log (§14) and the v1 migration map (§15).
 - [AGENTS.md](./AGENTS.md): short instructions for AI coding agents. How to install, the hard rules, the antislop routing, and a snippet to paste into a project's CLAUDE.md or AGENTS.md.
+- [aiyo.css](./aiyo.css): the theme file itself.
+
+## HeroUI
+
+- [HeroUI React llms.txt](https://heroui.com/react/llms.txt): HeroUI's own index, for component props and parts. Component pages are readable as Markdown at `https://heroui.com/en/docs/react/components/<name>.mdx`.
 
 ## Anti-slop skills
 
@@ -29,8 +34,8 @@ Key rules for agents:
 
 ## Tokens
 
-- [aiyo.tokens.json](./aiyo.tokens.json): W3C Design Tokens (DTCG) for color (light and inverted), typography, radius, shadow and motion.
+- [aiyo.tokens.json](./aiyo.tokens.json): W3C Design Tokens (DTCG) for colour (light and dark), typography, radius, shadow and motion.
 
 ## Optional
 
-- [llms-full.txt](./llms-full.txt): DESIGN.md and AGENTS.md concatenated into one file, for loading the full context at once.
+- [llms-full.txt](./llms-full.txt): AGENTS.md, DESIGN.md and aiyo.css concatenated into one file, for loading the full context at once.

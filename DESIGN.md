@@ -1,11 +1,14 @@
-# AiYO Design System: "Minimalist Modern"
+# AiYO Design System v2: "Minimalist Modern" on HeroUI v3
 
-This is the full spec for the AiYO Design System. It is written for AI coding agents and for people. Where it disagrees with the code, the code wins: `src/styles/aiyo.css` holds the tokens, `src/components/ui/*` the components, `src/components/blocks/*` the page blocks and `src/lib/motion.tsx` the motion helpers.
+This is the full spec for the AiYO Design System. It is written for AI coding agents and for people. Where it disagrees with the code, the code wins: `src/styles/aiyo.css` holds the theme, `src/components/aiyo/*` the AiYO blocks and `src/lib/motion.tsx` the scroll entrance.
 
-- **Stack:** React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui conventions (`cva`, `cn` from tailwind-merge, `radix-ui`, `lucide-react`) and `motion` (`motion/react`).
-- **Distribution:** components are copied into your project, shadcn style, and imported via the alias `@/components/ui/*`.
+- **Components:** [HeroUI v3](https://heroui.com) (`@heroui/react` 3.2, built on React Aria), used directly. AiYO does not wrap or fork HeroUI components.
+- **Theme:** one CSS file, `aiyo.css`, writes the AiYO palette into the CSS variables HeroUI already reads.
+- **AiYO blocks:** page-level pieces HeroUI does not have (Section, PageHeader, DataPagination, Stat…), in `src/components/aiyo/*`.
+- **Stack:** React 19, Vite, TypeScript, Tailwind CSS v4, `@heroui/react` + `@heroui/styles`, Geist via `@fontsource-variable/geist` and `@fontsource-variable/geist-mono`, icons from `@gravity-ui/icons`.
 - **Machine-readable tokens:** `tokens/aiyo.tokens.json` (W3C DTCG format).
 - **Anti-slop filter:** this file gives direction; `skills/antislop/SKILL.md` is the filter applied on top of it. See §14 for the owner's decisions.
+- **HeroUI API lookups:** for props and parts not covered here, read HeroUI's own docs ([llms.txt](https://heroui.com/react/llms.txt), or a component page with `.mdx` appended, e.g. `https://heroui.com/en/docs/react/components/select.mdx`). The installed package's types are the final word.
 
 Dial: ENERGY 2 / RHYTHM 2 / MOTION 2
 
@@ -13,13 +16,14 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 2
 
 ## 1. Philosophy
 
-> **Structure gives clarity. Bold details give character.** Use few elements and execute each with confidence.
+> **HeroUI builds it, AiYO brands it.** Use few elements and execute each with confidence.
 
-- **One accent:** the Electric Blue gradient `#0052FF → #3366FF`. Everything else is slate and white.
-- **Three typefaces, each with one job:** Calistoga for display headlines, Inter for all UI and body text, and JetBrains Mono for labels.
-- **Generous space and asymmetric grids.** Every landing page needs at least one deep-slate *inverted* section.
-- **Depth comes from contrast, not decoration.** Solid deep-slate sections, hairline borders and shadows used only as elevation markers. No dot grids, no blurred glows.
-- **Motion is quiet and purposeful.** Content enters once on scroll and controls answer hover and press. Nothing loops for decoration. Every animation uses the ease `cubic-bezier(0.16, 1, 0.3, 1)` and respects `prefers-reduced-motion`.
+- **HeroUI owns component behaviour and shape.** Buttons, fields, overlays, tables and their sizes, radii, states and motion come from HeroUI as they ship. AiYO changes colour and type through variables, never by restyling a component per page.
+- **One accent:** Electric Blue `#0052FF`, named `accent` (HeroUI's name for the brand colour). The gradient `#0052FF → #3366FF` is kept for a few brand moments only.
+- **One type family, two voices:** Geist Sans for headlines and interface text, Geist Mono, small and uppercase, for labels.
+- **Generous space and asymmetric grids.** Every landing page has at least one deep-slate *inverted* section.
+- **Depth comes from contrast, not decoration.** Solid surfaces, hairline separators and HeroUI's three elevation levels. No dot grids, no blurred glows.
+- **Motion is quiet and purposeful.** Content rises in once on scroll; controls use HeroUI's own feedback. Nothing loops for decoration, and `prefers-reduced-motion` is always respected.
 
 ---
 
@@ -27,120 +31,158 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 2
 
 ### 2.1 Naming: read this first
 
-| Concept in the design language | Token / Tailwind name | Notes |
+AiYO v2 uses HeroUI's token names. They differ from shadcn/ui and from AiYO v1.
+
+| Concept | Token / Tailwind | Notes |
 |---|---|---|
-| Brand accent (Electric Blue) | **`primary`**, `primary-end` | shadcn naming. Use `bg-primary`, `text-primary`, `bg-gradient-primary`. |
-| Subtle hover surface | `accent` | shadcn meaning (`#F1F5F9`). **Never use `bg-accent` for brand.** |
-| Status colors | `success`, `warning`, `destructive`, `info` | AiYO extension for app UIs. |
+| Brand colour (Electric Blue) | **`accent`**, `accent-foreground`, `accent-end` | `bg-accent`, `text-accent`. HeroUI's primary Button, focus ring, selection and Switch all read it. |
+| Soft brand tint | `accent-soft`, `accent-soft-foreground` | Soft chips, icon tiles, secondary button text. |
+| Page | `background`, `foreground` | `bg-background`, `text-foreground`. |
+| Non-overlay surfaces (cards, tables, accordions) | `surface`, `surface-secondary`, `surface-tertiary` | `bg-surface`. |
+| Floating surfaces (modals, popovers, menus, tooltips) | `overlay` | `bg-overlay`. |
+| Secondary **text** | **`muted`** | `text-muted`. In HeroUI `muted` is a text colour, not a fill. |
+| Neutral fill | `default`, `default-foreground` | Secondary buttons, chips, tracks. |
+| Status | `success`, `warning`, `danger` (+ `-foreground`, `-soft`, `-soft-foreground`) | `danger`, not `destructive`. Status text uses `text-*-soft-foreground`. |
+| Lines | `border` (component edges), `separator` (dividers) | `border-border`, `border-separator`, `divide-separator`. |
+| Form fields | `field`, `field-border`, `field-placeholder` | Read by every HeroUI field. |
+| Focus | `focus` | Equals `accent`. |
 
-### 2.2 Colors: light (default, `:root`)
+There is no `primary`, `card`, `popover`, `muted-foreground`, `destructive` or `ring` token any more (see §15 for the v1 mapping).
 
-| Token | Value | Tailwind | Use |
-|---|---|---|---|
-| `--background` | `#FAFAFA` | `bg-background` | Page background |
-| `--foreground` | `#0F172A` | `text-foreground` | Body and headline text (never pure black) |
-| `--card` / `--popover` | `#FFFFFF` | `bg-card`, `bg-popover` | Cards, menus, dialogs |
-| `--card-foreground` / `--popover-foreground` | `#0F172A` | `text-card-foreground` | |
-| `--primary` | `#0052FF` | `bg-primary`, `text-primary`, `border-primary` | Brand, links, focus |
-| `--primary-end` | `#3366FF` | `to-primary-end` | Gradient endpoint |
-| `--primary-foreground` | `#FFFFFF` | `text-primary-foreground` | Text on primary |
-| `--secondary` | `#F1F5F9` | `bg-secondary` | Secondary fills |
-| `--muted` | `#F1F5F9` | `bg-muted` | Quiet fills, tracks, table head |
-| `--muted-foreground` | `#5B6B80` | `text-muted-foreground` | Ledes, helper text, captions |
-| `--accent` | `#F1F5F9` | `bg-accent` | Hover surface only |
-| `--border` | `#E2E8F0` | `border-border` | All hairlines (the default border color) |
-| `--input` | `#E2E8F0` | `border-input` | Control borders |
-| `--ring` | `#0052FF` | `ring-ring` / `focus-ring` | Focus indicator |
-| `--success` | `#059669` | `bg-success`, icons | Positive status (fills, bars, icons) |
-| `--warning` | `#D97706` | `bg-warning`, icons | Caution |
-| `--destructive` | `#DC2626` | `bg-destructive`, icons | Errors, delete |
-| `--info` | `#0052FF` | `text-info` | Informational |
-| `*-foreground` (status) | `#FFFFFF` | `text-success-foreground`, … | Text on solid status fills |
-| `--success-text` / `--warning-text` / `--destructive-text` | `#047857` / `#92400E` / `#B91C1C` | `text-success-text`, … | Status **text**: badge labels on tints, field errors. The base status colours fail AA as 12px text, so text always uses these. |
+### 2.2 Colours: light (default, `:root`, `.light`, `[data-theme="light"]`)
 
-### 2.3 Colors: inverted / dark (`.inverted`, `.dark`)
+| Token | Value | Use and checked contrast |
+|---|---|---|
+| `--background` | `#FAFAFA` | Page canvas |
+| `--foreground` | `#0F172A` | Text; never pure black (17.1:1 on background) |
+| `--surface` | `#FFFFFF` | Cards, tables, accordions |
+| `--surface-secondary` | `#F1F5F9` | Grouped or secondary cards |
+| `--surface-tertiary` | `#E8EDF3` | Third level, skeletons |
+| `--overlay` | `#FFFFFF` | Modals, popovers, menus |
+| `--muted` | `#5B6B80` | Secondary text: 5.21:1 on background, 4.97:1 on default |
+| `--default` | `#F1F5F9` | Neutral fills |
+| `--accent` | `#0052FF` | Brand. White text on it 5.75:1 |
+| `--accent-end` | `#3366FF` | Gradient endpoint. White text on it 4.68:1 |
+| `--accent-foreground` | `#FFFFFF` | Text on accent |
+| `--accent-soft-foreground` | `#0047E0` | Text on accent tints: 5.58:1 on accent-soft, 6.44:1 on default |
+| `--success` / `--success-foreground` | `#059669` / `#0F172A` | 4.74:1 |
+| `--success-soft-foreground` | `#047857` | Success text on tints |
+| `--warning` / `--warning-foreground` | `#D97706` / `#0F172A` | 5.60:1 |
+| `--warning-soft-foreground` | `#92400E` | Warning text on tints |
+| `--danger` / `--danger-foreground` | `#DC2626` / `#FFFFFF` | 4.83:1 |
+| `--danger-soft-foreground` | `#B91C1C` | Error text on tints |
+| `--field-background` | `#FFFFFF` | Inputs, selects, checkboxes |
+| `--field-border` | `#7C8BA1` | 1px field edge, 3.46:1 on white (WCAG 1.4.11) |
+| `--border` | `#E2E8F0` | Component hairlines |
+| `--separator` | `#E9EEF4` | Dividers |
+| `--backdrop` | `rgb(15 23 42 / 0.5)` | Modal backdrop |
 
-Put `.inverted` on a section, or use `<Section inverted>`, to flip that subtree to deep slate. `.dark` uses the same palette for apps that want a full dark mode. Components only read the variables, so they re-theme automatically. The Tailwind `dark:` variant matches both `.dark` and `.inverted`.
+HeroUI derives the hover, soft and field-state colours (`--accent-hover`, `--accent-soft`, `--field-border-hover`…) from these with `color-mix`, so they follow automatically.
+
+### 2.3 Colours: dark (`.dark` / `[data-theme="dark"]` on `<html>`) and inverted (`.inverted` on a section)
+
+`.inverted` flips one section to the dark palette; HeroUI components inside it re-theme too. `.dark` is the same palette for the whole app. The Tailwind `dark:` variant matches `.dark`, `[data-theme="dark"]` and `.inverted`, and does **not** follow the OS setting by itself (use `useTheme("system")` for that).
 
 | Token | Value |
 |---|---|
 | `--background` | `#0F172A` |
 | `--foreground` | `#F8FAFC` |
-| `--card` / `--popover` / `--secondary` / `--muted` / `--accent` | `#1E293B` |
-| `--muted-foreground` | `#94A3B8` |
-| `--primary` / `--info` | `#7AA0FF` (7.06:1 on slate) |
-| `--primary-end` / `--ring` | `#9DB8FF` |
-| `--primary-foreground` and status `*-foreground` | `#0F172A` (on slate no blue passes AA against both white text and the background, so filled primary turns light with dark text) |
-| `--border` | `rgb(255 255 255 / 0.10)` |
-| `--input` | `rgb(255 255 255 / 0.14)` |
-| `--success` / `--warning` / `--destructive` | `#34D399` / `#FBBF24` / `#F87171` |
-| `--success-text` / `--warning-text` / `--destructive-text` | `#6EE7B7` / `#FCD34D` / `#FCA5A5` |
-| `--gradient-primary`, `--gradient-primary-diagonal` | Redeclared in this block, so gradients use the light blues above |
+| `--surface` / `--overlay` | `#1E293B` |
+| `--surface-secondary` / `--surface-tertiary` | `#273449` / `#334155` |
+| `--muted` | `#A8B5C8` (4.98:1 on default, 8.5:1 on background) |
+| `--default` | `#334155` |
+| `--accent` / `--accent-end` | `#7AA0FF` / `#9DB8FF` |
+| `--accent-foreground` | `#0F172A` (on slate no blue passes AA against both white text and the background, so the accent turns light and its text dark: 7.06:1 both ways) |
+| `--accent-soft-foreground` | `#9DB8FF` |
+| `--success` / `--warning` / `--danger` | `#34D399` / `#FBBF24` / `#F87171`, all with `#0F172A` text |
+| `--success-soft-foreground` / `--warning-soft-foreground` / `--danger-soft-foreground` | `#6EE7B7` / `#FCD34D` / `#FCA5A5` |
+| `--field-background` / `--field-border` | `#0F172A` / `#718096` (3.64:1 on surface) |
+| `--border` / `--separator` | `rgb(255 255 255 / 0.10)` / `rgb(255 255 255 / 0.08)` |
+| Shadows | Surface and field shadows off; overlays get a 1px inset hairline |
+
+Portaled overlays (Modal, AlertDialog, Popover, Dropdown, Select, Tooltip, Toast) render into `document.body`, so they follow the `<html>` theme, not an `.inverted` section they were opened from.
 
 ### 2.4 Gradients and signature utilities
 
 | Utility | What it does |
 |---|---|
-| `bg-gradient-primary` | `linear-gradient(to right, primary, primary-end)`: buttons, switches, progress, badges |
-| `bg-gradient-primary-diagonal` | Same gradient at 135°: icon tiles, avatars, checkboxes |
-| `text-gradient` | Paints text with the gradient. Prefer the `<GradientText>` component. |
-| `focus-ring` | `outline: 2px solid ring; outline-offset: 2px`. Every interactive element already gets this from the global `:focus-visible` rule; the utility is only for custom elements. It is an outline, so state shadows (checked, active) can never cover it. |
+| `bg-gradient-accent` | `linear-gradient(to right, accent, accent-end)` |
+| `bg-gradient-accent-diagonal` | Same at 135° |
+| `text-gradient` | Paints text with the gradient. Use `<GradientText>`. |
+| `heading-hero`, `heading-section` | The marketing type scale (§3) |
+| `label-caps` | Geist Mono 12px, 500, uppercase, 0.12em tracking: the label voice |
+| `ease-aiyo` | `cubic-bezier(0.16, 1, 0.3, 1)` |
 
-### 2.5 Radius (`--radius: 0.75rem`)
+The gradient appears in three places only: one headline word (`GradientText`, text 24px or larger, because its light end is 4.48:1 on the canvas), the one leading `IconTile` in a group, and a single data highlight (for example the latest bar in a chart). Never on buttons, cards or backgrounds; HeroUI's solid accent carries actions.
 
-| Class | Value | Use |
+### 2.5 Radius (HeroUI scale, `--radius: 0.5rem`)
+
+| Class | Value | Where HeroUI uses it |
 |---|---|---|
-| `rounded-sm` | 6px | Tiny chips |
-| `rounded-md` | 8px | Checkbox, kbd |
-| `rounded-lg` | 10px | Small controls (`sm` size), menu items, tab triggers |
-| **`rounded-xl`** | **12px** | **Default for buttons, inputs, selects, alerts and popovers** |
-| **`rounded-2xl`** | **16px** | **Cards, dialogs, tables** |
-| `rounded-3xl` | 24px | Large showcase panels, hero graphics |
-| `rounded-full` | pill | Badges, avatars, switches |
+| `rounded-lg` | 8px | Kbd, small parts |
+| `rounded-xl` / `rounded-field` | 12px | Inputs, selects, text areas, menu items |
+| `rounded-2xl` | 16px | Icon tiles, toasts |
+| `rounded-3xl` | 24px | Cards, alerts, modals, tables |
+| Pill | | Buttons (`rounded-3xl` on a 36 to 44px control), chips, tabs |
 
-### 2.6 Shadows
+Do not change component radii per page. Radius marks the kind of thing: pill means "press me", 12px means "type here", 24px means "a surface".
 
-| Class | Value | Use |
-|---|---|---|
-| `shadow-sm` | `0 1px 3px rgb(0 0 0/.06)` | Controls, resting buttons |
-| `shadow-md` | `0 4px 6px rgb(0 0 0/.07)` | Default cards |
-| `shadow-lg` | `0 10px 15px rgb(0 0 0/.08)` | Raised elements, tooltips |
-| `shadow-xl` | `0 20px 25px rgb(0 0 0/.10)` | Hovered cards, dialogs, menus |
-| `shadow-accent` | `0 4px 14px rgb(0 82 255/.25)` | Primary-tinted resting lift (gradient icon tiles, badges) |
-| `shadow-accent-lg` | `0 8px 24px rgb(0 82 255/.35)` | Primary button hover, featured card |
+### 2.6 Elevation
 
-Shadows mark elevation only: cards `shadow-md`, overlays (dialogs, menus) `shadow-xl`, and the accent shadow on the primary CTA. Everything else sits flat.
+| Utility | Use |
+|---|---|
+| `shadow-field` | Field controls |
+| `shadow-surface` | Cards, alerts, tables: just above the canvas |
+| `shadow-overlay` | Modals, popovers, menus, toasts: clearly floating |
+
+Three levels, all from HeroUI. Do not add other shadows, glows or coloured shadows.
 
 ### 2.7 Fonts
 
 | Token | Stack | Tailwind |
 |---|---|---|
-| `--font-display` | `"Calistoga", Georgia, serif` | `font-display` |
-| `--font-sans` | `"Inter", ui-sans-serif, system-ui, sans-serif` | `font-sans` (body default) |
-| `--font-mono` | `"JetBrains Mono", ui-monospace, monospace` | `font-mono` |
+| `--font-sans` | `"Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif` | `font-sans` (body default) |
+| `--font-mono` | `"Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, monospace` | `font-mono`, `label-caps` |
 
-`aiyo.css` loads all three from Google Fonts: Calistoga, Inter 400/500/600/700, and JetBrains Mono 400/500.
+`aiyo.css` imports both variable fonts from Fontsource, so they are self-hosted and bundled; no Google Fonts request. Weights 100 to 900 are available; AiYO uses 400, 500 and 600.
+
+### 2.8 AiYO adjustments to HeroUI (all in `aiyo.css`, `@layer components`)
+
+Each one exists for a stated reason. Do not add more per project; propose them here.
+
+| Adjustment | Reason |
+|---|---|
+| Fields get a 1px `--field-border` (HeroUI ships borderless fields) | Field edges at 3:1 (WCAG 1.4.11). Checkboxes and radios share the token. |
+| Switch off-track uses `--field-border` | Off switches were 1.1:1 against white. |
+| Touch layer: below 768px or on coarse pointers, buttons, pagination links, tabs, close buttons and tab scroll arrows get an invisible 44 × 44px hit area; fields, menu items, list items and the checkbox, radio and switch rows grow to 44px | HeroUI's default controls are 32 to 40px; AiYO requires 44px touch targets. Desktop keeps HeroUI's sizes. |
+| `.search-field__input::placeholder` uses `--field-placeholder` | HeroUI leaves it to the browser default (3.4:1). |
+| `.tabs__panel` gets a focus outline when it takes focus | A panel with nothing focusable inside is a tab stop; HeroUI draws no indicator for it. |
+| `--color-field-border-invalid: var(--danger)` | HeroUI's InputGroup reads this variable but never defines it. |
+| `.link.button` keeps `gap: 0.5rem`; `[data-arrow]` slides on hover | Link-as-button with an icon; the one primary CTA arrow. |
+| `dark:` variant redefined | Class-based only, and `.inverted` counts as dark. |
 
 ---
 
 ## 3. Typography
 
-| Role | Font | Classes |
-|---|---|---|
-| **Hero H1** | Calistoga, normal weight | `font-display text-[2.75rem] leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-[5.25rem]`. Put the last word in `<GradientText underline>`. |
-| **Section H2** | Calistoga | `font-display text-[2.25rem] leading-[1.15] tracking-[-0.02em] md:text-[3.25rem]` |
-| App page title (H1) | Inter semibold | `text-2xl md:text-3xl font-semibold tracking-[-0.01em]` via `<PageHeader>`. Never Calistoga in app UI. |
-| H3 / card title | Inter semibold | `text-lg md:text-xl font-semibold tracking-[-0.01em] leading-snug` |
-| Lede | Inter | `text-base md:text-lg leading-relaxed text-muted-foreground` (1.625 to 1.75) |
-| Body | Inter | `text-base leading-relaxed` |
-| Small / helper | Inter | `text-sm text-muted-foreground` |
-| **Section label / badge / table head** | JetBrains Mono | `font-mono text-xs uppercase tracking-[0.15em]` (11px inside menus and tables) |
-| Stat numeral | Calistoga | `font-display text-4xl md:text-5xl leading-none tracking-[-0.02em]` (the only display use outside h1/h2) |
+| Role | Classes |
+|---|---|
+| **Hero H1** | `heading-hero` (44 → 60 → 80px, 600, line-height 1.02, tracking -0.045em, balanced). Put one word in `<GradientText underline>`. |
+| **Section H2** | `heading-section` (32 → 48px, 600, line-height 1.1, tracking -0.035em), via `<SectionHeader>` |
+| App page title (H1) | `text-2xl md:text-3xl font-semibold tracking-[-0.03em]`, via `<PageHeader>` |
+| Card or block title | `text-lg font-semibold tracking-[-0.02em]` (pass it to `Card.Title`, whose HeroUI default is 14px medium) |
+| Lede | `text-lg leading-relaxed text-muted`, `max-w-2xl` |
+| Body | `text-base leading-relaxed` (body line-height 1.6) |
+| Small / helper | `text-sm text-muted` |
+| **Label** (section labels, stat labels, meta) | `label-caps` (Geist Mono 12px, uppercase, 0.12em) |
+| Stat numeral | `text-4xl md:text-5xl font-semibold tracking-[-0.04em] tabular-nums` |
+| Code, IDs, file names | `font-mono` |
 
 Rules:
-- Use Calistoga only for H1, H2 and big stat numerals. Always at normal weight, never bold, never in body text or UI controls.
-- Limit gradient text to one word or short phrase per headline.
-- Keep line length to about 65ch for body text (`max-w-2xl` for ledes).
+- Hierarchy comes from size, weight (400 / 500 / 600) and tight tracking at display sizes. No serif, no second family.
+- One gradient word per screen, in a heading of 24px or more.
+- Keep body lines near 65 characters (`max-w-2xl` for ledes).
+- Minimum text size is 12px.
 
 ---
 
@@ -149,14 +191,13 @@ Rules:
 | Rule | Value |
 |---|---|
 | Container | `mx-auto w-full max-w-6xl px-5 sm:px-8` (`<Container>`) |
-| Section padding | `py-24 md:py-32` by default. `py-28 md:py-44` for hero and showcase sections (`<Section spacing="lg">`). `py-16 md:py-20` when compact (`spacing="sm"`). |
-| Section header to content | `mb-12 md:mb-16` |
+| Section padding | `py-16 md:py-32` default; `py-20 md:py-44` hero and showcase (`spacing="lg"`); `py-12 md:py-20` compact (`spacing="sm"`) |
+| Section header to content | `mt-12 md:mt-16` |
 | Grid gaps | `gap-5` (dense cards) to `gap-8` (feature columns) |
 | Hero grid | `lg:grid-cols-[1.1fr_0.9fr]`: copy left, graphic right |
 | Benefits grid | `lg:grid-cols-[1.2fr_0.8fr]` |
-| Feature grid | `sm:grid-cols-2 lg:grid-cols-3` |
-| Alignment | Left-aligned by default. Center only short CTA blocks or pricing headers. |
-| Inverted section | At least one per landing page: `<Section inverted>`, a solid deep slate section (no texture, no glows) |
+| Alignment | Left-aligned by default. Center only short CTA blocks. |
+| Inverted section | At least one per landing page: `<Section inverted>`, solid deep slate |
 
 ---
 
@@ -164,296 +205,328 @@ Rules:
 
 | Surface | Recipe |
 |---|---|
-| Page | `bg-background` (#FAFAFA) |
-| Card | `<Card>`: `rounded-2xl border bg-card shadow-md` |
-| Interactive card | `<Card variant="interactive">`: lifts `-translate-y-1` with `shadow-xl` and a faint primary wash on hover |
-| Featured card | `<Card featured>`: 2px gradient stroke and `shadow-accent-lg` |
-| Inverted section | `.inverted` gives a solid slate-900 background. No texture layer, no glows. |
-| Testimonial | `<TestimonialCard>`: card with a gradient top bar and a large gradient quote mark |
+| Page | `bg-background` |
+| Card | HeroUI `<Card>`: `bg-surface`, 24px radius, `shadow-surface`. Add padding with `className="p-6 md:p-8"` for content-heavy cards. |
+| Secondary card | `<Card variant="secondary">` (`bg-surface-secondary`) for grouped or supporting content |
+| Overlay | HeroUI Modal, Popover, Dropdown, Tooltip: `bg-overlay`, `shadow-overlay` |
+| Inverted section | `<Section inverted>`: solid slate-900. No texture, no glows. |
+| Code sample | Deep slate in both themes: put `inverted` on the block |
 
 ---
 
-## 6. Components (`@/components/ui/*`)
+## 6. Components: HeroUI v3
 
-All components set `data-slot`, accept `className` (merged with `cn`) and forward native props.
+### 6.1 Rules
 
-### Button: `@/components/ui/button`
-| Prop | Values | Default |
+1. **Import components from `@heroui/react`.** No local copies, no wrappers. If a project needs a variant, compose it from HeroUI parts plus utility classes in that project, or propose it as an AiYO block.
+2. **Compound parts:** `Card.Header`, `Modal.Dialog`, `Tabs.Tab`… Every part takes `className`; utilities win over HeroUI's styles because HeroUI's CSS sits in `@layer components`. Use `cn()` from `@heroui/react` to merge class names, and `tv()` for your own variants.
+3. **Events:** use `onPress` (React Aria), not `onClick`. Menus and lists use `onAction`. Selection uses `value` / `onChange` (Select, RadioGroup) or `isSelected` / `onChange` (Checkbox, Switch); `selectedKey` is deprecated on Select.
+4. **Collections need ids.** Every `Tabs.Tab` / `Tabs.Panel`, `ListBox.Item`, `Dropdown.Item` and `Table.Row` gets an `id`; every `ListBox.Item` and `Dropdown.Item` also gets a `textValue`. A `Table` needs one `Table.Column isRowHeader` and the same number of cells in every row.
+5. **No provider is needed.** Mount `<Toast.Provider />` once if the app uses toasts. Use `RouterProvider` from `@heroui/react` to route `href`s through your router.
+6. **Icons:** `@gravity-ui/icons` (the set HeroUI's docs use). Give icon-only buttons an `aria-label` and decorative icons `aria-hidden`.
+
+### 6.2 Which component for which job
+
+| Need | HeroUI | AiYO notes |
 |---|---|---|
-| `variant` | `primary` (gradient) · `secondary` (outline) · `ghost` · `inverted` (foreground fill) · `destructive` · `link` | `primary` |
-| `size` | `sm` h-9 (dense desktop only) · `md` h-11 · `lg` h-12 · `xl` h-14 · `icon` 44px · `icon-sm` 36px | `md` |
-| `asChild` | Renders the child (for example `<a>`) through Radix Slot | `false` |
+| Action | `Button` | Variants: `primary` (accent fill, the main action), `secondary` (soft fill, accent text), `tertiary` (neutral fill), `outline`, `ghost`, `danger`, `danger-soft`. Sizes `sm` / `md` (default) / `lg`. `isIconOnly`, `isPending`, `fullWidth`. |
+| Link that looks like a button | `Link` + `buttonVariants()` | `<Link href="/x" className={buttonVariants({ variant: "outline" })}>`. The `render` prop cannot turn a Button into `<a>`. |
+| Text link | `Link` | Accent colour, underline on hover |
+| Inline status / metadata | `Chip` | `variant="soft"` with `color="success" \| "warning" \| "danger" \| "accent"`. Always with a word. |
+| Counter or dot on another element | `Badge` | Not an inline label |
+| Text input | `TextField` + `Label` + `Input` + `Description` + `FieldError` | `TextArea` for multi-line, `InputGroup` for prefix/suffix, `SearchField` for search, `NumberField` for numbers |
+| Choice from a list | `Select` + `ListBox` | `ComboBox` / `Autocomplete` when the list is long |
+| Booleans and options | `Checkbox`, `RadioGroup` + `Radio`, `Switch` | The `.Content` part is required: it holds the native input |
+| Container | `Card` | `variant="secondary"` for grouped content |
+| Dialog | `Modal` | Backdrop `variant="opaque"` (the default). Never `blur`. |
+| Destructive confirmation | `AlertDialog` | `AlertDialog.Icon status="danger"` + a `danger` Button |
+| Side panel | `Drawer` | Filters, details |
+| Sections in one page | `Tabs` | `variant="secondary"` for page navigation and settings side tabs |
+| FAQ / disclosure | `Accordion`, `Disclosure` | |
+| Menu | `Dropdown` | Pass a `Button` as the direct child; `Dropdown.Item variant="danger"` with a `<Label>` inside |
+| Page message | `Alert` | `status="accent" \| "success" \| "warning" \| "danger"`; add `role="status"` when it appears after an action |
+| Confirmation after an action | `toast()` | `toast.success(...)`, `toast.danger(...)` |
+| Progress | `ProgressBar`, `Meter`, `Spinner`, `Skeleton` | |
+| Data | `Table` | Plus `DataPagination` (AiYO) under it |
+| Name an icon button | `Tooltip` | The button still needs `aria-label` |
+| Keyboard shortcut | `Kbd` | |
+| Person | `Avatar`, `AvatarGroup` | Initials (`Avatar.Fallback`) until an approved photo exists |
+| No results | `EmptyState` | With a cause and one next action |
 
-Primary hover adds `-translate-y-0.5`, `shadow-accent-lg` and `brightness-110`. Active adds `scale-[0.98]`. An icon with `data-arrow` slides right on hover. Use the arrow only on the ONE primary CTA per screen; every other button goes without it.
+### 6.3 Recipes
+
+**Button**
 ```tsx
-import { ArrowRight } from "lucide-react"
-<Button size="lg">Start free trial <ArrowRight data-arrow /></Button>
-<Button variant="secondary" size="lg">Book a demo</Button>
-<Button asChild variant="link"><a href="/docs">Read the docs</a></Button>
+import { Button, Link, Spinner, buttonVariants } from "@heroui/react"
+import { ArrowRight, Plus } from "@gravity-ui/icons"
+
+<Button onPress={create}>Create invoice <ArrowRight data-arrow /></Button>  {/* the one primary CTA on the screen */}
+<Button variant="secondary">Export CSV</Button>
+<Button variant="outline">Preview</Button>
+<Button variant="ghost">Cancel</Button>
+<Button variant="danger">Delete</Button>
+<Button isIconOnly variant="ghost" aria-label="Add"><Plus /></Button>
+<Button isPending={saving}>
+  {({ isPending }) => (isPending ? <><Spinner color="current" size="sm" /> Saving</> : "Save")}
+</Button>
+<Link href="/docs" className={buttonVariants({ variant: "outline" })}>Read the API docs</Link>
 ```
 
-### Badge: `@/components/ui/badge`
-`variant`: `neutral` · `primary` (gradient) · `soft` · `outline` · `success` · `warning` · `destructive`. `size`: `sm` · `md`. Also supports `asChild`.
+**Text field and form**
 ```tsx
-<Badge variant="soft">New</Badge>  <Badge variant="success">Active</Badge>
-```
+import { Button, Description, FieldError, Form, Input, Label, TextField } from "@heroui/react"
 
-### SectionLabel: `@/components/ui/section-label`
-A plain small label: JetBrains Mono, 12px (`text-xs`), uppercase, `tracking-[0.15em]`, `text-primary`. No border, no background, no dot. Opens every major section. There is no `pulse` prop: a dot is allowed only where it marks a real live state, and then it belongs in status UI, not in a section label.
-```tsx
-<SectionLabel>Pricing</SectionLabel>
+<Form validationBehavior="aria" validationErrors={errors} onSubmit={save}>
+  <TextField name="email" type="email" isRequired fullWidth>
+    <Label>Email</Label>
+    <Input placeholder="email@example.com" />
+    <Description>We only use it for receipts.</Description>
+    <FieldError />
+  </TextField>
+  <Button type="submit">Save</Button>
+</Form>
 ```
+- `FieldError` renders only when the field is invalid. Server or cross-field errors go in `Form validationErrors={{ [name]: "message" }}`; they show immediately and clear when the value changes.
+- With `isInvalid` on a field, put the message inside: `<FieldError>Enter the merchant ID.</FieldError>`.
+- The Label must be a direct child of the field for the required asterisk to appear.
 
-### GradientText: `@/components/ui/gradient-text`
-Paints text with the gradient. Set `underline` to add the soft gradient bar, which is reserved for the hero.
+**Select**
 ```tsx
-<h1 className="font-display …">Ship faster with <GradientText underline>AiYO</GradientText></h1>
-```
+import { Label, ListBox, Select } from "@heroui/react"
 
-### IconTile: `@/components/ui/icon-tile`
-`variant`: `gradient` (default) · `soft` · `muted`. `size`: `sm` 36px · `md` 48px · `lg` 56px. It scales up 110% on `group-hover`.
-```tsx
-<IconTile><Zap /></IconTile>
-```
-
-### Card: `@/components/ui/card`
-Exports `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent` and `CardFooter`. `variant`: `default` · `elevated` · `flat` · `interactive`. Set `featured` for the gradient stroke.
-```tsx
-<Card variant="interactive">
-  <CardHeader><IconTile><Zap /></IconTile><CardTitle>Fast</CardTitle>
-    <CardDescription>Under 50ms p95.</CardDescription></CardHeader>
-</Card>
-```
-
-### Input / Textarea: `@/components/ui/input`, `@/components/ui/textarea`
-Input `size`: `sm` h-9 · `md` h-12 (default) · `lg` h-14. Both share `fieldControl`: `rounded-xl`, a primary border on focus plus `focus-ring`, and a destructive style under `aria-invalid`. `inputVariants` and `fieldControl` are also exported.
-```tsx
-<Input type="email" placeholder="you@company.com" />
-<Textarea rows={4} />
-```
-
-### Label / Field: `@/components/ui/label`, `@/components/ui/field`
-`Field` stacks a label, the control and a hint or error, and wires up `aria-describedby` and `aria-invalid`. Props: `label`, `hint`, `error`, `htmlFor`, `required`.
-```tsx
-<Field label="Email" htmlFor="email" hint="We never share it." required>
-  <Input id="email" type="email" />
-</Field>
-```
-
-### Select: `@/components/ui/select`
-Exports `Select`, `SelectTrigger` (`size` `sm|md|lg`), `SelectValue`, `SelectContent`, `SelectGroup`, `SelectLabel` and `SelectItem`.
-```tsx
-<Select defaultValue="pro">
-  <SelectTrigger><SelectValue placeholder="Plan" /></SelectTrigger>
-  <SelectContent><SelectItem value="free">Free</SelectItem><SelectItem value="pro">Pro</SelectItem></SelectContent>
+<Select value={bank} onChange={setBank} placeholder="Choose a bank">
+  <Label>Settlement bank</Label>
+  <Select.Trigger><Select.Value /><Select.Indicator /></Select.Trigger>
+  <Select.Popover>
+    <ListBox>
+      <ListBox.Item id="bca" textValue="BCA">BCA<ListBox.ItemIndicator /></ListBox.Item>
+    </ListBox>
+  </Select.Popover>
 </Select>
 ```
 
-### Checkbox / RadioGroup / Switch
-Import paths: `@/components/ui/checkbox`, `@/components/ui/radio-group` (`RadioGroup`, `RadioGroupItem`) and `@/components/ui/switch`. When checked they fill with the gradient. Pair each with a `Label` and give the row `min-h-11` for touch.
+**Checkbox, Radio, Switch**
 ```tsx
-<div className="flex items-center gap-3"><Checkbox id="t" /><Label htmlFor="t">Accept terms</Label></div>
-<RadioGroup defaultValue="m"><div className="flex items-center gap-3"><RadioGroupItem value="m" id="m" /><Label htmlFor="m">Monthly</Label></div></RadioGroup>
-<Switch defaultChecked aria-label="Notifications" />
+<Checkbox name="receipts" defaultSelected>
+  <Checkbox.Content>
+    <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+    Email receipts
+  </Checkbox.Content>
+</Checkbox>
+
+<RadioGroup name="plan" value={plan} onChange={setPlan}>
+  <Label>Plan</Label>
+  <Radio value="pro"><Radio.Content><Radio.Control><Radio.Indicator /></Radio.Control>Pro</Radio.Content></Radio>
+</RadioGroup>
+
+<Switch defaultSelected>
+  <Switch.Content><Switch.Control><Switch.Thumb /></Switch.Control>Auto settlement</Switch.Content>
+</Switch>
 ```
 
-### Tabs: `@/components/ui/tabs`
-Exports `Tabs`, `TabsList` (muted pill track), `TabsTrigger` (the active one gets a card fill with `shadow-sm`) and `TabsContent`.
+**Modal (trigger inside) and controlled Modal (opened from code)**
 ```tsx
-<Tabs defaultValue="a"><TabsList><TabsTrigger value="a">Overview</TabsTrigger><TabsTrigger value="b">API</TabsTrigger></TabsList>
-<TabsContent value="a">…</TabsContent></Tabs>
+<Modal>
+  <Button>Confirm payout</Button>
+  <Modal.Backdrop>
+    <Modal.Container>
+      <Modal.Dialog>
+        <Modal.CloseTrigger />
+        <Modal.Header><Modal.Heading>Confirm payout</Modal.Heading></Modal.Header>
+        <Modal.Body>…</Modal.Body>
+        <Modal.Footer>
+          <Button slot="close" variant="secondary">Cancel</Button>
+          <Button slot="close" onPress={confirm}>Confirm payout</Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    </Modal.Container>
+  </Modal.Backdrop>
+</Modal>
+
+// Opened from a row action: no <Modal> root, the Backdrop owns the state.
+const editor = useOverlayState()
+<Modal.Backdrop isOpen={editor.isOpen} onOpenChange={editor.setOpen}>
+  <Modal.Container>
+    <Modal.Dialog>{({ close }) => <>…<Button onPress={() => { save(); close() }}>Save</Button></>}</Modal.Dialog>
+  </Modal.Container>
+</Modal.Backdrop>
 ```
-**Vertical tabs** (`orientation="vertical"`): on md and up, `TabsList` becomes a sticky left nav column (~15rem) with left-aligned triggers. The active trigger is a white card with a gradient bar on its left edge. Below md it collapses into a horizontally scrollable tab row on top. Use it for settings and profile pages with 3+ sub-sections, one `Card` per tab (see §13).
+
+**Tabs**
 ```tsx
-<Tabs defaultValue="password" orientation="vertical">
-  <TabsList>
-    <TabsTrigger value="profile"><User /> Profile</TabsTrigger>
-    <TabsTrigger value="password"><Lock /> Password</TabsTrigger>
-    <TabsTrigger value="address"><MapPin /> Address</TabsTrigger>
-  </TabsList>
-  <TabsContent value="profile"><Card>…</Card></TabsContent>
-  …
+<Tabs defaultSelectedKey="overview">
+  <Tabs.ListContainer>
+    <Tabs.List aria-label="Invoice">
+      <Tabs.Tab id="overview">Overview<Tabs.Indicator /></Tabs.Tab>
+      <Tabs.Tab id="activity">Activity<Tabs.Indicator /></Tabs.Tab>
+    </Tabs.List>
+  </Tabs.ListContainer>
+  <Tabs.Panel id="overview">…</Tabs.Panel>
+  <Tabs.Panel id="activity">…</Tabs.Panel>
 </Tabs>
 ```
+`Tabs.Indicator` goes inside every tab. `variant="primary"` (default) is a segmented control; `variant="secondary"` is an underline, and a left rail when `orientation="vertical"`.
 
-### Accordion: `@/components/ui/accordion`
-Exports `Accordion`, `AccordionItem`, `AccordionTrigger` (a plus icon that rotates 45° and fills with the gradient when open) and `AccordionContent`. Use it for FAQs.
+**Accordion**
 ```tsx
-<Accordion type="single" collapsible><AccordionItem value="1">
-  <AccordionTrigger>Is there a free plan?</AccordionTrigger><AccordionContent>Yes.</AccordionContent>
-</AccordionItem></Accordion>
+<Accordion defaultExpandedKeys={["billing"]}>
+  <Accordion.Item id="billing">
+    <Accordion.Heading><Accordion.Trigger>How does billing work?<Accordion.Indicator /></Accordion.Trigger></Accordion.Heading>
+    <Accordion.Panel><Accordion.Body>…</Accordion.Body></Accordion.Panel>
+  </Accordion.Item>
+</Accordion>
 ```
 
-### Dialog: `@/components/ui/dialog`
-Exports `Dialog`, `DialogTrigger`, `DialogContent` (`showClose` defaults to true), `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` and `DialogClose`. It uses a solid `foreground/40` overlay (no backdrop blur), `rounded-2xl` and the `pop-in` animation.
+**Dropdown**
 ```tsx
-<Dialog><DialogTrigger asChild><Button>Open</Button></DialogTrigger>
-  <DialogContent><DialogHeader><DialogTitle>Invite</DialogTitle><DialogDescription>…</DialogDescription></DialogHeader>
-  <DialogFooter><DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose><Button>Send</Button></DialogFooter></DialogContent>
-</Dialog>
+<Dropdown>
+  <Button isIconOnly variant="ghost" aria-label={`Actions for ${row.name}`}><Ellipsis /></Button>
+  <Dropdown.Popover placement="bottom end">
+    <Dropdown.Menu onAction={(key) => handle(key)}>
+      <Dropdown.Item id="edit" textValue="Edit"><Pencil /><Label>Edit</Label></Dropdown.Item>
+      <Dropdown.Item id="delete" textValue="Delete" variant="danger"><TrashBin /><Label>Delete</Label></Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown.Popover>
+</Dropdown>
+```
+`variant="danger"` colours only the `<Label>`, so always wrap item text in `Label`.
+
+**Alert, Chip, Toast**
+```tsx
+<Alert status="success" role="status">
+  <Alert.Indicator />
+  <Alert.Content><Alert.Title>Payment received</Alert.Title><Alert.Description>Invoice INV-0042 is paid.</Alert.Description></Alert.Content>
+</Alert>
+
+<Chip color="warning" variant="soft">Pending</Chip>
+
+// once, at the app root:  <Toast.Provider placement="bottom end" />
+toast.success("Invoice sent", { description: "The customer gets an email with the PDF." })
 ```
 
-### Tooltip: `@/components/ui/tooltip`
-Exports `TooltipProvider` (150ms delay; wrap the app in it once), `Tooltip`, `TooltipTrigger` and `TooltipContent`. The tooltip is always slate-900.
+**Table** (see §13.2 for the full list page)
 ```tsx
-<Tooltip><TooltipTrigger asChild><Button size="icon" variant="ghost" aria-label="Copy"><Copy /></Button></TooltipTrigger>
-<TooltipContent>Copy</TooltipContent></Tooltip>
+<Table>
+  <Table.ScrollContainer>
+    <Table.Content aria-label="Invoices">
+      <Table.Header>
+        <Table.Column isRowHeader>Invoice</Table.Column>
+        <Table.Column>Status</Table.Column>
+      </Table.Header>
+      <Table.Body renderEmptyState={() => <EmptyState>…</EmptyState>}>
+        {rows.map((r) => (
+          <Table.Row key={r.id} id={r.id}>
+            <Table.Cell>{r.number}</Table.Cell>
+            <Table.Cell><Chip color="success" variant="soft" size="sm">Paid</Chip></Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Content>
+  </Table.ScrollContainer>
+</Table>
 ```
 
-### DropdownMenu: `@/components/ui/dropdown-menu`
-Exports `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` (`variant` `default|destructive`), `DropdownMenuLabel` (mono), `DropdownMenuSeparator`, `DropdownMenuShortcut` and `DropdownMenuGroup`.
+**Progress, Spinner, Skeleton, Tooltip, Kbd**
 ```tsx
-<DropdownMenu><DropdownMenuTrigger asChild><Button variant="secondary">Actions</Button></DropdownMenuTrigger>
-<DropdownMenuContent><DropdownMenuItem><Pencil />Edit<DropdownMenuShortcut>⌘E</DropdownMenuShortcut></DropdownMenuItem>
-<DropdownMenuSeparator /><DropdownMenuItem variant="destructive"><Trash2 />Delete</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
+<ProgressBar value={64}><Label>Onboarding</Label><ProgressBar.Output /><ProgressBar.Track><ProgressBar.Fill /></ProgressBar.Track></ProgressBar>
+<Spinner size="sm" aria-label="Syncing transactions" />
+<Skeleton aria-hidden className="h-4 w-48 rounded-lg" />
+<Tooltip>
+  <Button isIconOnly variant="secondary" aria-label="Inbox"><Envelope /></Button>
+  <Tooltip.Content showArrow><Tooltip.Arrow />Inbox, 3 unread</Tooltip.Content>
+</Tooltip>
+<Kbd><Kbd.Abbr keyValue="command" /><Kbd.Content>K</Kbd.Content></Kbd>
 ```
 
-### Alert: `@/components/ui/alert`
-Exports `Alert`, `AlertTitle` and `AlertDescription`. `variant`: `info` (gradient bar) · `success` · `warning` · `destructive`. It is a card with a 3px colored bar on the left, and an optional leading icon.
-```tsx
-<Alert variant="success"><CircleCheck /><AlertTitle>Saved</AlertTitle><AlertDescription>Changes are live.</AlertDescription></Alert>
-```
+### 6.4 HeroUI behaviours to know
 
-### Avatar: `@/components/ui/avatar`
-Exports `Avatar` (size-10 by default), `AvatarImage`, `AvatarFallback` (initials on the gradient) and `AvatarGroup` (overlapping `-space-x-3`).
-```tsx
-<AvatarGroup><Avatar><AvatarImage src={url} alt="Ana" /><AvatarFallback>AN</AvatarFallback></Avatar></AvatarGroup>
-```
-
-### Progress: `@/components/ui/progress`
-A gradient bar on a muted track, h-2. Takes `value` from 0 to 100.
-```tsx
-<Progress value={64} aria-label="Upload progress" />
-```
-
-### Table: `@/components/ui/table`
-Exports `Table` (wrapped in a `rounded-2xl` card), `TableHeader`, `TableBody`, `TableRow` (primary tint on hover, `data-state=selected`), `TableHead` (mono uppercase), `TableCell` and `TableCaption`.
-```tsx
-<Table><TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
-<TableBody><TableRow><TableCell>Acme</TableCell><TableCell><Badge variant="success">Active</Badge></TableCell></TableRow></TableBody></Table>
-```
-
-### Pagination: `@/components/ui/pagination`
-Goes under every data table (see §13). It shows "Showing 11–20 of 248", a rows-per-page select, prev/next buttons (labelled for screen readers) and page numbers with ellipsis.
-| Prop | Type | Notes |
-|---|---|---|
-| `page` | `number` | 1-based current page |
-| `pageSize` | `number` | Rows per page. Default to 10. |
-| `total` | `number` | Total row count (from the API on server-side lists) |
-| `onPageChange` | `(page: number) => void` | Called with the new page |
-| `onPageSizeChange` | `(size: number) => void` | Changing the size also calls `onPageChange(1)` |
-| `pageSizeOptions` | `number[]` | Default `[10, 20, 50, 100]` |
-```tsx
-const [page, setPage] = useState(1)
-const [pageSize, setPageSize] = useState(10)
-<Pagination page={page} pageSize={pageSize} total={total}
-  onPageChange={setPage} onPageSizeChange={setPageSize} pageSizeOptions={[10, 20, 50, 100]} />
-```
-
-### Skeleton / Separator / Kbd / Spinner
-| Component | Import | Notes |
-|---|---|---|
-| `Skeleton` | `@/components/ui/skeleton` | `animate-pulse rounded-lg bg-muted`. You set the size. |
-| `Separator` | `@/components/ui/separator` | `orientation` `horizontal|vertical`, `decorative` |
-| `Kbd` | `@/components/ui/kbd` | Mono key cap with a 2px bottom border |
-| `Spinner` | `@/components/ui/spinner` | Lucide `LoaderCircle` with `role="status"`. Size it with `className="size-5"`. |
-```tsx
-<Skeleton className="h-4 w-40" /> <Separator /> <Kbd>⌘</Kbd><Kbd>K</Kbd> <Button disabled><Spinner />Saving</Button>
-```
-
-### Stat: `@/components/ui/stat`
-Props: `label`, `value`, `trend` (for example `"+12.4%"`), `trendDirection` `up|down`, `hint`. It shows a mono label, a Calistoga numeral and a trend pill (gradient when up, destructive when down).
-```tsx
-<Stat label="Monthly revenue" value="$48.2k" trend="+12.4%" hint="vs. last month" />
-```
+- **Sizes:** HeroUI controls are 32 to 40px on desktop and a step larger below 768px. `aiyo.css` brings every touch target to 44px on phones and touch screens (§2.8); do not hand-size controls for touch.
+- **Inputs inside cards** keep the primary (white) variant: the AiYO field border separates them from the card.
+- **Focus rings** are drawn by HeroUI with `--focus` (accent) on keyboard focus. Text inputs show the ring on any focus. Never remove it.
+- **Tooltip delay** is HeroUI's 1500ms (from `--tooltip-delay` on `:root`, read once).
+- **Skeleton** animates with a shimmer; the global reduced-motion rule in `aiyo.css` stops it.
+- **Table rows** are cached per item when you pass `items`; list handlers used inside rows in `dependencies`, or map children yourself as the examples do.
+- **SearchField.ClearButton** names itself "Close"; pass `aria-label="Clear search"`.
 
 ---
 
-## 7. Blocks and patterns (`@/components/blocks/*`)
+## 7. AiYO components (`@/components/aiyo/*`)
 
-The blocks are page-level compositions built from the UI components. `Container`, `Section` and `SectionHeader` all live in `section.tsx`.
+Page-level pieces HeroUI does not have. Copy the files you use; each depends only on `@heroui/react` and `@gravity-ui/icons`.
 
-| Block | Import | Props / purpose |
+| Component | File | Props / purpose |
 |---|---|---|
-| `Container` | `@/components/blocks/section` | `mx-auto w-full max-w-6xl px-5 sm:px-8` content column |
-| `Section` | `@/components/blocks/section` | `spacing`: `default` (`py-24 md:py-32`) · `lg` (`py-28 md:py-44`, for hero and showcase sections) · `sm` (`py-16 md:py-20`). Set `inverted` for a solid deep slate section. Base classes: `relative isolate overflow-hidden`. |
-| `SectionHeader` | `@/components/blocks/section` | `label`, `title` (Calistoga H2), `description` (muted lede), `align` (`left` by default, or `center`) |
-| `HeroGraphic` | `@/components/blocks/hero-graphic` | Static hero visual: a still composition of sample product cards. No loops, no rings, no dot grid. Its numbers are labelled example data for the showcase (see §14.3). Use `className="hidden lg:block"`. |
-| `Steps` | `@/components/blocks/steps` | `steps: { title, description }[]`. A "how it works" list: stacked on mobile, a horizontal row with gradient arrow connectors on md and up. |
-| `PricingCard` | `@/components/blocks/pricing-card` | `name`, `price`, `period?`, `description`, `features: string[]`, `cta`. Set `highlighted` for the gradient stroke, a lift and a primary CTA. |
-| `TestimonialCard` | `@/components/blocks/testimonial-card` | `quote`, `name`, `role`. Has a gradient top bar, a large gradient quote mark and an initials avatar. |
-| `PageHeader` | `@/components/blocks/page-header` | App page title. `title`, `description?`, `back?: { href: string; label: string }` (renders a "← label" link above the title), `actions?: ReactNode` (right-aligned on desktop, full width below). Uses **Inter semibold** `text-2xl md:text-3xl`, not Calistoga. |
-| `FormSection` | `@/components/blocks/page-header` | `title`, `description?`, `children`. On lg it is two columns: title and description on the left (1/3), the fields in a `Card` on the right (2/3). Stacked on mobile. |
-| `FormActions` | `@/components/blocks/page-header` | Sticky bottom bar (`sticky bottom-0`, solid background, top border) with right-aligned children: Cancel (`secondary`), then the primary Save. |
+| `Container` | `section.tsx` | `max-w-6xl` content column with responsive gutters |
+| `Section` | `section.tsx` | `spacing`: `default` · `lg` · `sm`. `inverted` for a solid deep-slate section. |
+| `SectionHeader` | `section.tsx` | `label`, `title` (H2, `heading-section`), `description` (muted lede), `align` (`left` default, or `center`) |
+| `SectionLabel` | `section-label.tsx` | Plain `label-caps` in `text-accent`. No pill, no border, no dot, no `pulse` prop. |
+| `GradientText` | `gradient-text.tsx` | One headline word in the gradient. `underline` adds a soft accent bar, for the hero only. |
+| `IconTile` | `icon-tile.tsx` | `variant`: `soft` (default) · `gradient` (the one item that leads a group) · `default`. `size`: `sm` 36px · `md` 48px · `lg` 56px. Decorative (`aria-hidden`). |
+| `Stat` | `stat.tsx` | `label`, `value`, `trend`, `trendDirection` (`up`/`down`), `trendTone` (`positive`/`negative`), `hint`. Trend only with a real, named comparison period. |
+| `PageHeader` | `page-header.tsx` | App page title: `title`, `description?`, `back?: { href, label }`, `actions?` |
+| `FormSection` | `page-header.tsx` | `title`, `description?`, children. Title left (1/3), fields in a Card right (2/3) on lg. |
+| `FormActions` | `page-header.tsx` | Sticky bottom bar on a full-page form: status text, Cancel (`secondary`), Save (primary) |
+| `DataPagination` | `data-pagination.tsx` | `page` (1-based), `pageSize`, `total`, `onPageChange`, `onPageSizeChange?`, `pageSizeOptions?` (default `[10, 20, 50, 100]`). Built on HeroUI `Pagination` + `Select`. |
+| `Steps` | `steps.tsx` | `steps: { title, description }[]`. Mono numbers on hairlines. As many steps as the real process has. |
+| `PricingCard` | `pricing-card.tsx` | `name`, `price`, `period?`, `description`, `features`, `cta`, `highlighted?`, `highlightLabel?` (a reason, never "Most popular"), `selected?`, `onSelect?` |
+| `TestimonialCard` | `testimonial-card.tsx` | `quote`, `name`, `role`. Real customers only. |
+| `HeroGraphic` | `hero-graphic.tsx` | Static, decorative hero composition with labelled sample numbers. `className="hidden lg:block"`. |
+| `ThemeToggle` | `theme-toggle.tsx` | Light/dark icon button on HeroUI's `useTheme`. Render it once per page. |
 
+Motion helpers live in `@/lib/motion` (§8).
+
+### 7.1 Section header pattern (every major marketing section)
 ```tsx
-<Steps steps={[{ title: "Connect", description: "Link your data." }, { title: "Automate", description: "Set rules once." }]} />
-<PricingCard name="Pro" price="$29" period="/mo" description="For growing teams" features={["Unlimited projects"]} cta="Start trial" highlighted />
-<TestimonialCard quote="It just works." name="Ana Putri" role="CTO, Acme" />
-```
+import { Container, Section, SectionHeader } from "@/components/aiyo/section"
+import { GradientText } from "@/components/aiyo/gradient-text"
+import { Reveal, RevealGroup, RevealItem } from "@/lib/motion"
 
-### App page blocks (PageHeader, FormSection, FormActions)
-```tsx
-import { PageHeader, FormSection, FormActions } from "@/components/blocks/page-header"
-
-<PageHeader title="Customers" description="Everyone who has bought from you."
-  actions={<Button><Plus /> Add customer</Button>} />
-
-<PageHeader title="New customer" back={{ href: "/customers", label: "Customers" }} />
-<FormSection title="Contact" description="How we reach this customer.">
-  <div className="grid gap-5 md:grid-cols-2">
-    <Field label="Name" htmlFor="name" required><Input id="name" /></Field>
-    <Field label="Email" htmlFor="email"><Input id="email" type="email" /></Field>
-  </div>
-</FormSection>
-<FormActions>
-  <Button variant="secondary">Cancel</Button>
-  <Button>Save customer</Button>
-</FormActions>
-```
-
-### Section header pattern (required for every major section)
-```tsx
 <Section id="features">
   <Container>
-    <SectionHeader
-      label="Features"
-      title={<>Everything you need to <GradientText>ship</GradientText></>}
-      description="One sentence on why this matters, in muted text."
-    />
-    <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {features.map(f => (
-        <RevealItem key={f.title}>
-          <Card variant="interactive"><CardHeader><IconTile>{f.icon}</IconTile>
-            <CardTitle>{f.title}</CardTitle><CardDescription>{f.body}</CardDescription></CardHeader></Card>
+    <Reveal>
+      <SectionHeader
+        label="Features"
+        title={<>Settlement in <GradientText>one tap</GradientText></>}
+        description="One sentence on why this matters."
+      />
+    </Reveal>
+    <RevealGroup className="mt-12 grid gap-5 md:mt-16 md:grid-cols-3">
+      {features.map((f, i) => (
+        <RevealItem key={f.title} className={i === 0 ? "md:col-span-3" : undefined}>
+          <Card className="h-full gap-5 p-6 md:p-8">
+            <IconTile variant={i === 0 ? "gradient" : "soft"}><f.icon /></IconTile>
+            <Card.Header className="gap-2">
+              <Card.Title className="text-lg font-semibold">{f.title}</Card.Title>
+              <Card.Description>{f.body}</Card.Description>
+            </Card.Header>
+          </Card>
         </RevealItem>
       ))}
     </RevealGroup>
   </Container>
 </Section>
 ```
+Vary the treatment by weight: the feature that leads gets the wide card and the gradient tile; the rest stay soft.
 
-### Hero pattern
+### 7.2 Hero pattern
 ```tsx
-<Section spacing="lg">
-  <Container className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-    <Reveal className="flex flex-col items-start gap-8">
-      <SectionLabel>Workflow automation</SectionLabel>
-      <h1 className="font-display text-[2.75rem] leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-[5.25rem]">
-        Work that runs <GradientText underline>itself</GradientText>
-      </h1>
-      <p className="max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">Lede…</p>
-      <div className="flex flex-wrap gap-3">
-        <Button size="lg">Start free <ArrowRight data-arrow /></Button> {/* the screen's one arrow */}
-        <Button size="lg" variant="secondary">Book a demo</Button>
-      </div>
-    </Reveal>
+<section className="pt-28 pb-16 md:pt-44 md:pb-32">
+  <Container className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
+    <RevealGroup className="flex flex-col items-start gap-8">
+      <RevealItem><SectionLabel>{/* information the H1 does not already give */}</SectionLabel></RevealItem>
+      <RevealItem><h1 className="heading-hero">Work that runs <GradientText underline>itself</GradientText></h1></RevealItem>
+      <RevealItem><p className="max-w-xl text-lg leading-relaxed text-muted md:text-xl">Lede…</p></RevealItem>
+      <RevealItem className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <Link href="/signup" className={buttonVariants({ size: "lg" })}>Start a free trial <ArrowRight data-arrow /></Link>
+        <Link href="#demo" className={buttonVariants({ size: "lg", variant: "outline" })}>Watch the demo</Link>
+      </RevealItem>
+    </RevealGroup>
     <HeroGraphic className="hidden lg:block" />
   </Container>
-</Section>
+</section>
 ```
 
-### Inverted section
+### 7.3 Inverted section
 ```tsx
 <Section inverted>
   <Container>
@@ -462,67 +535,50 @@ import { PageHeader, FormSection, FormActions } from "@/components/blocks/page-h
   </Container>
 </Section>
 ```
-This is the manual equivalent of `<Section inverted>`:
-```tsx
-<section className="inverted relative isolate overflow-hidden py-24 md:py-32">
-  <Container>…</Container>
-</section>
-```
 
 ---
 
-## 8. Motion (`@/lib/motion`)
+## 8. Motion
 
-| Export | Value |
-|---|---|
-| `easeOut` | `[0.16, 1, 0.3, 1]` (also the CSS `ease-out-expo`) |
-| `fadeInUp` | `y: 28 → 0`, opacity `0 → 1`, 0.7s |
-| `fadeIn` | Opacity only, 0.7s |
-| `stagger` | `staggerChildren: 0.1`, `delayChildren: 0.1` |
-| `viewport` | `{ once: true, amount: 0.15, margin: "-60px" }` |
-| `<Reveal>` | One element fades up when it enters the viewport. Accepts `variants`. |
-| `<RevealGroup>` + `<RevealItem>` | Staggered children |
-
-All three render a plain `<div>` when the user prefers reduced motion.
-
-| Kind | Duration | Implementation |
+| Kind | Source | Values |
 |---|---|---|
-| Entrance | 0.7s, 28px, stagger 0.1s, once | `Reveal`, `RevealGroup`, or `animate-fade-in-up` in CSS |
-| Hover / press | 200–300ms | `transition-all duration-200` (buttons), `duration-300` (cards) |
-| Overlays | 0.2s | `animate-pop-in`, `animate-fade-in` |
-| Accordion | 0.3s / 0.2s | `animate-accordion-down` / `-up` |
+| Scroll entrance (marketing pages) | `Reveal`, `RevealGroup` + `RevealItem` from `@/lib/motion` | 0.7s, 28px rise, `ease-aiyo`, stagger 0.1s, once |
+| Hover, press, focus | HeroUI | Button press `scale(0.97)`, 100 to 250ms colour transitions |
+| Overlays, accordion, tabs indicator | HeroUI | Built in |
+| Primary CTA arrow | `data-arrow` on the icon | Slides 4px right on hover, 200ms |
 
-That is the whole motion vocabulary (MOTION dial 2). There is no endless decorative motion: no floating cards, rotating rings, breathing orbs or pulsing dots. The tokens `animate-spin-slow`, `animate-float`, `animate-float-delayed`, `animate-pulse-dot` and `animate-breathe` no longer exist. The only loops left are loading indicators (`Spinner`, `Skeleton`), which mark a real state.
+`Reveal` keeps content visible by default. It hides an element only when it starts below the fold and JavaScript is running, then shows it once as it scrolls in. Reduced-motion users, print and screenshots always see everything. `RevealGroup` staggers its direct `RevealItem` children.
 
-Rules:
-- `aiyo.css` already shortens CSS animations to near zero under `prefers-reduced-motion`. For JS motion, use the helpers or `useReducedMotion()`.
-- Animate only `transform` and `opacity`. Never animate layout properties in loops.
-- Don't animate on every scroll. Entrances run once.
+That is the whole vocabulary (MOTION dial 2). No endless decorative motion: no floating cards, rotating rings, breathing orbs or pulsing dots. The only loops are loading indicators (Spinner, Skeleton, indeterminate ProgressBar), which mark a real state. No scroll entrances on app and data screens.
+
+`aiyo.css` shortens all animations and transitions to near zero under `prefers-reduced-motion`.
 
 ---
 
 ## 9. Responsive rules
 
-- Design mobile first. The breakpoints are Tailwind's (`sm` 640, `md` 768, `lg` 1024, `xl` 1280).
+- Mobile first, Tailwind breakpoints (`sm` 640, `md` 768, `lg` 1024, `xl` 1280).
 - Grids collapse to one column below `sm` or `md`. Asymmetric hero and benefit grids start at `lg`.
-- **Hide decorative graphics below `lg`** (`hidden lg:block`). This covers HeroGraphic and other illustrative panels.
-- Headline scale: the hero goes 2.75rem → 5.25rem and the H2 2.25rem → 3.25rem.
-- Every touch target is at least 44px. Use button `md` (h-11) or larger on touch. `sm` (h-9) is for dense desktop tooling only.
-- Inputs use `text-base` on mobile (which avoids iOS zoom) and `md:text-sm` on desktop.
-- Button rows wrap: `flex flex-wrap gap-3`. Stack full-width on mobile if needed (`w-full sm:w-auto`).
+- Hide decorative graphics below `lg` (`hidden lg:block`).
+- Every touch target is at least 44 × 44px; `aiyo.css` handles HeroUI controls (§2.8). Custom tappable elements get `min-h-11`.
+- Inputs use 16px text on mobile (HeroUI does this) to avoid iOS zoom.
+- Button rows wrap (`flex flex-wrap gap-3`) and stack full width on phones where needed (`w-full sm:w-auto`).
+- Settings side tabs become a scrollable tab row below 768px (§13.1).
 
 ---
 
 ## 10. Accessibility
 
-- Meet WCAG AA for text, checked per token pair in both palettes: white on the gradient 4.68:1 or more, primary on white 5.75:1, muted text 4.97:1 or more, status text 4.88:1 or more, and on slate primary 7.06:1. Inverted and dark sections use light primary with dark text. Muted-foreground `#5B6B80` passes on `#FAFAFA` and white for body sizes.
-- Every interactive element shows a focus outline (2px ring colour, 2px offset) from the global `:focus-visible` rule in `aiyo.css`. Never set `outline: none` on an interactive element without an equally visible replacement.
-- Touch targets must be at least 44 × 44px.
+- WCAG AA for text in both themes: every token pair is checked (§2.2, §2.3). Status text uses the `-soft-foreground` tokens. Gradient text only at 24px or larger.
+- Non-text contrast: field edges, checkbox and radio borders and the off switch track are 3:1 or more.
+- Every interactive element shows a visible focus indicator: HeroUI's ring on its components, and `aiyo.css`'s 2px `--focus` outline on everything else (`:focus-visible`). Never remove one without an equally visible replacement.
+- Touch targets 44 × 44px (§2.8).
 - Icon-only buttons need an `aria-label`. Decorative icons and graphics get `aria-hidden`.
-- Use `Field` for forms. It wires the label, `aria-describedby` and `aria-invalid` for you.
-- Never convey status by color alone. Pair it with an icon or text (Badge, Alert).
-- Respect `prefers-reduced-motion`. This is built in, so don't bypass it.
-- Use one `h1` per page and keep the heading order without skipping levels.
+- Fields go inside `TextField` (or Select, RadioGroup…), which wires the label, description, error and `aria-invalid`.
+- Never convey status by colour alone: Chip and Alert always carry a word.
+- Dialogs close with Escape and trap focus (HeroUI does both).
+- One `h1` per page; headings in order.
+- Respect `prefers-reduced-motion` (built in).
 
 ---
 
@@ -530,26 +586,24 @@ Rules:
 
 | Do | Don't |
 |---|---|
-| Use `primary` / `bg-gradient-primary` for brand | Use `bg-accent` for brand: `accent` is the hover surface |
-| Keep a single Electric Blue accent | Add a second accent color (purple, teal…) |
-| Use `text-foreground` (#0F172A) | Use pure black `#000` text |
-| Use Calistoga for H1/H2 (and stat numerals) | Use Calistoga for body, buttons, labels or UI |
-| Open each section with SectionLabel → H2 → lede | Drop headlines in without a label or lede |
+| Use HeroUI components from `@heroui/react` | Copy, wrap or fork them into the project |
+| Theme through `aiyo.css` variables | Override a component's colours or radius per page |
+| Use `accent` for the brand (`bg-accent`, `text-accent`) | Look for a `primary` token; it no longer exists |
+| Keep a single Electric Blue accent | Add a second accent colour |
+| Use `text-foreground`, `text-muted`, `bg-surface`, `border-separator` | Use raw hex values or pure black |
+| Use Geist for everything, `label-caps` for labels | Bring in a display serif or a third family |
+| Open each marketing section with SectionLabel → H2 → lede | Drop headlines in without a label or lede |
 | Use asymmetric grids and left-aligned copy | Center everything |
-| Add a solid deep-slate inverted section for contrast and rhythm | Add dot-grid textures or blurred glows to make a section look designed |
-| Use gradients on buttons, icons, accents and small fills | Put gradients on large body or page backgrounds |
-| Use `rounded-xl` controls and `rounded-2xl` cards | Mix arbitrary radii |
-| Use shadows as elevation markers: cards `md`, overlays `xl`, accent on the primary CTA | Shadow every element, or use colored shadows other than primary |
-| Use ease `[0.16,1,0.3,1]` with 200 to 300ms hovers | Use bouncy springs or long hover transitions |
-| Animate entrances (once) and hover/press feedback | Loop decorative motion: floating cards, rotating rings, pulsing dots |
-| Use a plain mono `SectionLabel` | Wrap labels in a pill with a pulsing dot |
+| Add one solid inverted section per landing page | Add dot-grid textures or blurred glows |
+| Keep the gradient to one headline word, the leading icon tile, one data highlight | Put gradients on buttons, cards or backgrounds |
+| Use HeroUI's three elevation levels | Add glows or coloured shadows |
+| Use `Modal` with the opaque backdrop | Use `variant="blur"`; backdrop blur is for the sticky navbar only |
 | Put the `data-arrow` icon on the one primary CTA per screen | Add arrows to every button |
-| Keep backdrop blur on the sticky navbar only | Blur dialog overlays, cards, sidebars or form bars |
-| Hide decorative graphics below `lg` | Squeeze hero illustrations onto phones |
-| Use the status colors only for status | Use `success` green as a decorative color |
-| Put 3+ settings sub-sections in vertical `Tabs`, one Card each | Stack many cards down one long settings page |
-| End every list with `Pagination` (even with one page) | Ship a table without pagination, or with an infinite unbounded list |
-| Use a Dialog for ≤6-field forms and a dedicated page for larger ones | Cram a multi-section or upload form into a modal |
+| Use `onPress` | Use `onClick` on HeroUI components |
+| Use Chip with a word for status | Use colour alone, or `success` green as decoration |
+| Put 3+ settings sub-sections in vertical secondary `Tabs`, one Card each | Stack many cards down one long settings page |
+| End every list with `DataPagination` | Ship a table without pagination |
+| Confirm deletes in an `AlertDialog` | Delete on one click |
 
 ---
 
@@ -558,54 +612,62 @@ Rules:
 ### 12.1 Landing page (section order)
 Build only the sections the product's content needs (antislop C-3). Every block that shows numbers, people or customers uses real data, or the section is left out.
 
-1. **Nav**: sticky, `bg-background/80 backdrop-blur border-b` (the only backdrop blur in the system), text wordmark left (no symbol until an approved logo file exists), ghost links to sections that exist, primary `md` CTA right.
-2. **Hero**: asymmetric `1.1fr/0.9fr`, a plain SectionLabel that adds information the H1 does not, Calistoga H1 with a gradient last word and underline, lede, a primary `lg` button (the screen's one `data-arrow` CTA) and a secondary `lg` button, `HeroGraphic` (lg+).
-3. **Logos / social proof**: only real, verifiable customers. If there are none, leave it out.
-4. **Features**: SectionHeader plus a grid of `Card variant="interactive"` with `IconTile`s. Vary the treatment when one feature carries more weight.
-5. **Benefits / deep dive**: asymmetric `1.2fr/0.8fr`, copy plus a real screenshot or Stat cluster.
-6. **How it works**: `Steps` on a solid **inverted** section, with as many steps as the real process has.
-7. **Stats / testimonials**: a `Stat` row, then `TestimonialCard`s, real data only.
-8. **Pricing**: one `PricingCard` per real tier. Highlight a tier only with a written reason.
-9. **FAQ**: `Accordion` with questions real users ask, in a narrow column with the SectionHeader on the left on lg.
-10. **Final CTA**: an inverted or featured block with a short H2 and one primary `xl` button.
-11. **Footer**: muted text, mono column labels, border-top. Group links by what the product actually has.
+1. **Nav:** sticky, `bg-background/80 backdrop-blur-xl` once scrolled (the only backdrop blur), text wordmark left (no symbol until an approved logo file exists), links to sections that exist, `ThemeToggle`, a primary `sm` CTA.
+2. **Hero:** §7.2. A label only if it adds information the H1 does not.
+3. **Logos / social proof:** only real, verifiable customers; otherwise leave it out.
+4. **Features:** `SectionHeader` plus cards weighted by importance (§7.1).
+5. **Benefits / deep dive:** `1.2fr / 0.8fr`, copy plus a real screenshot or a `Stat` cluster.
+6. **How it works:** `Steps` on an inverted section, as many steps as the real process has.
+7. **Stats / testimonials:** real data only.
+8. **Pricing:** one `PricingCard` per real tier. Highlight a tier only with a written reason in `highlightLabel`.
+9. **FAQ:** `Accordion` with questions real users ask.
+10. **Final CTA:** an inverted block with a short H2 and one primary `lg` button.
+11. **Footer:** muted text, grouped by what the product actually links to.
 
-### 12.2 Admin / dashboard page (same tokens, denser)
-- **Shell:** `bg-background`, a sidebar (`w-64 border-r bg-card`, ghost nav items `h-10 rounded-lg`, active item `bg-muted text-foreground` with a 2px primary indicator) and a top bar (`h-16 border-b`, search `Input size="sm"` with `Kbd`, Avatar menu).
-- **Content:** `max-w-7xl` (or fluid) with `p-6 lg:p-8` and `gap-6` grids.
-- **Page header:** always `<PageHeader title description actions>`: H1 in **Inter** semibold `text-2xl md:text-3xl` (Calistoga is for marketing H1/H2 only), muted description, actions on the right. Detail and form pages add `back`.
-- **KPI row:** `grid gap-5 sm:grid-cols-2 xl:grid-cols-4` of `Card` > `CardContent` > `Stat`.
-- **List pages:** PageHeader (primary "Add <Thing>" with a `Plus` icon) → toolbar (search `Input` with a `Search` icon, plus filters) → `Table` → `Pagination` (always present, default `pageSize` 10). See §13.2.
-- **Data:** `Table` with mono heads, `Badge` status cells, a `DropdownMenu` row-actions trigger (`Button variant="ghost" size="icon-sm"` with `MoreHorizontal`) in the last column, an empty-state row when there are no results, and a `Skeleton` while loading.
-- **Settings / profile:** 3+ sub-sections go in vertical `Tabs`, one `Card` per tab. See §13.1.
-- **Forms:** small forms (≤6 fields) in a `Dialog`; large forms on a dedicated page built from `PageHeader back` → `FormSection`s → `FormActions`. See §13.3.
-- **Feedback:** `Alert` for page-level messages, `Dialog` to confirm destructive actions (destructive button), `Progress` and `Spinner` for async work.
-- **Dense sizing is allowed:** button `sm` (h-9), input `sm` (h-9) and tab triggers h-9, **on desktop only**.
-- **Dark mode:** put `.dark` on `<html>`. Everything re-themes.
-- **Motion:** keep it minimal. No scroll entrances on data views, only hover and overlay transitions.
+### 12.2 Admin / dashboard page
+- **Shell:** `bg-background`; a sidebar (`w-64 border-r border-separator bg-surface`) with `Link`s or a vertical secondary `Tabs`/`Menu`; a top bar (`h-16 border-b border-separator`) with a `SearchField`, `ThemeToggle` and an `Avatar` in a `Dropdown`.
+- **Content:** `max-w-7xl` (or fluid), `p-6 lg:p-8`, `gap-6` grids.
+- **Page header:** always `<PageHeader>`. Detail and form pages add `back`.
+- **Metrics:** only metrics that matter, real data, `Stat` inside `Card`.
+- **List pages:** §13.2. **Settings:** §13.1. **Forms:** §13.3.
+- **Feedback:** `Alert` for page-level messages, `toast()` after actions, `AlertDialog` for destructive confirmation, `ProgressBar` / `Spinner` for async work.
+- **Density:** HeroUI's desktop sizes are already compact (`sm` buttons for table rows and toolbars).
+- **Dark mode:** `useTheme` (or `ThemeToggle`); everything re-themes.
+- **Motion:** no scroll entrances on data views.
 
 ---
 
 ## 13. App page rules (mandatory)
 
-These rules apply to every app, admin and dashboard page. The showcase site demos all three patterns (a settings page, a list page and a create page) in its **App Patterns** section (`#app-patterns`).
+These rules apply to every app, admin and dashboard page. The showcase's **App patterns** section (`#app-patterns`) runs all three: a settings page, a list page and a create page.
 
 ### 13.1 Settings and profile pages
-- When one page has **3 or more sub-sections** (for example profile, change password, change address, notifications), use **vertical `Tabs`** (`orientation="vertical"`) with **one `Card` per tab**.
-- **Never stack many cards vertically on one long page.**
+- With **3 or more sub-sections** (profile, password, address, notifications…), use **`Tabs variant="secondary"`**, vertical from 768px up and horizontal below, with **one `Card` per tab**, each with its own Save button.
+- **Never stack many cards down one long page.**
 ```tsx
-<PageHeader title="Account settings" description="Manage your profile and security." />
-<Tabs defaultValue="profile" orientation="vertical">
-  <TabsList>
-    <TabsTrigger value="profile"><User /> Profile</TabsTrigger>
-    <TabsTrigger value="password"><Lock /> Password</TabsTrigger>
-    <TabsTrigger value="address"><MapPin /> Address</TabsTrigger>
-  </TabsList>
-  <TabsContent value="password">
-    <Card><CardHeader><CardTitle>Change password</CardTitle></CardHeader>
-      <CardContent className="grid gap-5">…Fields…</CardContent>
-      <CardFooter className="justify-end"><Button>Update password</Button></CardFooter></Card>
-  </TabsContent>
+import { Card, Tabs, useMediaQuery } from "@heroui/react"
+import { Lock, MapPin, Person } from "@gravity-ui/icons"
+
+const wide = useMediaQuery("(min-width: 768px)", { defaultValue: true })
+
+<PageHeader title="Settings" description="Manage your account and security." />
+<Tabs variant="secondary" align="start" orientation={wide ? "vertical" : "horizontal"} defaultSelectedKey="profile" className="gap-6">
+  <Tabs.ListContainer className={wide ? "w-56 shrink-0 self-start" : undefined}>
+    <Tabs.List aria-label="Settings sections" className="w-full">
+      <Tabs.Tab id="profile" className="h-11 justify-start gap-2.5 px-4"><Person /> Profile<Tabs.Indicator /></Tabs.Tab>
+      <Tabs.Tab id="password" className="h-11 justify-start gap-2.5 px-4"><Lock /> Password<Tabs.Indicator /></Tabs.Tab>
+      <Tabs.Tab id="address" className="h-11 justify-start gap-2.5 px-4"><MapPin /> Address<Tabs.Indicator /></Tabs.Tab>
+    </Tabs.List>
+  </Tabs.ListContainer>
+  <Tabs.Panel id="password" className="min-w-0 p-0">
+    <Card className="p-0">
+      <Form validationBehavior="aria" validationErrors={errors} onSubmit={save}>
+        <Card.Header className="p-6 pb-0 md:p-8 md:pb-0"><Card.Title className="text-lg font-semibold">Change password</Card.Title></Card.Header>
+        <Card.Content className="grid gap-5 p-6 md:p-8">…TextFields…</Card.Content>
+        <Card.Footer className="justify-end border-t border-separator px-6 py-4 md:px-8"><Button type="submit">Update password</Button></Card.Footer>
+      </Form>
+    </Card>
+  </Tabs.Panel>
   …
 </Tabs>
 ```
@@ -613,106 +675,130 @@ These rules apply to every app, admin and dashboard page. The showcase site demo
 ### 13.2 List and data pages
 Every list page has this structure, in this order:
 1. **`PageHeader`** with `title`, `description` and a primary **"Add <Thing>"** `Button` with a `Plus` icon in `actions`.
-2. **Toolbar:** a search `Input` with a `Search` icon, plus filters (`Select`, etc.).
-3. **`Table`.** Row actions go in a `DropdownMenu` (an icon button with `MoreHorizontal` and an `aria-label`) in the **last column**. Only list actions that work; leave out the rest.
-   Every list handles **four states**, each with a cause and one next action:
-   - **Loading:** skeleton rows shaped like the real rows, `aria-busy` on the table and a screen-reader text ("Loading merchants…").
+2. **Toolbar:** a `SearchField`, plus filters (`Select`…).
+3. **`Table`.** Row actions go in a `Dropdown` (an icon-only ghost `Button` with `Ellipsis` and an `aria-label`) in the **last column**. Only list actions that work.
+   Every list handles **four states**, each with a cause and one next action, rendered through `Table.Body renderEmptyState` or as skeleton rows:
+   - **Loading:** skeleton rows shaped like the real rows, `aria-busy` on the table and screen-reader text ("Loading merchants…").
    - **Error:** what failed and a "Try again" button.
    - **Empty (first run):** why it is empty and the action that fills it ("Add the first merchant").
    - **Filtered to nothing:** what was searched and a "Clear search and filter" button.
-4. **`Pagination`**, **always present, even with a single page.** Default `pageSize` is 10.
+4. **`DataPagination`**, **always present, even with a single page.** Default `pageSize` is 10.
 
 State rules:
 - **Reset to page 1** whenever the search, a filter or the page size changes.
-- When the data comes from an API, use **server-side pagination**: send `page` and `pageSize`, and read `total` from the response.
+- Data from an API uses **server-side pagination**: send `page` and `pageSize`, read `total`.
 ```tsx
 const [query, setQuery] = useState("")
 const [page, setPage] = useState(1)
 const [pageSize, setPageSize] = useState(10)
-// const { rows, total } = useCustomers({ query, page, pageSize })
+// const { rows, total, status } = useMerchants({ query, page, pageSize })
 
-<PageHeader title="Customers" description="Everyone who has bought from you."
-  actions={<Button onClick={openCreate}><Plus /> Add customer</Button>} />
-<div className="flex flex-wrap items-center gap-3">
-  <div className="relative w-full sm:max-w-xs">
-    <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-    <Input className="pl-9" placeholder="Search customers" aria-label="Search customers"
-      value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} />
-  </div>
-  {/* filters: also setPage(1) on change */}
-</div>
-<Table>
-  <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Status</TableHead><TableHead className="w-12" /></TableRow></TableHeader>
-  <TableBody>
-    {rows.length === 0 ? (
-      <TableRow><TableCell colSpan={3} className="py-12 text-center text-muted-foreground">No customers found.</TableCell></TableRow>
-    ) : rows.map((r) => (
-      <TableRow key={r.id}>
-        <TableCell>{r.name}</TableCell>
-        <TableCell><Badge variant="success">Active</Badge></TableCell>
-        <TableCell>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon-sm" aria-label={`Actions for ${r.name}`}><MoreHorizontal /></Button></DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem><Pencil />Edit</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive"><Trash2 />Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
+<PageHeader title="Merchants" description="Every merchant registered on AiYO."
+  actions={<Button onPress={openAdd}><Plus /> Add merchant</Button>} />
+
+<SearchField aria-label="Search merchants" value={query} onChange={(v) => { setQuery(v); setPage(1) }}>
+  <SearchField.Group>
+    <SearchField.SearchIcon />
+    <SearchField.Input placeholder="Search name or ID" />
+    <SearchField.ClearButton aria-label="Clear search" />
+  </SearchField.Group>
+</SearchField>
+
+<Table aria-busy={status === "loading"}>
+  <Table.ScrollContainer>
+    <Table.Content aria-label="Merchants" className="min-w-[640px]">
+      <Table.Header>
+        <Table.Column isRowHeader>Merchant</Table.Column>
+        <Table.Column>Status</Table.Column>
+        <Table.Column className="w-16"><span className="sr-only">Actions</span></Table.Column>
+      </Table.Header>
+      <Table.Body renderEmptyState={() => (
+        <EmptyState className="flex flex-col items-center gap-3 py-14 text-center">…cause and one next action…</EmptyState>
+      )}>
+        {rows.map((m) => (
+          <Table.Row key={m.id} id={m.id}>
+            <Table.Cell>{m.name}</Table.Cell>
+            <Table.Cell><Chip size="sm" variant="soft" color="success">Active</Chip></Table.Cell>
+            <Table.Cell>
+              <Dropdown>
+                <Button isIconOnly size="sm" variant="ghost" aria-label={`Actions for ${m.name}`}><Ellipsis /></Button>
+                <Dropdown.Popover placement="bottom end">
+                  <Dropdown.Menu onAction={(key) => (key === "edit" ? openEdit(m) : askDelete(m))}>
+                    <Dropdown.Item id="edit" textValue="Edit"><Pencil /><Label>Edit</Label></Dropdown.Item>
+                    <Dropdown.Item id="delete" textValue="Delete" variant="danger"><TrashBin /><Label>Delete</Label></Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown.Popover>
+              </Dropdown>
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Content>
+  </Table.ScrollContainer>
 </Table>
-<Pagination page={page} pageSize={pageSize} total={total} onPageChange={setPage} onPageSizeChange={setPageSize} />
+
+<DataPagination page={page} pageSize={pageSize} total={total} onPageChange={setPage} onPageSizeChange={setPageSize} />
 ```
 
-### 13.3 Add / edit data: Dialog or dedicated page
-| Use a **Dialog (modal)** when the form is small | Use a **dedicated page** (`/things/new`, `/things/:id/edit`) when the form is large |
+### 13.3 Add / edit data: Modal or dedicated page
+| Use a **Modal** when the form is small | Use a **dedicated page** (`/things/new`, `/things/:id/edit`) when it is large |
 |---|---|
-| ≤ 6 fields | > 6 fields |
-| One section | Multiple sections |
+| 6 fields or fewer | More than 6 fields |
+| One section | Several sections |
 | No file uploads | File uploads |
 | No nested line items | Nested line items or tables |
-| | The URL needs to be shareable |
-| `DialogFooter` with Cancel (`secondary`) + Save (primary) | `PageHeader` with `back` → `FormSection` blocks → `FormActions` |
+| | The URL should be shareable |
+| `Modal.Footer` with Cancel (`slot="close"`, `secondary`) + Save (primary) | `PageHeader back` → `FormSection` blocks → `FormActions` |
 
 - The same rule applies to **edit**.
-- **Delete always asks for confirmation** in a `Dialog` with a `destructive` button.
+- **Delete always asks for confirmation** in an `AlertDialog` with a `danger` button.
 ```tsx
-// Small form: Dialog
-<Dialog open={open} onOpenChange={setOpen}>
-  <DialogContent>
-    <DialogHeader><DialogTitle>Add tag</DialogTitle></DialogHeader>
-    <div className="grid gap-5">…≤ 6 Fields…</div>
-    <DialogFooter>
-      <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
-      <Button>Save</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+// Small form, opened from a button or a row action
+<Modal.Backdrop isOpen={editor.isOpen} onOpenChange={editor.setOpen}>
+  <Modal.Container>
+    <Modal.Dialog>
+      {({ close }) => (
+        <Form className="contents" onSubmit={(e) => { e.preventDefault(); save(new FormData(e.currentTarget)); close() }}>
+          <Modal.CloseTrigger />
+          <Modal.Header><Modal.Heading>Add merchant</Modal.Heading></Modal.Header>
+          <Modal.Body className="grid gap-5">…6 fields or fewer…</Modal.Body>
+          <Modal.Footer>
+            <Button slot="close" variant="secondary">Cancel</Button>
+            <Button type="submit">Save merchant</Button>
+          </Modal.Footer>
+        </Form>
+      )}
+    </Modal.Dialog>
+  </Modal.Container>
+</Modal.Backdrop>
 
-// Large form: /customers/new
-<PageHeader title="New customer" description="…" back={{ href: "/customers", label: "Customers" }} />
-<div className="grid gap-8">
-  <FormSection title="Contact" description="…">…Fields…</FormSection>
-  <FormSection title="Billing address" description="…">…Fields…</FormSection>
-  <FormSection title="Documents">…file upload…</FormSection>
-</div>
-<FormActions>
-  <Button variant="secondary">Cancel</Button>
-  <Button>Save customer</Button>
-</FormActions>
+// Large form: /invoices/new
+<Form validationBehavior="aria" validationErrors={errors} onSubmit={save} className="flex flex-col gap-10">
+  <PageHeader back={{ href: "/invoices", label: "Invoices" }} title="New invoice" />
+  <FormSection title="Customer" description="Who receives this invoice.">…TextFields…</FormSection>
+  <FormSection title="Line items">…</FormSection>
+  <FormActions>
+    <Button variant="secondary" onPress={cancel}>Cancel</Button>
+    <Button type="submit">Create invoice</Button>
+  </FormActions>
+</Form>
 
 // Delete confirmation
-<DialogContent>
-  <DialogHeader><DialogTitle>Delete customer?</DialogTitle>
-    <DialogDescription>This cannot be undone.</DialogDescription></DialogHeader>
-  <DialogFooter>
-    <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
-    <Button variant="destructive">Delete</Button>
-  </DialogFooter>
-</DialogContent>
+<AlertDialog.Backdrop isOpen={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
+  <AlertDialog.Container size="sm">
+    <AlertDialog.Dialog>
+      <AlertDialog.Header>
+        <AlertDialog.Icon status="danger" />
+        <AlertDialog.Heading>Delete {toDelete?.name}?</AlertDialog.Heading>
+      </AlertDialog.Header>
+      <AlertDialog.Body>This removes the merchant and its outlets. You can't undo this.</AlertDialog.Body>
+      <AlertDialog.Footer>
+        <Button slot="close" variant="secondary">Cancel</Button>
+        <Button variant="danger" onPress={confirmDelete}>Delete</Button>
+      </AlertDialog.Footer>
+    </AlertDialog.Dialog>
+  </AlertDialog.Container>
+</AlertDialog.Backdrop>
 ```
 
 ---
@@ -720,7 +806,7 @@ const [pageSize, setPageSize] = useState(10)
 ## 14. Anti-slop filter and decisions
 
 ### 14.1 How the filter fits
-AiYO vendors the antislop skills (MIT, release 3.2.21) in `skills/antislop*`. The model has three parts:
+AiYO vendors the antislop skills (MIT, release 3.2.21) in `skills/antislop*`.
 
 | File | Role |
 |---|---|
@@ -730,30 +816,85 @@ AiYO vendors the antislop skills (MIT, release 3.2.21) in `skills/antislop*`. Th
 
 Task skills: `antislop-ui` (visual), `antislop-copywriting` (copy), `antislop-human` (contrast, keyboard, focus, states; ships `contrast-check.py`), `antislop-layoutmobile` (breakpoints, tap targets) and `antislop-code` (code comments).
 
-Dials for AiYO products: **ENERGY 2 / RHYTHM 2 / MOTION 2**. Balanced energy, consistent sections with a few breaks (asymmetric grids, one inverted section), scroll entrances plus hover feedback. Before building, declare a Design Read, for example: *"Reading this as: B2B SaaS landing for small-business owners, in the AiYO Minimalist Modern style, dial ENERGY 2 / RHYTHM 2 / MOTION 2."* Run the Delivery Gate before delivering.
+Dials for AiYO products: **ENERGY 2 / RHYTHM 2 / MOTION 2**. Before building, declare a Design Read, for example: *"Reading this as: B2B SaaS landing for small-business owners, in the AiYO Minimalist Modern style on HeroUI, dial ENERGY 2 / RHYTHM 2 / MOTION 2."* Run the Delivery Gate before delivering.
 
 ### 14.2 Decision log (R-37)
-Where this system used a pattern antislop names, the owner decided to keep it or drop it. The code matches these decisions.
 
-**Dropped**
+**Owner decisions, v2 (2026-10-20)**
 
-| Pattern | Rule | What changed |
+| Decision | Rule | Reason |
 |---|---|---|
-| Pill `SectionLabel` with a pulsing dot | R-09, R-31 | `SectionLabel` is a plain label: JetBrains Mono 12px, uppercase, 0.15em tracking, `text-primary`, no border, background or dot. The `pulse` prop is gone from `SectionLabel` and `SectionHeader`. A dot only marks a real live state. |
-| Endless decorative motion (floating cards, rotating ring, breathing orb, pulsing dots) | R-19 | `animate-spin-slow`, `animate-float`, `animate-float-delayed`, `animate-pulse-dot` and `animate-breathe` are deleted from `aiyo.css`. Motion is scroll entrance, hover/press feedback, overlay pop-in and accordion (MOTION 2). `HeroGraphic` is static. |
-| Dot-grid texture and blurred glows on inverted sections | R-07, R-13 | `texture-dots`, `texture-dots-dark` and `<Glow>` are removed. `<Section inverted>` is solid deep slate. |
-| Arrows on buttons by default | R-08 | `data-arrow` stays, for the ONE primary CTA per screen only. |
+| HeroUI v3 replaces Radix UI and the shadcn-style copies; projects use `@heroui/react` directly with HeroUI's default component style | R-20 | One maintained component library for every AiYO product, with React Aria behaviour. AiYO keeps colour, branding and page blocks. |
+| Geist Sans and Geist Mono replace Calistoga, Inter and JetBrains Mono | R-06 | Owner choice. One superfamily, so the mono label voice shares the sans skeleton, and it sits quietly next to HeroUI's chrome. Geist is on antislop's default roster; it stays as an owner decision with this reason. |
+| AiYO docs and rules may be rewritten to fit HeroUI | R-37 | Owner instruction, so v1 rules that fought HeroUI (`accent` as a hover surface, 48px inputs, local `<Button>`) were replaced. |
 
-**Dose caps** (R-10): backdrop blur only on the sticky navbar. The Dialog overlay and `FormActions` are solid.
+**Applied under that direction (each with its reason)**
+
+| Change | Rule | Reason |
+|---|---|---|
+| Icons: `@gravity-ui/icons` instead of Lucide | R-04 | The set HeroUI's docs and examples use, so copied examples work unchanged. v1's reason for Lucide (matching shadcn/ui) no longer applies. Pick each icon for relevance; no sparkle, magic, robot or lightning as feature icons. |
+| Gradient reduced to one headline word, the leading icon tile and one data highlight; buttons, checkboxes, switches, progress and pagination use HeroUI's solid accent | R-01, R-13 | An accent everywhere stops being an accent (audit 001 items 16 and 17). |
+| Elevation from HeroUI's three shadow levels; no accent glow shadows | R-12 | Shadows mark elevation only (audit 001 item 18). |
+| Field edges, checkbox/radio borders and off switch tracks at 3:1 | antislop-human | Non-text contrast (audit 001 item 19). |
+| Touch layer for HeroUI controls | R-03 | HeroUI's default controls are under 44px. |
+| `Reveal` keeps content visible until JS hides below-the-fold elements | C-4 | v1 content was invisible until the animation ran (audit 001 item 28). |
+| Light/dark `ThemeToggle` in the showcase | R-21 | The dark palette shipped without a toggle (audit 001 item 30). |
+| `PricingCard` shows a reason (`highlightLabel`), never "Most popular" | R-09, R-31 | A highlighted tier needs a written reason. |
+
+**Still dropped (v1 owner decisions, unchanged)**
+
+| Pattern | Rule | Status |
+|---|---|---|
+| Pill `SectionLabel` with a pulsing dot | R-09, R-31 | `SectionLabel` is a plain mono label. A dot only marks a real live state. |
+| Endless decorative motion | R-19 | Only loading indicators loop. `HeroGraphic` is static. |
+| Dot-grid texture and blurred glows | R-07, R-13 | Inverted sections are solid deep slate. |
+| Arrows on buttons by default | R-08 | `data-arrow` on the ONE primary CTA per screen only. |
+
+**Dose caps** (R-10): backdrop blur only on the sticky navbar. Modal and AlertDialog backdrops are opaque; `FormActions` is solid.
 
 **Kept on purpose** (R-31 reasons)
 
 | Pattern | Rule | Reason |
 |---|---|---|
-| Electric Blue gradient `#0052FF → #3366FF` | R-01 | It is the brand identity and marks the single primary action level. |
-| Uppercase JetBrains Mono labels with wide tracking (section labels, table heads) | R-06 | A deliberate typographic voice and the system's identity motif, kept small at 12px. |
-| Lucide icons | R-04 | Matches the shadcn/ui ecosystem used across AiYO projects. Pick each icon for relevance; never sparkle, magic, robot or lightning as feature icons. |
-| Shadows | R-12 | Elevation markers only: cards `md`, overlays `xl`, accent shadow on the primary CTA. |
+| Electric Blue `#0052FF` (gradient to `#3366FF`) | R-01 | The brand identity; it marks the single primary action level. |
+| Uppercase Geist Mono labels with wide tracking (section labels, stat labels, meta) | R-06 | The system's typographic motif, always small at 12px. |
+| HeroUI's elevation shadows | R-12 | Cards sit just above the canvas; overlays float. |
 
 ### 14.3 Exception: showcase sample content
-The showcase site keeps sample content: the hero graphic numbers, sample testimonials, and the 3-tier pricing with a highlighted tier. It is clearly labelled as example data. This is an owner override of R-17, R-18 and R-38 **for the showcase only**. In real AiYO products these blocks use real data only; otherwise leave the section out.
+The showcase keeps sample content: hero graphic numbers, sample testimonials, sample stats and three sample pricing tiers. All of it is labelled as sample data. This is an owner override of R-17, R-18 and R-38 **for the showcase only**. In real AiYO products these blocks use real data only; otherwise leave the section out.
+
+---
+
+## 15. Migrating a v1 project (Radix / shadcn-style) to v2
+
+1. Install: `npm i @heroui/react @heroui/styles @fontsource-variable/geist @fontsource-variable/geist-mono @gravity-ui/icons` (npm 7+ also installs HeroUI's React Aria peers; if your package manager does not install peers, add `react-aria-components react-aria @react-aria/utils @react-aria/ssr @internationalized/date`). Remove `radix-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` and `motion` once nothing imports them.
+2. Replace `aiyo.css` and remove any other `@import "tailwindcss"`.
+3. Replace `src/components/ui/*` and `src/components/blocks/*` with HeroUI imports and `src/components/aiyo/*`; replace `src/lib/motion.tsx`; delete `src/lib/utils.ts` (`cn` now comes from `@heroui/react`).
+
+| v1 | v2 |
+|---|---|
+| `bg-primary`, `text-primary`, `bg-gradient-primary` | `bg-accent`, `text-accent`, `bg-gradient-accent` (gradient only where §2.4 allows) |
+| `text-muted-foreground` | `text-muted` |
+| `bg-muted` (fill) | `bg-default` or `bg-surface-secondary` |
+| `bg-card`, `bg-popover` | `bg-surface`, `bg-overlay` |
+| `destructive`, `text-destructive-text` | `danger`, `text-danger-soft-foreground` |
+| `text-success-text`, `text-warning-text` | `text-success-soft-foreground`, `text-warning-soft-foreground` |
+| `border-input`, `ring` | `border-field-border`, `focus` |
+| `font-display` (Calistoga) | `heading-hero`, `heading-section` (Geist 600) |
+| `font-mono text-xs uppercase tracking-[0.15em]` | `label-caps` |
+| `<Button variant="primary\|secondary\|ghost\|destructive\|link">` | `variant="primary\|outline\|ghost\|danger"`; links: `<Link>` |
+| `<Button asChild><a/></Button>` | `<Link className={buttonVariants()}>` |
+| `onClick` | `onPress` |
+| `<Badge>` | `<Chip>` |
+| `<Field label hint error><Input/></Field>` | `<TextField><Label/><Input/><Description/><FieldError/></TextField>` |
+| `<Select><SelectTrigger><SelectValue/>…<SelectItem value>` | `<Select><Select.Trigger><Select.Value/>…<ListBox.Item id textValue>` |
+| `<Dialog>`, `DialogContent`, `DialogClose` | `<Modal>`, `Modal.Dialog`, `<Button slot="close">` |
+| Delete confirmation in `Dialog` | `AlertDialog` |
+| `<DropdownMenu>` | `<Dropdown>` |
+| `<Tabs value>` / `TabsTrigger value` / `TabsContent value` | `<Tabs selectedKey>` / `Tabs.Tab id` + `Tabs.Indicator` / `Tabs.Panel id` |
+| `<Accordion type="single">` | `<Accordion>` (single by default) |
+| `<Progress value>` | `<ProgressBar value>` with Track and Fill |
+| `<Pagination>` (AiYO v1) | `<DataPagination>` from `@/components/aiyo/data-pagination` |
+| `<TooltipProvider>` | Not needed |
+| `<Card variant="interactive">`, `featured` | HeroUI `<Card>`; emphasis through layout and the gradient icon tile |
+| `MoreHorizontal`, `Trash2`, `Search` (Lucide) | `Ellipsis`, `TrashBin`, `Magnifier` (Gravity UI) |

@@ -1,59 +1,52 @@
 ---
 name: aiyo-design
-description: Apply the AiYO Design System ("Minimalist Modern") when building, styling or reviewing UI in AiYO projects. Use it for any React/Tailwind page, component, landing page, dashboard, form or layout for AiYO, or when the user mentions AiYO UI, the AiYO design system, aiyo.css, the Electric Blue gradient or Calistoga headlines.
+description: Apply the AiYO Design System v2 (HeroUI v3 with the AiYO theme, "Minimalist Modern") when building, styling or reviewing UI in AiYO projects. Use it for any React/Tailwind page, component, landing page, dashboard, form or layout for AiYO, or when the user mentions AiYO UI, the AiYO design system, aiyo.css, HeroUI in an AiYO project, Electric Blue or Geist.
 ---
 
-# AiYO Design System
+# AiYO Design System v2
 
-The full spec is in `DESIGN.md` in the aiyo-design-system repo, also served at `<site>/DESIGN.md`. The LLM index is at `<site>/llms.txt`. Read DESIGN.md when you need exact component props or page recipes. The rules below are the condensed version.
+The full spec is in `DESIGN.md` in the aiyo-design-system repo, also served at `<site>/DESIGN.md`. The LLM index is at `<site>/llms.txt`. Read DESIGN.md when you need recipes, block props or page rules. The rules below are the condensed version. For HeroUI props not covered there, read `https://heroui.com/react/llms.txt` or the types in `node_modules/@heroui/react`.
 
 ## Anti-slop filter
 This skill gives direction. antislop is the filter on top of it: read `skills/antislop/SKILL.md` (core) plus the skill for the task (`skills/antislop-ui/SKILL.md` for visual work, `antislop-copywriting`, `antislop-human`, `antislop-layoutmobile`, `antislop-code`), and run its Delivery Gate before delivering. Dials for AiYO products: ENERGY 2 / RHYTHM 2 / MOTION 2. The owner's keep/drop decisions (R-37 log) are in DESIGN.md §14; the showcase's sample numbers, testimonials and pricing are an exception for the showcase only.
 
 ## Setup check
-- Tokens live in `src/styles/aiyo.css` (Tailwind v4, imported once). Helpers: `src/lib/utils.ts` (`cn`) and `src/lib/motion.tsx`.
-- Components are shadcn style and imported from `@/components/ui/*` and `@/components/blocks/*`. **Reuse them before writing new markup.** If one is missing, copy it from the design-system repo.
-- Dependencies: `class-variance-authority clsx tailwind-merge radix-ui lucide-react motion`.
+- Dependencies: `@heroui/react @heroui/styles @fontsource-variable/geist @fontsource-variable/geist-mono @gravity-ui/icons`, Tailwind CSS v4.
+- `src/styles/aiyo.css` is imported once and is the only `@import "tailwindcss"` (it loads Tailwind and HeroUI itself).
+- AiYO blocks live in `src/components/aiyo/*`; scroll entrances in `src/lib/motion.tsx`. If one is missing, copy it from the design-system repo.
+- Components come from `@heroui/react` directly. **Do not create `components/ui/*` copies or wrappers.**
 
 ## Rules
-1. **The brand color is `primary`**: Electric Blue `#0052FF → #3366FF` (`bg-gradient-primary`, `text-primary`). `accent` is the shadcn hover surface (#F1F5F9), so **never use `bg-accent` for brand.** Use one accent color only.
-2. Use tokens only: `bg-background` (#FAFAFA), `text-foreground` (#0F172A, never pure black), `text-muted-foreground` (#5B6B80), `bg-muted`, `border-border`, `bg-card`. Status colors (`success`, `warning`, `destructive`, `info`) are for status only.
-3. Typography:
-   - Hero H1: `font-display text-[2.75rem] lg:text-[5.25rem] leading-[1.05] tracking-[-0.02em]`, with the last word in `<GradientText underline>`.
-   - H2: `font-display text-[2.25rem] md:text-[3.25rem] leading-[1.15]`.
-   - Card titles: Inter semibold `tracking-[-0.01em]`.
-   - Labels: `font-mono text-xs uppercase tracking-[0.15em]` (kept on purpose as the identity motif, always small).
-   - Calistoga is never used for body or UI.
-4. Every major section uses `<SectionHeader label title description>` (SectionLabel → H2 → muted lede). `SectionLabel` is a plain mono label in `text-primary`: no pill, no border, no background, no dot, no `pulse` prop. A dot only marks a real live state.
-5. Layout: `<Container>` (max-w-6xl) and `<Section>` (`py-24 md:py-32`). Use asymmetric grids (hero `lg:grid-cols-[1.1fr_0.9fr]`, benefits `1.2fr/0.8fr`), gaps `gap-5`–`gap-8`, and left-aligned copy.
-6. Landing pages need at least one `<Section inverted>`: solid deep slate. No dot-grid textures, no blurred glows (`texture-dots` and `<Glow>` are gone). No gradients on large backgrounds.
-7. Surfaces: controls `rounded-xl`, cards `rounded-2xl`. Shadows mark elevation only: cards `shadow-md`, overlays `shadow-xl`, `shadow-accent` on the primary CTA. Backdrop blur only on the sticky navbar; Dialog overlays and `FormActions` are solid.
-8. Buttons: `<Button variant="primary|secondary|ghost|inverted|destructive|link" size="sm|md|lg|xl|icon">`. `data-arrow` goes on the ONE primary CTA per screen only. `sm` (h-9) is for dense desktop only.
-9. Forms: `<Field label hint error htmlFor>` wrapping `<Input>` (h-12), `<Select>` or `<Textarea>`.
-10. Motion (MOTION 2):
-    - Entrances: `<Reveal>` or `<RevealGroup>`/`<RevealItem>` (0.7s, 28px, stagger 0.1s, once).
-    - Ease `[0.16,1,0.3,1]`, hover and press feedback 200 to 300ms, overlay pop-in, accordion.
-    - No endless decorative motion: no floating cards, rotating rings, breathing orbs or pulsing dots. `HeroGraphic` is static.
-    - Always respect reduced motion.
-11. Responsive: mobile first, hide decorative graphics below `lg`, touch targets at least 44px.
-12. Accessibility: WCAG AA, keep the visible focus outline (global `:focus-visible` rule), status text via `text-*-text` tokens, `aria-label` on icon-only buttons, `aria-hidden` on decoration.
+1. **Brand = `accent`** (Electric Blue `#0052FF`, HeroUI naming; no `primary` token). One accent colour only. `success`, `warning`, `danger` are for status.
+2. Tokens only: `bg-background`, `text-foreground`, `text-muted` (secondary text), `bg-surface`, `bg-default` (neutral fill), `border-separator`, `text-accent`; status text `text-*-soft-foreground`. No hex, no pure black.
+3. Never restyle HeroUI colours or radii per page. Theme changes go in `aiyo.css` with a written reason (DESIGN.md §2.8). Layout utilities in `className` are fine; merge with `cn()` from `@heroui/react`.
+4. Typography: Geist only. Hero H1 `heading-hero`, section H2 `heading-section`, app page titles via `<PageHeader>`, card titles `text-lg font-semibold`, labels `label-caps` (Geist Mono 12px uppercase, the identity motif). Text ≥ 12px.
+5. Every major marketing section uses `<SectionHeader label title description>`. `SectionLabel` is a plain mono label: no pill, no border, no dot.
+6. Layout: `<Container>` (max-w-6xl) inside `<Section>`. Asymmetric grids (hero `lg:grid-cols-[1.1fr_0.9fr]`), left-aligned copy. At least one `<Section inverted>` (solid deep slate) per landing page. No dot grids, no glows.
+7. HeroUI usage: `onPress` not `onClick`; menus `onAction`; Select and RadioGroup `value`/`onChange`; ids on `Tabs.Tab`/`Tabs.Panel`, `ListBox.Item`, `Dropdown.Item`, `Table.Row`, plus `textValue` on list and menu items; one `Table.Column isRowHeader`; Checkbox, Radio and Switch always include `.Content`; `Tabs.Indicator` inside each tab.
+8. Buttons: HeroUI `<Button variant="primary|secondary|tertiary|outline|ghost|danger|danger-soft" size="sm|md|lg">`. Link styled as a button: `<Link className={buttonVariants({...})}>`. `data-arrow` on the ONE primary CTA per screen only.
+9. Forms: `<TextField><Label/><Input/><Description/><FieldError/></TextField>`; server or cross-field errors via `<Form validationErrors>`.
+10. Overlays: `Modal` with the default opaque backdrop (never `blur`); `AlertDialog` for destructive confirmation; `toast()` after actions (mount `<Toast.Provider />` once).
+11. Gradient only on one headline word (`<GradientText>`, ≥ 24px), the one leading `IconTile`, one data highlight.
+12. Motion (MOTION 2): `<Reveal>` / `<RevealGroup>` for marketing entrances (0.7s, 28px, once); HeroUI motion for controls; no endless decorative motion; reduced motion respected.
+13. Responsive and accessible: mobile first, decorative graphics `hidden lg:block`, 44px touch targets (aiyo.css covers HeroUI controls), WCAG AA in light and dark, visible focus everywhere, `aria-label` on icon-only buttons, status never by colour alone.
+14. Icons: `@gravity-ui/icons`, chosen for relevance.
 
 ## App page rules (mandatory, DESIGN.md §13)
-13. App page titles use `<PageHeader title description back actions>` from `@/components/blocks/page-header` (Inter semibold 2xl/3xl, never Calistoga).
-14. Settings / profile pages with 3+ sub-sections: vertical `<Tabs orientation="vertical">`, one `Card` per tab. Never stack many cards down one long page.
-15. Every list / data page: `PageHeader` (primary "Add <Thing>" with a `Plus` icon in `actions`) → toolbar (search `Input` with a `Search` icon, plus filters) → `Table` → `<Pagination page pageSize total onPageChange onPageSizeChange>` from `@/components/ui/pagination`.
-    - Pagination is always shown, even with one page. Default `pageSize` 10, pages 1-based.
-    - Reset to page 1 on search, filter or page-size change. Use server-side pagination for API data (send `page`/`pageSize`, read `total`).
-    - Empty-state row or card when there are no results. Row actions in a `DropdownMenu` (`MoreHorizontal` icon button) in the last column.
-16. Add / edit: a `Dialog` for small forms (≤6 fields, one section, no uploads, no nested line items) with Cancel (`secondary`) + Save. Otherwise a dedicated page (`/things/new`, `/things/:id/edit`): `PageHeader` with `back` → `FormSection`s → `FormActions` (sticky bottom bar). Delete always confirms in a Dialog with a `destructive` button.
+15. App page titles use `<PageHeader title description back actions>` from `@/components/aiyo/page-header`.
+16. Settings / profile with 3+ sub-sections: `<Tabs variant="secondary">`, vertical from 768px (`useMediaQuery`), horizontal below, one `Card` per tab.
+17. Every list / data page: `PageHeader` ("Add <Thing>" with `Plus`) → `SearchField` + filters → `Table` → `<DataPagination page pageSize total onPageChange onPageSizeChange>` from `@/components/aiyo/data-pagination`.
+    - Pagination always shown, default `pageSize` 10, 1-based, reset to page 1 on search, filter or size change, server-side for API data.
+    - Loading, error, first-run and filtered-to-nothing states, each with a cause and one next action. Row actions in a `Dropdown` (`Ellipsis` icon button with `aria-label`) in the last column.
+18. Add / edit: a `Modal` for ≤6 fields in one section (Cancel `slot="close"` + Save); otherwise a dedicated page (`PageHeader back` → `FormSection`s → `FormActions`). Delete always confirms in an `AlertDialog` with a `danger` button.
 
 ## Page recipes
-- **Landing:** Nav → Hero (asymmetric, HeroGraphic lg+) → Features (interactive cards with IconTile) → Benefits (1.2fr/0.8fr) → How it works (`Steps`, inverted) → Final CTA → Footer. Add Logos, Stats, `TestimonialCard`s, `PricingCard`s (one per real tier) and FAQ (`Accordion`) only when there is real data for them; otherwise leave the section out.
-- **Dashboard:** sidebar and top bar shell, `PageHeader` titles, a KPI row of `Stat` in Cards, list pages per rule 15, forms per rule 16, settings per rule 14, and `Alert`/`Dialog`/`Progress` for feedback. Dense `sm` sizes are allowed on desktop. Use `.dark` on `<html>` for dark mode.
-- The showcase site's **App Patterns** section (`#app-patterns`) demos a settings page, a list page and a create page.
+- **Landing:** Nav (blur only here, ThemeToggle) → Hero (asymmetric, HeroGraphic lg+) → Features (cards weighted by importance, one gradient IconTile) → Benefits → How it works (`Steps`, inverted) → Final CTA → Footer. Logos, stats, `TestimonialCard`, `PricingCard` and FAQ (`Accordion`) only with real data.
+- **Dashboard:** sidebar and top bar, `PageHeader` titles, real metrics only (`Stat` in `Card`), list pages per rule 17, forms per rule 18, settings per rule 16.
+- The showcase's **App patterns** section (`#app-patterns`) runs a settings page, a list page and a create page.
 
 ## Before finishing
-Check that there are no hex colors, no `bg-accent` used as brand, and no second accent. Confirm the section header pattern, focus rings, 44px targets, layout at 375, 768 and 1280px, and reduced motion. Confirm there are no pill labels, pulsing dots, looping decoration, dot grids or glows, and at most one `data-arrow` button per screen. On app pages, confirm the rules 13–16 (PageHeader, vertical Tabs, Pagination on every list, Dialog vs dedicated page, delete confirmation). Then run the antislop Delivery Gate.
+No hex colours, no `primary` token, no second accent, no copied or wrapped HeroUI components. Section header pattern, focus indicators, 44px targets, layout at 375, 768 and 1280px in light and dark, reduced motion. No pill labels, pulsing dots, looping decoration, dot grids or glows; at most one `data-arrow` per screen. App pages follow rules 15 to 18. Then run the antislop Delivery Gate.
 
 ## Installing this skill
-Copy the `skills/aiyo-design/` folder to `~/.claude/skills/aiyo-design/` (all projects) or `<project>/.claude/skills/aiyo-design/` (one project). Claude Code then loads it automatically whenever you build AiYO UI. Copy the `skills/antislop*` folders the same way (or run `npx skills add miqdadbadjuber/anti-slop`) so the filter is available too.
+Copy the `skills/aiyo-design/` folder to `~/.claude/skills/aiyo-design/` (all projects) or `<project>/.claude/skills/aiyo-design/` (one project). Claude Code then loads it whenever you build AiYO UI. Copy the `skills/antislop*` folders the same way (or run `npx skills add miqdadbadjuber/anti-slop`) so the filter is available too.

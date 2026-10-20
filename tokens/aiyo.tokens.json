@@ -1,169 +1,189 @@
 {
-  "$description": "AiYO Design System — 'Minimalist Modern'. W3C Design Tokens (DTCG) format. Source of truth for CSS is src/styles/aiyo.css. Note: brand colour is named 'primary' (shadcn naming); 'accent' is the subtle hover surface.",
+  "$description": "AiYO Design System v2, 'Minimalist Modern': the AiYO theme for HeroUI v3. W3C Design Tokens (DTCG) format. Source of truth for CSS is src/styles/aiyo.css. Names follow HeroUI: 'accent' is the brand colour, 'muted' is secondary text, 'default' is the neutral fill, 'danger' is the error colour.",
   "color": {
     "$type": "color",
     "light": {
-      "$description": "Default palette (:root).",
-      "background": { "$value": "#FAFAFA" },
-      "foreground": { "$value": "#0F172A" },
-      "card": { "$value": "#FFFFFF" },
-      "card-foreground": { "$value": "#0F172A" },
-      "popover": { "$value": "#FFFFFF" },
-      "popover-foreground": { "$value": "#0F172A" },
-      "primary": { "$value": "#0052FF", "$description": "Electric Blue — the single brand accent." },
-      "primary-end": { "$value": "#3366FF", "$description": "Gradient endpoint. White text 4.68:1." },
-      "primary-foreground": { "$value": "#FFFFFF" },
-      "secondary": { "$value": "#F1F5F9" },
-      "secondary-foreground": { "$value": "#0F172A" },
-      "muted": { "$value": "#F1F5F9" },
-      "muted-foreground": { "$value": "#5B6B80", "$description": "4.97:1 on muted, 5.44:1 on white." },
-      "accent": { "$value": "#F1F5F9", "$description": "Hover surface (shadcn semantics). NOT the brand colour." },
-      "accent-foreground": { "$value": "#0F172A" },
-      "border": { "$value": "#E2E8F0" },
-      "input": { "$value": "#E2E8F0" },
-      "ring": { "$value": "{color.light.primary}" },
+      "$description": "Default palette (:root, .light, [data-theme=light]).",
+      "background": { "$value": "#FAFAFA", "$description": "Page canvas." },
+      "foreground": { "$value": "#0F172A", "$description": "Text. 17.1:1 on background." },
+      "surface": { "$value": "#FFFFFF", "$description": "Cards, tables, accordions." },
+      "surface-secondary": { "$value": "#F1F5F9" },
+      "surface-tertiary": { "$value": "#E8EDF3" },
+      "overlay": { "$value": "#FFFFFF", "$description": "Modals, popovers, menus, tooltips." },
+      "muted": { "$value": "#5B6B80", "$description": "Secondary text. 5.21:1 on background, 4.97:1 on default." },
+      "default": { "$value": "#F1F5F9", "$description": "Neutral fill: secondary buttons, chips, tracks." },
+      "default-foreground": { "$value": "#0F172A" },
+      "accent": { "$value": "#0052FF", "$description": "Electric Blue, the single brand accent. White text 5.75:1." },
+      "accent-end": { "$value": "#3366FF", "$description": "Gradient endpoint. White text 4.68:1." },
+      "accent-foreground": { "$value": "#FFFFFF" },
+      "accent-soft-foreground": { "$value": "#0047E0", "$description": "Text on accent tints. 5.58:1 on accent-soft." },
       "success": { "$value": "#059669" },
-      "success-foreground": { "$value": "#FFFFFF" },
+      "success-foreground": { "$value": "#0F172A", "$description": "4.74:1 on success." },
+      "success-soft-foreground": { "$value": "#047857", "$description": "Success text on tints." },
       "warning": { "$value": "#D97706" },
-      "warning-foreground": { "$value": "#FFFFFF" },
-      "destructive": { "$value": "#DC2626" },
-      "destructive-foreground": { "$value": "#FFFFFF" },
-      "info": { "$value": "#0052FF" },
-      "success-text": { "$value": "#047857", "$description": "Status text on tints and backgrounds." },
-      "warning-text": { "$value": "#92400E" },
-      "destructive-text": { "$value": "#B91C1C" },
-      "info-foreground": { "$value": "#FFFFFF" }
+      "warning-foreground": { "$value": "#0F172A", "$description": "5.60:1 on warning." },
+      "warning-soft-foreground": { "$value": "#92400E" },
+      "danger": { "$value": "#DC2626" },
+      "danger-foreground": { "$value": "#FFFFFF", "$description": "4.83:1 on danger." },
+      "danger-soft-foreground": { "$value": "#B91C1C" },
+      "field-background": { "$value": "#FFFFFF" },
+      "field-border": { "$value": "#7C8BA1", "$description": "1px field edge, 3.46:1 on white (WCAG 1.4.11)." },
+      "border": { "$value": "#E2E8F0" },
+      "separator": { "$value": "#E9EEF4" },
+      "focus": { "$value": "{color.light.accent}" },
+      "link": { "$value": "{color.light.accent}" },
+      "backdrop": { "$value": "#0F172A80", "$description": "rgb(15 23 42 / 0.5)" }
     },
-    "inverted": {
-      "$description": "Deep-slate palette applied by .inverted (a section) or .dark (whole app).",
+    "dark": {
+      "$description": "Dark palette: .dark or [data-theme=dark] on <html>, or .inverted on one section.",
       "background": { "$value": "#0F172A" },
       "foreground": { "$value": "#F8FAFC" },
-      "card": { "$value": "#1E293B" },
-      "card-foreground": { "$value": "#F8FAFC" },
-      "popover": { "$value": "#1E293B" },
-      "popover-foreground": { "$value": "#F8FAFC" },
-      "primary": { "$value": "#7AA0FF", "$description": "Light primary with dark text: 7.06:1 both ways on slate." },
-      "primary-end": { "$value": "#9DB8FF" },
-      "primary-foreground": { "$value": "#0F172A" },
-      "secondary": { "$value": "#1E293B" },
-      "secondary-foreground": { "$value": "#F8FAFC" },
-      "muted": { "$value": "#1E293B" },
-      "muted-foreground": { "$value": "#94A3B8" },
-      "accent": { "$value": "#1E293B" },
-      "accent-foreground": { "$value": "#F8FAFC" },
-      "border": { "$value": "#FFFFFF1A", "$description": "rgb(255 255 255 / 0.10)" },
-      "input": { "$value": "#FFFFFF24", "$description": "rgb(255 255 255 / 0.14)" },
-      "ring": { "$value": "#9DB8FF" },
+      "surface": { "$value": "#1E293B" },
+      "surface-secondary": { "$value": "#273449" },
+      "surface-tertiary": { "$value": "#334155" },
+      "overlay": { "$value": "#1E293B" },
+      "muted": { "$value": "#A8B5C8", "$description": "4.98:1 on default, 8.5:1 on background." },
+      "default": { "$value": "#334155" },
+      "default-foreground": { "$value": "#F8FAFC" },
+      "accent": { "$value": "#7AA0FF", "$description": "Light accent with dark text: 7.06:1 both ways on slate." },
+      "accent-end": { "$value": "#9DB8FF" },
+      "accent-foreground": { "$value": "#0F172A" },
+      "accent-soft-foreground": { "$value": "#9DB8FF" },
       "success": { "$value": "#34D399" },
+      "success-foreground": { "$value": "#0F172A" },
+      "success-soft-foreground": { "$value": "#6EE7B7" },
       "warning": { "$value": "#FBBF24" },
-      "destructive": { "$value": "#F87171" },
-      "info": { "$value": "#7AA0FF" },
-      "success-text": { "$value": "#6EE7B7" },
-      "warning-text": { "$value": "#FCD34D" },
-      "destructive-text": { "$value": "#FCA5A5" }
+      "warning-foreground": { "$value": "#0F172A" },
+      "warning-soft-foreground": { "$value": "#FCD34D" },
+      "danger": { "$value": "#F87171" },
+      "danger-foreground": { "$value": "#0F172A" },
+      "danger-soft-foreground": { "$value": "#FCA5A5" },
+      "field-background": { "$value": "#0F172A" },
+      "field-border": { "$value": "#718096", "$description": "3.64:1 on surface." },
+      "border": { "$value": "#FFFFFF1A", "$description": "rgb(255 255 255 / 0.10)" },
+      "separator": { "$value": "#FFFFFF14", "$description": "rgb(255 255 255 / 0.08)" },
+      "focus": { "$value": "{color.dark.accent}" },
+      "link": { "$value": "{color.dark.accent}" },
+      "backdrop": { "$value": "#020617B3", "$description": "rgb(2 6 23 / 0.7)" }
     }
   },
   "gradient": {
     "$type": "gradient",
-    "primary": {
-      "$description": "linear-gradient(to right, primary, primary-end). Diagonal variant uses 135deg.",
+    "accent": {
+      "$description": "linear-gradient(to right, accent, accent-end); diagonal variant at 135deg. Only on one headline word (24px or larger), the leading icon tile and one data highlight.",
       "$value": [
-        { "color": "{color.light.primary}", "position": 0 },
-        { "color": "{color.light.primary-end}", "position": 1 }
+        { "color": "{color.light.accent}", "position": 0 },
+        { "color": "{color.light.accent-end}", "position": 1 }
       ]
     }
   },
   "font": {
     "family": {
       "$type": "fontFamily",
-      "display": { "$value": ["Calistoga", "Georgia", "serif"], "$description": "H1/H2 and stat numerals only, weight normal." },
-      "sans": { "$value": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"], "$description": "All UI and body text." },
-      "mono": { "$value": ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"], "$description": "Section labels, badges, table heads." }
+      "sans": { "$value": ["Geist Variable", "Geist", "ui-sans-serif", "system-ui", "sans-serif"], "$description": "Headlines, UI and body text. Self-hosted via @fontsource-variable/geist." },
+      "mono": { "$value": ["Geist Mono Variable", "Geist Mono", "ui-monospace", "SFMono-Regular", "monospace"], "$description": "Labels (label-caps), code, IDs. Self-hosted via @fontsource-variable/geist-mono." }
     },
     "weight": {
       "$type": "fontWeight",
       "regular": { "$value": 400 },
       "medium": { "$value": 500 },
-      "semibold": { "$value": 600 },
-      "bold": { "$value": 700 }
+      "semibold": { "$value": 600 }
     }
   },
   "typography": {
     "$type": "typography",
     "hero": {
-      "$description": "Hero H1. Scales 2.75rem (mobile) → 5.25rem (lg). Last word uses gradient text + underline.",
-      "$value": { "fontFamily": "{font.family.display}", "fontWeight": 400, "fontSize": { "value": 5.25, "unit": "rem" }, "lineHeight": 1.05, "letterSpacing": { "value": -0.02, "unit": "em" } },
-      "$extensions": { "id.aiyo.responsive": { "min": "2.75rem", "max": "5.25rem" } }
+      "$description": "Hero H1 (utility heading-hero). 2.75rem, 3.75rem from 640px, 5rem from 1024px. One word may use gradient text with the underline bar.",
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 5, "unit": "rem" }, "lineHeight": 1.02, "letterSpacing": { "value": -0.045, "unit": "em" } },
+      "$extensions": { "id.aiyo.responsive": { "min": "2.75rem", "max": "5rem" } }
     },
-    "h2": {
-      "$description": "Section headline. Scales 2.25rem → 3.25rem.",
-      "$value": { "fontFamily": "{font.family.display}", "fontWeight": 400, "fontSize": { "value": 3.25, "unit": "rem" }, "lineHeight": 1.15, "letterSpacing": { "value": -0.02, "unit": "em" } },
-      "$extensions": { "id.aiyo.responsive": { "min": "2.25rem", "max": "3.25rem" } }
+    "section": {
+      "$description": "Section H2 (utility heading-section). 2rem, 3rem from 768px.",
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 3, "unit": "rem" }, "lineHeight": 1.1, "letterSpacing": { "value": -0.035, "unit": "em" } },
+      "$extensions": { "id.aiyo.responsive": { "min": "2rem", "max": "3rem" } }
+    },
+    "page-title": {
+      "$description": "App page H1 via PageHeader. 1.5rem, 1.875rem from 768px.",
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 1.875, "unit": "rem" }, "lineHeight": 1.2, "letterSpacing": { "value": -0.03, "unit": "em" } }
     },
     "card-title": {
-      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 1.25, "unit": "rem" }, "lineHeight": 1.375, "letterSpacing": { "value": -0.01, "unit": "em" } }
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 1.125, "unit": "rem" }, "lineHeight": 1.4, "letterSpacing": { "value": -0.02, "unit": "em" } }
     },
     "lede": {
-      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 1.125, "unit": "rem" }, "lineHeight": 1.75, "letterSpacing": { "value": 0, "unit": "em" } },
-      "$extensions": { "id.aiyo.responsive": { "min": "1rem", "max": "1.125rem" } }
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 1.125, "unit": "rem" }, "lineHeight": 1.625, "letterSpacing": { "value": 0, "unit": "em" } }
     },
     "body": {
-      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 1, "unit": "rem" }, "lineHeight": 1.625, "letterSpacing": { "value": 0, "unit": "em" } }
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 1, "unit": "rem" }, "lineHeight": 1.6, "letterSpacing": { "value": 0, "unit": "em" } }
     },
     "small": {
       "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 400, "fontSize": { "value": 0.875, "unit": "rem" }, "lineHeight": 1.5, "letterSpacing": { "value": 0, "unit": "em" } }
     },
     "label": {
-      "$description": "Mono uppercase label (section labels, badges, table heads). Apply text-transform: uppercase.",
-      "$value": { "fontFamily": "{font.family.mono}", "fontWeight": 400, "fontSize": { "value": 0.75, "unit": "rem" }, "lineHeight": 1, "letterSpacing": { "value": 0.15, "unit": "em" } }
+      "$description": "Mono uppercase label (utility label-caps): section labels, stat labels, meta. Apply text-transform: uppercase.",
+      "$value": { "fontFamily": "{font.family.mono}", "fontWeight": 500, "fontSize": { "value": 0.75, "unit": "rem" }, "lineHeight": 1, "letterSpacing": { "value": 0.12, "unit": "em" } }
+    },
+    "stat": {
+      "$description": "Stat numeral. 2.25rem, 3rem from 768px, tabular figures.",
+      "$value": { "fontFamily": "{font.family.sans}", "fontWeight": 600, "fontSize": { "value": 3, "unit": "rem" }, "lineHeight": 1, "letterSpacing": { "value": -0.04, "unit": "em" } }
     }
   },
   "radius": {
     "$type": "dimension",
-    "sm": { "$value": { "value": 6, "unit": "px" } },
-    "md": { "$value": { "value": 8, "unit": "px" } },
-    "lg": { "$value": { "value": 10, "unit": "px" } },
-    "xl": { "$value": { "value": 12, "unit": "px" }, "$description": "Default control radius (buttons, inputs)." },
-    "2xl": { "$value": { "value": 16, "unit": "px" }, "$description": "Cards, dialogs, tables." },
-    "3xl": { "$value": { "value": 24, "unit": "px" } },
-    "full": { "$value": { "value": 9999, "unit": "px" } }
+    "$description": "HeroUI scale from --radius: 0.5rem.",
+    "base": { "$value": { "value": 0.5, "unit": "rem" } },
+    "lg": { "$value": { "value": 8, "unit": "px" } },
+    "field": { "$value": { "value": 12, "unit": "px" }, "$description": "Inputs, selects, text areas (rounded-xl / rounded-field)." },
+    "2xl": { "$value": { "value": 16, "unit": "px" }, "$description": "Icon tiles, toasts." },
+    "surface": { "$value": { "value": 24, "unit": "px" }, "$description": "Cards, alerts, modals, tables (rounded-3xl)." },
+    "full": { "$value": { "value": 9999, "unit": "px" }, "$description": "Buttons, chips, tabs." }
   },
   "shadow": {
     "$type": "shadow",
-    "sm": { "$value": { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 1, "unit": "px" }, "blur": { "value": 3, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
-    "md": { "$value": { "color": "#00000012", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 4, "unit": "px" }, "blur": { "value": 6, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
-    "lg": { "$value": { "color": "#00000014", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 10, "unit": "px" }, "blur": { "value": 15, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
-    "xl": { "$value": { "color": "#0000001A", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 20, "unit": "px" }, "blur": { "value": 25, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
-    "accent": { "$value": { "color": "#0052FF40", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 4, "unit": "px" }, "blur": { "value": 14, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } },
-    "accent-lg": { "$value": { "color": "#0052FF59", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 8, "unit": "px" }, "blur": { "value": 24, "unit": "px" }, "spread": { "value": 0, "unit": "px" } } }
+    "field": {
+      "$description": "Light theme only; none in dark.",
+      "$value": [
+        { "color": "#0000000A", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 2, "unit": "px" }, "blur": { "value": 4, "unit": "px" }, "spread": { "value": 0, "unit": "px" } },
+        { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 1, "unit": "px" }, "blur": { "value": 2, "unit": "px" }, "spread": { "value": 0, "unit": "px" } },
+        { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 0, "unit": "px" }, "blur": { "value": 1, "unit": "px" }, "spread": { "value": 0, "unit": "px" } }
+      ]
+    },
+    "surface": {
+      "$description": "Cards, alerts, tables. Light theme only; none in dark.",
+      "$value": [
+        { "color": "#0000000A", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 2, "unit": "px" }, "blur": { "value": 4, "unit": "px" }, "spread": { "value": 0, "unit": "px" } },
+        { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 1, "unit": "px" }, "blur": { "value": 2, "unit": "px" }, "spread": { "value": 0, "unit": "px" } },
+        { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 0, "unit": "px" }, "blur": { "value": 1, "unit": "px" }, "spread": { "value": 0, "unit": "px" } }
+      ]
+    },
+    "overlay": {
+      "$description": "Modals, popovers, menus, toasts. Dark theme uses a 1px inset hairline instead (rgb(255 255 255 / 0.3)).",
+      "$value": [
+        { "color": "#0000000F", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 2, "unit": "px" }, "blur": { "value": 8, "unit": "px" }, "spread": { "value": 0, "unit": "px" } },
+        { "color": "#00000008", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": -6, "unit": "px" }, "blur": { "value": 12, "unit": "px" }, "spread": { "value": 0, "unit": "px" } },
+        { "color": "#00000014", "offsetX": { "value": 0, "unit": "px" }, "offsetY": { "value": 14, "unit": "px" }, "blur": { "value": 28, "unit": "px" }, "spread": { "value": 0, "unit": "px" } }
+      ]
+    }
   },
   "motion": {
     "easing": {
       "$type": "cubicBezier",
-      "out-expo": { "$value": [0.16, 1, 0.3, 1], "$description": "The AiYO easing curve, used everywhere." }
+      "aiyo": { "$value": [0.16, 1, 0.3, 1], "$description": "Scroll entrances (Tailwind ease-aiyo). Component motion uses HeroUI's own curves." }
     },
     "duration": {
       "$type": "duration",
-      "fast": { "$value": { "value": 200, "unit": "ms" }, "$description": "Hover, press, overlays." },
-      "base": { "$value": { "value": 300, "unit": "ms" }, "$description": "Card hover, accordion." },
-      "entrance": { "$value": { "value": 700, "unit": "ms" }, "$description": "fadeInUp entrance (28px)." },
-      "stagger": { "$value": { "value": 100, "unit": "ms" } },
-      "pulse": { "$value": { "value": 2000, "unit": "ms" } },
-      "breathe": { "$value": { "value": 3000, "unit": "ms" } },
-      "float": { "$value": { "value": 5000, "unit": "ms" }, "$description": "±10px; delayed variant 4s." },
-      "ring": { "$value": { "value": 60000, "unit": "ms" }, "$description": "Slow decorative ring spin." }
+      "arrow": { "$value": { "value": 200, "unit": "ms" }, "$description": "data-arrow slide on the primary CTA." },
+      "entrance": { "$value": { "value": 700, "unit": "ms" }, "$description": "Reveal entrance (28px rise), once." },
+      "stagger": { "$value": { "value": 100, "unit": "ms" } }
     },
     "distance": {
       "$type": "dimension",
-      "entrance": { "$value": { "value": 28, "unit": "px" } },
-      "float": { "$value": { "value": 10, "unit": "px" } }
+      "entrance": { "$value": { "value": 28, "unit": "px" } }
     }
   },
   "layout": {
     "$type": "dimension",
     "container-max": { "$value": { "value": 72, "unit": "rem" }, "$description": "Tailwind max-w-6xl." },
-    "touch-target-min": { "$value": { "value": 44, "unit": "px" } },
-    "control-height": { "$value": { "value": 48, "unit": "px" }, "$description": "Input default h-12." },
-    "button-height": { "$value": { "value": 44, "unit": "px" }, "$description": "Button md h-11." }
+    "touch-target-min": { "$value": { "value": 44, "unit": "px" }, "$description": "Enforced for HeroUI controls by the touch layer in aiyo.css (below 768px or coarse pointers)." },
+    "touch-breakpoint": { "$value": { "value": 768, "unit": "px" } }
   }
 }

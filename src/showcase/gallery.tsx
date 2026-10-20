@@ -1,103 +1,116 @@
 import * as React from "react"
+import { ArrowRight, Bell, Envelope, Gear, Plus, Receipt, Wallet, ArrowRightFromSquare, Person } from "@gravity-ui/icons"
 import {
-  ArrowRight,
-  Bell,
-  CircleCheck,
-  Info,
-  LogOut,
-  Mail,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Settings,
-  TriangleAlert,
-  User,
-  Receipt,
-  Store,
-  Wallet,
-} from "lucide-react"
-import { Container, SectionHeader, Section } from "@/components/blocks/section"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Field } from "@/components/ui/field"
-import { GradientText } from "@/components/ui/gradient-text"
-import { IconTile } from "@/components/ui/icon-tile"
-import { Input } from "@/components/ui/input"
-import { Kbd } from "@/components/ui/kbd"
-import { Label } from "@/components/ui/label"
-import { Pagination } from "@/components/ui/pagination"
-import { Progress } from "@/components/ui/progress"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { SectionLabel } from "@/components/ui/section-label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Spinner } from "@/components/ui/spinner"
-import { Stat } from "@/components/ui/stat"
-import { Switch } from "@/components/ui/switch"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+  Accordion,
+  Alert,
+  Avatar,
+  AvatarGroup,
+  Button,
+  Card,
+  Checkbox,
+  Chip,
+  Description,
+  Dropdown,
+  FieldError,
+  Input,
+  Kbd,
+  Label,
+  Link,
+  ListBox,
+  Modal,
+  ProgressBar,
+  Radio,
+  RadioGroup,
+  SearchField,
+  Select,
+  Skeleton,
+  Spinner,
+  Switch,
+  Table,
+  Tabs,
+  TextArea,
+  TextField,
+  Tooltip,
+  buttonVariants,
+  cn,
+  toast,
+  type Key,
+} from "@heroui/react"
+import { DataPagination } from "@/components/aiyo/data-pagination"
+import { GradientText } from "@/components/aiyo/gradient-text"
+import { IconTile } from "@/components/aiyo/icon-tile"
+import { Container, Section, SectionHeader } from "@/components/aiyo/section"
+import { SectionLabel } from "@/components/aiyo/section-label"
+import { Stat } from "@/components/aiyo/stat"
 import { Demo } from "./shared"
 
 const GROUPS = [
   { label: "Actions", items: [["button", "Button"], ["icon-tile", "Icon Tile"]] },
-  { label: "Labels", items: [["badge", "Badge"], ["section-label", "Section Label"], ["gradient-text", "Gradient Text"]] },
-  { label: "Forms", items: [["input", "Input & Field"], ["select", "Select"], ["choices", "Checkbox · Radio · Switch"]] },
-  { label: "Surfaces", items: [["card", "Card"], ["dialog", "Dialog"]] },
-  { label: "Navigation", items: [["tabs", "Tabs"], ["accordion", "Accordion"], ["dropdown", "Dropdown Menu"]] },
-  { label: "Feedback", items: [["alert", "Alert"], ["progress", "Progress · Spinner · Skeleton"], ["tooltip", "Tooltip · Kbd"]] },
-  { label: "Data", items: [["stat", "Stat"], ["table", "Table"], ["pagination", "Pagination"], ["avatar", "Avatar"]] },
+  { label: "Labels", items: [["chip", "Chip"], ["brand-type", "Section Label · Gradient Text"]] },
+  { label: "Forms", items: [["text-field", "Text Field"], ["select", "Select"], ["choices", "Checkbox · Radio · Switch"]] },
+  { label: "Surfaces", items: [["card", "Card"], ["modal", "Modal"]] },
+  { label: "Navigation", items: [["tabs", "Tabs"], ["accordion", "Accordion"], ["dropdown", "Dropdown"]] },
+  { label: "Feedback", items: [["alert", "Alert"], ["toast", "Toast"], ["progress", "Progress · Spinner · Skeleton"], ["tooltip", "Tooltip · Kbd"]] },
+  { label: "Data", items: [["stat", "Stat"], ["table", "Table"], ["pagination", "Data Pagination"], ["avatar", "Avatar"]] },
 ] as const
+
+const ALL_IDS = GROUPS.flatMap((g) => g.items.map(([id]) => id))
 
 function useActiveId(ids: string[]) {
   const [active, setActive] = React.useState(ids[0])
   React.useEffect(() => {
-    const obs = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
         if (visible[0]) setActive(visible[0].target.id)
+        // Scrolled back above the gallery: the first entry is the one coming next.
+        else if ((document.getElementById(ids[0])?.getBoundingClientRect().top ?? 0) > window.innerHeight * 0.35) setActive(ids[0])
       },
       { rootMargin: "-20% 0px -65% 0px" },
     )
     ids.forEach((id) => {
       const el = document.getElementById(id)
-      if (el) obs.observe(el)
+      if (el) observer.observe(el)
     })
-    return () => obs.disconnect()
+    return () => observer.disconnect()
   }, [ids])
   return active
 }
 
-const ALL_IDS = GROUPS.flatMap((g) => g.items.map(([id]) => id))
+const BANKS = ["BCA", "Mandiri", "BNI", "BRI"]
+const INVOICES = [
+  { id: "INV-0003", customer: "Sample customer C", status: "Paid", color: "success", amount: "Rp 1.250.000" },
+  { id: "INV-0002", customer: "Sample customer B", status: "Pending", color: "warning", amount: "Rp 480.000" },
+  { id: "INV-0001", customer: "Sample customer A", status: "Failed", color: "danger", amount: "Rp 2.100.000" },
+] as const
+
+function PendingButton() {
+  const [pending, setPending] = React.useState(false)
+  return (
+    <Button
+      isPending={pending}
+      onPress={() => {
+        setPending(true)
+        window.setTimeout(() => setPending(false), 1200)
+      }}
+    >
+      {({ isPending }) =>
+        isPending ? (
+          <>
+            <Spinner color="current" size="sm" aria-label="Saving" /> Saving
+          </>
+        ) : (
+          "Save draft"
+        )
+      }
+    </Button>
+  )
+}
 
 export function Gallery() {
-  const active = useActiveId(ALL_IDS)
+  const active = useActiveId(ALL_IDS as unknown as string[])
   const [plan, setPlan] = React.useState("pro")
+  const [bank, setBank] = React.useState<Key | null>("bca")
   const [page, setPage] = React.useState(4)
   const [pageSize, setPageSize] = React.useState(10)
 
@@ -108,10 +121,10 @@ export function Gallery() {
           label="Components"
           title={
             <>
-              Thirty-odd pieces, <GradientText>one voice</GradientText>.
+              HeroUI components, <GradientText>AiYO colours</GradientText>
             </>
           }
-          description="Built on Radix primitives and cva, following shadcn/ui file names and APIs, so they drop straight into any AiYO React project. Every preview below is the real component."
+          description="Every preview below is the real HeroUI v3 component, imported from @heroui/react and themed only by aiyo.css. AiYO-only pieces are marked with their components/aiyo file."
         />
 
         <div className="mt-16 grid gap-12 lg:grid-cols-[13rem_1fr] lg:gap-16">
@@ -119,17 +132,16 @@ export function Gallery() {
             <div className="sticky top-28 flex flex-col gap-6">
               {GROUPS.map((g) => (
                 <div key={g.label} className="flex flex-col gap-1">
-                  <span className="mb-1 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{g.label}</span>
+                  <span className="mb-1 label-caps text-muted">{g.label}</span>
                   {g.items.map(([id, name]) => (
                     <a
                       key={id}
                       href={`#${id}`}
-                      className={
-                        "relative rounded-md py-1 pl-3 text-sm transition-colors before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full before:transition-colors " +
-                        (active === id
-                          ? "font-medium text-foreground before:bg-gradient-primary"
-                          : "text-muted-foreground before:bg-border hover:text-foreground")
-                      }
+                      aria-current={active === id ? "location" : undefined}
+                      className={cn(
+                        "relative rounded-md py-1 pl-3 text-sm transition-colors before:absolute before:inset-y-1 before:left-0 before:w-0.5 before:rounded-full",
+                        active === id ? "font-medium text-foreground before:bg-accent" : "text-muted before:bg-separator hover:text-foreground",
+                      )}
                     >
                       {name}
                     </a>
@@ -143,41 +155,43 @@ export function Gallery() {
             <Demo
               id="button"
               title="Button"
-              description="Primary is the signature gradient and lifts on hover. An arrow marked data-arrow slides right, reserved for the one main CTA on a screen. Secondary is the outline partner. Ghost for low-emphasis, inverted for dark-on-light emphasis. Sizes sm (dense desktop only) to xl (hero CTA)."
-              code={`import { Button } from "@/components/ui/button"
+              description="HeroUI's button, unchanged: primary is the Electric Blue fill, secondary a soft neutral, outline and ghost for low emphasis, danger for destructive actions. Use onPress, not onClick. An icon marked data-arrow slides on hover; give it to the one main CTA on a screen."
+              code={`import { Button, Link, buttonVariants } from "@heroui/react"
+import { ArrowRight, Plus } from "@gravity-ui/icons"
 
-<Button>Create invoice <ArrowRight data-arrow /></Button> {/* arrow: main CTA only */}
-<Button variant="secondary">Documentation</Button>
+<Button onPress={create}>Create invoice <ArrowRight data-arrow /></Button>
+<Button variant="secondary">Export CSV</Button>
+<Button variant="outline">Preview</Button>
 <Button variant="ghost">Cancel</Button>
-<Button variant="inverted">Talk to sales</Button>
-<Button variant="destructive">Delete</Button>
-<Button size="xl">Hero CTA</Button>
-<Button size="icon" variant="secondary" aria-label="Add"><Plus /></Button>`}
+<Button variant="danger">Delete</Button>
+<Button isIconOnly variant="secondary" aria-label="Add"><Plus /></Button>
+
+{/* A link that looks like a button */}
+<Link href="/docs" className={buttonVariants({ variant: "outline" })}>Read the API docs</Link>`}
             >
               <div className="flex flex-col items-center gap-6">
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <Button>
-                    Create invoice <ArrowRight data-arrow />
+                    Create invoice <ArrowRight data-arrow aria-hidden />
                   </Button>
-                  <Button variant="secondary">Documentation</Button>
+                  <Button variant="secondary">Export CSV</Button>
+                  <Button variant="tertiary">Duplicate</Button>
+                  <Button variant="outline">Preview</Button>
                   <Button variant="ghost">Cancel</Button>
-                  <Button variant="inverted">Talk to sales</Button>
-                  <Button variant="destructive">Delete</Button>
-                  <Button variant="link">Learn more</Button>
+                  <Button variant="danger">Delete</Button>
+                  <Button variant="danger-soft">Archive</Button>
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <Button size="sm">Small</Button>
                   <Button size="md">Medium</Button>
                   <Button size="lg">Large</Button>
-                  <Button size="xl">
-                    Extra large
+                  <Button isIconOnly variant="secondary" aria-label="Add">
+                    <Plus aria-hidden />
                   </Button>
-                  <Button size="icon" variant="secondary" aria-label="Add">
-                    <Plus />
-                  </Button>
-                  <Button disabled>
-                    <Spinner /> Saving
-                  </Button>
+                  <PendingButton />
+                  <Link href="#text-field" className={buttonVariants({ variant: "outline" })}>
+                    Jump to forms
+                  </Link>
                 </div>
               </div>
             </Demo>
@@ -185,170 +199,255 @@ export function Gallery() {
             <Demo
               id="icon-tile"
               title="Icon Tile"
-              description="Feature icons sit on a full gradient, not a translucent wash. Scales up 10% when its group parent is hovered."
-              code={`<IconTile><Receipt /></IconTile>
-<IconTile variant="soft" size="lg"><Wallet /></IconTile>
-<IconTile variant="muted" size="sm"><Settings /></IconTile>`}
+              description="AiYO block (components/aiyo/icon-tile.tsx). Soft by default. The gradient tile marks the one item that leads a group, so use it once per group."
+              code={`import { IconTile } from "@/components/aiyo/icon-tile"
+
+<IconTile variant="gradient" size="lg"><Receipt /></IconTile>
+<IconTile><Wallet /></IconTile>
+<IconTile variant="default" size="sm"><Gear /></IconTile>`}
             >
-              <IconTile size="sm">
-                <Receipt />
-              </IconTile>
-              <IconTile>
+              <IconTile variant="gradient" size="lg">
                 <Receipt />
               </IconTile>
               <IconTile size="lg">
-                <Receipt />
-              </IconTile>
-              <IconTile variant="soft" size="lg">
                 <Wallet />
               </IconTile>
-              <IconTile variant="muted" size="lg">
-                <Settings />
+              <IconTile>
+                <Wallet />
+              </IconTile>
+              <IconTile variant="default" size="sm">
+                <Gear />
               </IconTile>
             </Demo>
 
             <Demo
-              id="badge"
-              title="Badge"
-              description="Pill-shaped status and metadata. Primary (gradient) is for the one thing that should shine, such as a trend or a featured tier."
-              code={`<Badge>Draft</Badge>
-<Badge variant="primary"><TrendingUp /> +24%</Badge>
-<Badge variant="soft">New</Badge>
-<Badge variant="success">Paid</Badge>
-<Badge variant="warning">Pending</Badge>
-<Badge variant="destructive">Failed</Badge>`}
+              id="chip"
+              title="Chip"
+              description="Inline status and metadata. Use the soft variant with a status colour, and always keep the word: colour alone never carries the status. (HeroUI's Badge is a counter that sits on another element, not an inline label.)"
+              code={`import { Chip } from "@heroui/react"
+
+<Chip color="success" variant="soft">Paid</Chip>
+<Chip color="warning" variant="soft">Pending</Chip>
+<Chip color="danger" variant="soft">Failed</Chip>
+<Chip>Draft</Chip>
+<Chip color="accent" variant="soft">v2.0</Chip>`}
             >
-              <Badge>Draft</Badge>
-              <Badge variant="primary">Featured</Badge>
-              <Badge variant="soft">New</Badge>
-              <Badge variant="outline">v1.0</Badge>
-              <Badge variant="success">
-                <CircleCheck /> Paid
-              </Badge>
-              <Badge variant="warning">Pending</Badge>
-              <Badge variant="destructive">Failed</Badge>
+              <Chip color="success" variant="soft">
+                Paid
+              </Chip>
+              <Chip color="warning" variant="soft">
+                Pending
+              </Chip>
+              <Chip color="danger" variant="soft">
+                Failed
+              </Chip>
+              <Chip>Draft</Chip>
+              <Chip color="accent" variant="soft">
+                v2.0
+              </Chip>
+              <Chip color="accent" variant="primary">
+                Selected
+              </Chip>
             </Demo>
 
             <Demo
-              id="section-label"
-              title="Section Label"
-              description="Names a marketing section above its headline: plain uppercase JetBrains Mono, 0.15em tracking. No pill and no dot; it marks no state."
-              code={`<SectionLabel>Settlement</SectionLabel>`}
+              id="brand-type"
+              title="Section Label and Gradient Text"
+              description="AiYO blocks (section-label.tsx, gradient-text.tsx). The label is plain uppercase Geist Mono with no pill and no dot. One headline word per screen may take the gradient; the underline bar is for the hero only."
+              previewClassName="flex-col"
+              code={`import { SectionLabel } from "@/components/aiyo/section-label"
+import { GradientText } from "@/components/aiyo/gradient-text"
+
+<SectionLabel>Settlement</SectionLabel>
+<h2 className="heading-section">Settlement in <GradientText>one tap</GradientText></h2>
+<h1 className="heading-hero">Ship it <GradientText underline>today</GradientText></h1>`}
             >
               <SectionLabel>Settlement</SectionLabel>
-            </Demo>
-
-            <Demo
-              id="gradient-text"
-              title="Gradient Text"
-              description="One key word per headline gets the gradient. The underline bar is reserved for the hero."
-              code={`<h2 className="font-display text-5xl">
-  Payments that feel <GradientText>effortless</GradientText>
-</h2>
-<h1 className="font-display text-6xl">
-  Ship it <GradientText underline>today</GradientText>
-</h1>`}
-              previewClassName="flex-col"
-            >
-              <p className="text-center font-display text-4xl leading-tight md:text-5xl">
-                Payments that feel <GradientText>effortless</GradientText>
-              </p>
-              <p className="text-center font-display text-4xl leading-tight md:text-5xl">
-                Ship it <GradientText underline>today</GradientText>
+              <p className="heading-section text-center">
+                Settlement in <GradientText>one tap</GradientText>
               </p>
             </Demo>
 
             <Demo
-              id="input"
-              title="Input, Textarea & Field"
-              description="h-12 by default, rounded-xl, focus ring in primary with an offset. Field wires up label, hint, error and aria attributes for you."
-              code={`<Field label="Email" htmlFor="email" hint="We'll never share it." required>
-  <Input id="email" type="email" placeholder="email@example.com" />
-</Field>
-<Field label="Merchant ID" htmlFor="mid" error="Merchant ID is required">
-  <Input id="mid" />
-</Field>
-<Textarea placeholder="Notes" />`}
+              id="text-field"
+              title="Text Field"
+              description="TextField wires Label, Input, Description and FieldError together, with validation and aria attributes. AiYO gives fields a 1px edge at 3:1 contrast, and on touch screens every field is at least 44px tall."
               previewClassName="block"
+              code={`import { Description, FieldError, Input, Label, SearchField, TextArea, TextField } from "@heroui/react"
+
+<TextField name="email" type="email" isRequired>
+  <Label>Email</Label>
+  <Input placeholder="email@example.com" />
+  <Description>We only use it for receipts.</Description>
+  <FieldError />
+</TextField>
+
+<TextField name="mid" isInvalid>
+  <Label>Merchant ID</Label>
+  <Input placeholder="MID-0000" />
+  <FieldError>Enter the merchant ID.</FieldError>
+</TextField>
+
+<SearchField aria-label="Search transactions">
+  <SearchField.Group>
+    <SearchField.SearchIcon />
+    <SearchField.Input placeholder="Search transactions" />
+    <SearchField.ClearButton aria-label="Clear search" />
+  </SearchField.Group>
+</SearchField>`}
             >
               <div className="mx-auto grid w-full max-w-xl gap-6 sm:grid-cols-2">
-                <Field label="Email" htmlFor="demo-email" hint="We'll never share it." required>
-                  <Input id="demo-email" type="email" placeholder="email@example.com" />
-                </Field>
-                <Field label="Merchant ID" htmlFor="demo-mid" error="Merchant ID is required">
-                  <Input id="demo-mid" placeholder="MID-0000" />
-                </Field>
-                <div className="relative sm:col-span-2">
-                  <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input className="pl-11" placeholder="Search transactions…" aria-label="Search" />
-                </div>
-                <Field label="Notes" htmlFor="demo-notes" className="sm:col-span-2">
-                  <Textarea id="demo-notes" placeholder="Anything we should know?" />
-                </Field>
+                <TextField name="email" type="email" isRequired>
+                  <Label>Email</Label>
+                  <Input placeholder="email@example.com" />
+                  <Description>We only use it for receipts.</Description>
+                  <FieldError />
+                </TextField>
+                <TextField name="mid" isInvalid>
+                  <Label>Merchant ID</Label>
+                  <Input placeholder="MID-0000" />
+                  <FieldError>Enter the merchant ID.</FieldError>
+                </TextField>
+                <SearchField aria-label="Search transactions" className="sm:col-span-2" fullWidth>
+                  <SearchField.Group>
+                    <SearchField.SearchIcon />
+                    <SearchField.Input placeholder="Search transactions" />
+                    <SearchField.ClearButton aria-label="Clear search" />
+                  </SearchField.Group>
+                </SearchField>
+                <TextField name="notes" className="sm:col-span-2" fullWidth>
+                  <Label>Notes</Label>
+                  <TextArea rows={3} placeholder="Anything we should know?" />
+                </TextField>
               </div>
             </Demo>
 
             <Demo
               id="select"
               title="Select"
-              description="Radix Select wearing the same field chrome as Input, so forms read as one system."
-              code={`<Select defaultValue="bca">
-  <SelectTrigger className="w-64"><SelectValue placeholder="Choose bank" /></SelectTrigger>
-  <SelectContent>
-    <SelectItem value="bca">BCA</SelectItem>
-    <SelectItem value="mandiri">Mandiri</SelectItem>
-  </SelectContent>
+              description="A field trigger with a ListBox in a popover. Give every item an id and a textValue; read and set the choice with value and onChange."
+              code={`import { Label, ListBox, Select } from "@heroui/react"
+
+<Select value={bank} onChange={setBank} placeholder="Choose a bank" className="w-64">
+  <Label>Settlement bank</Label>
+  <Select.Trigger>
+    <Select.Value />
+    <Select.Indicator />
+  </Select.Trigger>
+  <Select.Popover>
+    <ListBox>
+      <ListBox.Item id="bca" textValue="BCA">BCA<ListBox.ItemIndicator /></ListBox.Item>
+      <ListBox.Item id="mandiri" textValue="Mandiri">Mandiri<ListBox.ItemIndicator /></ListBox.Item>
+    </ListBox>
+  </Select.Popover>
 </Select>`}
             >
-              <Select defaultValue="bca">
-                <SelectTrigger className="w-64" aria-label="Bank">
-                  <SelectValue placeholder="Choose bank" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bca">BCA</SelectItem>
-                  <SelectItem value="mandiri">Mandiri</SelectItem>
-                  <SelectItem value="bni">BNI</SelectItem>
-                  <SelectItem value="bri">BRI</SelectItem>
-                </SelectContent>
+              <Select value={bank} onChange={setBank} placeholder="Choose a bank" className="w-64">
+                <Label>Settlement bank</Label>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover>
+                  <ListBox>
+                    {BANKS.map((b) => (
+                      <ListBox.Item key={b} id={b.toLowerCase()} textValue={b}>
+                        {b}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
               </Select>
             </Demo>
 
             <Demo
               id="choices"
-              title="Checkbox, Radio & Switch"
-              description="Selected states fill with the gradient. Always pair with a Label; the whole row is the hit target."
-              code={`<Label><Checkbox defaultChecked /> Email receipts</Label>
-<RadioGroup defaultValue="pro">
-  <Label><RadioGroupItem value="pro" /> Pro</Label>
+              title="Checkbox, Radio and Switch"
+              description="Each control sits inside its own Content part, so the whole row is the target. Off states keep a 3:1 edge or track."
+              code={`import { Checkbox, Label, Radio, RadioGroup, Switch } from "@heroui/react"
+
+<Checkbox name="receipts" defaultSelected>
+  <Checkbox.Content>
+    <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+    Email receipts
+  </Checkbox.Content>
+</Checkbox>
+
+<RadioGroup name="plan" value={plan} onChange={setPlan}>
+  <Label>Plan</Label>
+  <Radio value="pro">
+    <Radio.Content>
+      <Radio.Control><Radio.Indicator /></Radio.Control>
+      Pro
+    </Radio.Content>
+  </Radio>
 </RadioGroup>
-<Label><Switch defaultChecked /> Auto settlement</Label>`}
+
+<Switch defaultSelected>
+  <Switch.Content>
+    <Switch.Control><Switch.Thumb /></Switch.Control>
+    Auto settlement
+  </Switch.Content>
+</Switch>`}
             >
               <div className="grid w-full max-w-xl gap-8 sm:grid-cols-3">
-                <div className="flex flex-col gap-4">
-                  <Label className="cursor-pointer">
-                    <Checkbox defaultChecked /> Email receipts
-                  </Label>
-                  <Label className="cursor-pointer">
-                    <Checkbox checked="indeterminate" /> Some selected
-                  </Label>
-                  <Label className="cursor-pointer">
-                    <Checkbox /> SMS alerts
-                  </Label>
+                <div className="flex flex-col gap-3">
+                  <Checkbox name="receipts" defaultSelected>
+                    <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      Email receipts
+                    </Checkbox.Content>
+                  </Checkbox>
+                  <Checkbox name="some" isIndeterminate>
+                    <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      Some outlets
+                    </Checkbox.Content>
+                  </Checkbox>
+                  <Checkbox name="sms">
+                    <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      SMS alerts
+                    </Checkbox.Content>
+                  </Checkbox>
                 </div>
-                <RadioGroup value={plan} onValueChange={setPlan}>
+                <RadioGroup name="plan" value={plan} onChange={setPlan}>
+                  <Label>Plan</Label>
                   {["starter", "pro", "enterprise"].map((p) => (
-                    <Label key={p} className="cursor-pointer capitalize">
-                      <RadioGroupItem value={p} /> {p}
-                    </Label>
+                    <Radio key={p} value={p}>
+                      <Radio.Content className="capitalize">
+                        <Radio.Control>
+                          <Radio.Indicator />
+                        </Radio.Control>
+                        {p}
+                      </Radio.Content>
+                    </Radio>
                   ))}
                 </RadioGroup>
-                <div className="flex flex-col gap-4">
-                  <Label className="cursor-pointer">
-                    <Switch defaultChecked /> Auto settlement
-                  </Label>
-                  <Label className="cursor-pointer">
-                    <Switch /> Maintenance
-                  </Label>
+                <div className="flex flex-col gap-3">
+                  <Switch defaultSelected>
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      Auto settlement
+                    </Switch.Content>
+                  </Switch>
+                  <Switch>
+                    <Switch.Content>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                      Maintenance
+                    </Switch.Content>
+                  </Switch>
                 </div>
               </div>
             </Demo>
@@ -356,250 +455,324 @@ export function Gallery() {
             <Demo
               id="card"
               title="Card"
-              description="White, 1px border, rounded-2xl. default (shadow-md), elevated (shadow-xl), interactive (lifts with a faint primary wash) and featured (2px gradient stroke)."
-              code={`<Card variant="interactive">
-  <CardHeader>
-    <IconTile><Store /></IconTile>
-    <CardTitle>Instant settlement</CardTitle>
-    <CardDescription>Funds land in seconds.</CardDescription>
-  </CardHeader>
+              description="White surface, 24px radius, HeroUI's light surface shadow. Title, description, content and footer are parts. The secondary variant sits on a tinted fill for grouped or less important content."
+              previewClassName="grid items-stretch gap-5 md:grid-cols-[1.2fr_1fr]"
+              code={`import { Button, Card } from "@heroui/react"
+
+<Card className="p-6">
+  <Card.Header>
+    <Card.Title>Instant settlement</Card.Title>
+    <Card.Description>Funds land in the merchant's account the same day.</Card.Description>
+  </Card.Header>
+  <Card.Footer className="gap-3">
+    <Button size="sm">Turn on</Button>
+  </Card.Footer>
 </Card>
-<Card featured>…</Card>`}
-              previewClassName="grid gap-5 md:grid-cols-3 items-stretch"
+
+<Card variant="secondary">…</Card>`}
             >
-              <Card variant="interactive">
-                <CardHeader>
-                  <IconTile className="mb-3">
-                    <Store />
-                  </IconTile>
-                  <CardTitle>Interactive</CardTitle>
-                  <CardDescription>Hover me: I lift, my shadow deepens, my icon grows.</CardDescription>
-                </CardHeader>
-              </Card>
-              <Card variant="elevated">
-                <CardHeader>
-                  <CardTitle>Elevated</CardTitle>
-                  <CardDescription>For surfaces that sit above the page, like popovers and hero cards.</CardDescription>
-                </CardHeader>
-                <CardFooter>
-                  <Button size="sm" variant="secondary">
-                    Action
+              <Card className="gap-5 p-6">
+                <IconTile>
+                  <Wallet />
+                </IconTile>
+                <Card.Header className="gap-1">
+                  <Card.Title className="text-lg font-semibold">Instant settlement</Card.Title>
+                  <Card.Description>Funds land in the merchant's account the same day.</Card.Description>
+                </Card.Header>
+                <Card.Footer className="gap-3">
+                  <Button size="sm">Turn on</Button>
+                  <Button size="sm" variant="ghost">
+                    Learn how payouts work
                   </Button>
-                </CardFooter>
+                </Card.Footer>
               </Card>
-              <Card featured>
-                <CardHeader>
-                  <Badge variant="primary" className="mb-2">
-                    Featured
-                  </Badge>
-                  <CardTitle>Featured</CardTitle>
-                  <CardDescription>2px gradient stroke. One per view, at most.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={72} />
-                </CardContent>
+              <Card variant="secondary" className="justify-between gap-5 p-6">
+                <Card.Header className="gap-1">
+                  <Card.Title className="text-lg font-semibold">Secondary</Card.Title>
+                  <Card.Description>For grouped settings and supporting content that sits behind the main card.</Card.Description>
+                </Card.Header>
+                <Card.Content>
+                  <ProgressBar value={72} aria-label="Setup progress">
+                    <ProgressBar.Track>
+                      <ProgressBar.Fill />
+                    </ProgressBar.Track>
+                  </ProgressBar>
+                </Card.Content>
               </Card>
             </Demo>
 
             <Demo
-              id="dialog"
+              id="modal"
               sample
-              title="Dialog"
-              description="Solid slate overlay (no blur), pops in with the AiYO ease. Footer buttons stack on mobile with the primary action first in reading order."
-              code={`<Dialog>
-  <DialogTrigger asChild><Button>Open dialog</Button></DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Confirm payout</DialogTitle>
-      <DialogDescription>…</DialogDescription>
-    </DialogHeader>
-    <DialogFooter>
-      <DialogClose asChild><Button variant="secondary">Cancel</Button></DialogClose>
-      <Button>Confirm</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>`}
+              title="Modal"
+              description="Solid backdrop (no blur), focus trapped, closes on Escape. A Button with slot close closes it. For a delete confirmation use AlertDialog with a danger button (see App patterns)."
+              code={`import { Button, Input, Label, Modal, TextField } from "@heroui/react"
+
+<Modal>
+  <Button>Confirm payout</Button>
+  <Modal.Backdrop>
+    <Modal.Container>
+      <Modal.Dialog>
+        <Modal.CloseTrigger />
+        <Modal.Header>
+          <Modal.Heading>Confirm payout</Modal.Heading>
+          <p className="text-sm text-muted">[Amount] goes to [bank account].</p>
+        </Modal.Header>
+        <Modal.Body>
+          <TextField name="pin" type="password"><Label>PIN</Label><Input /></TextField>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button slot="close" variant="secondary">Cancel</Button>
+          <Button slot="close">Confirm payout</Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    </Modal.Container>
+  </Modal.Backdrop>
+</Modal>`}
             >
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>Open dialog</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Confirm payout</DialogTitle>
-                    <DialogDescription>[Amount] will be sent to [bank account]. This can't be undone.</DialogDescription>
-                  </DialogHeader>
-                  <Field label="PIN" htmlFor="demo-pin">
-                    <Input id="demo-pin" type="password" inputMode="numeric" placeholder="••••••" />
-                  </Field>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="secondary">Cancel</Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <Button>
-                        Confirm payout
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Modal>
+                <Button>Confirm payout</Button>
+                <Modal.Backdrop>
+                  <Modal.Container>
+                    <Modal.Dialog>
+                      <Modal.CloseTrigger />
+                      <Modal.Header>
+                        <Modal.Heading>Confirm payout</Modal.Heading>
+                        <p className="text-sm text-muted">[Amount] goes to [bank account]. This can't be undone.</p>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <TextField name="pin" type="password" fullWidth>
+                          <Label>PIN</Label>
+                          <Input inputMode="numeric" placeholder="6 digits" />
+                        </TextField>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button slot="close" variant="secondary">
+                          Cancel
+                        </Button>
+                        <Button slot="close">Confirm payout</Button>
+                      </Modal.Footer>
+                    </Modal.Dialog>
+                  </Modal.Container>
+                </Modal.Backdrop>
+              </Modal>
             </Demo>
 
             <Demo
               id="tabs"
               title="Tabs"
-              description="Segmented control on a muted track; the active tab becomes a small white card. Use orientation vertical for side navigation on settings-style pages (see App Patterns)."
-              code={`<Tabs defaultValue="overview">
-  <TabsList>
-    <TabsTrigger value="overview">Overview</TabsTrigger>
-    <TabsTrigger value="activity">Activity</TabsTrigger>
-  </TabsList>
-  <TabsContent value="overview">…</TabsContent>
-</Tabs>`}
+              description="Primary is a segmented control; secondary is an underline that also works as vertical side navigation (see App patterns). Put Tabs.Indicator inside every tab and give tabs and panels matching ids."
+              previewClassName="flex-col items-stretch"
+              code={`import { Tabs } from "@heroui/react"
+
+<Tabs defaultSelectedKey="overview">
+  <Tabs.ListContainer>
+    <Tabs.List aria-label="Invoice">
+      <Tabs.Tab id="overview">Overview<Tabs.Indicator /></Tabs.Tab>
+      <Tabs.Tab id="activity">Activity<Tabs.Indicator /></Tabs.Tab>
+    </Tabs.List>
+  </Tabs.ListContainer>
+  <Tabs.Panel id="overview">…</Tabs.Panel>
+  <Tabs.Panel id="activity">…</Tabs.Panel>
+</Tabs>
+
+<Tabs variant="secondary">…</Tabs>`}
             >
-              <Tabs defaultValue="overview" className="w-full max-w-md">
-                <TabsList>
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="activity">Activity</TabsTrigger>
-                  <TabsTrigger value="settings">Settings</TabsTrigger>
-                </TabsList>
-                {["overview", "activity", "settings"].map((t) => (
-                  <TabsContent key={t} value={t}>
-                    <p className="rounded-xl border border-border bg-background p-5 text-sm capitalize text-muted-foreground">{t} panel content.</p>
-                  </TabsContent>
-                ))}
-              </Tabs>
+              {(["primary", "secondary"] as const).map((variant) => (
+                <Tabs key={variant} variant={variant} defaultSelectedKey="overview" align="start" className="w-full max-w-md self-center">
+                  <Tabs.ListContainer>
+                    <Tabs.List aria-label={`Invoice, ${variant} tabs`}>
+                      {["Overview", "Activity", "Settings"].map((t) => (
+                        <Tabs.Tab key={t} id={t.toLowerCase()}>
+                          {t}
+                          <Tabs.Indicator />
+                        </Tabs.Tab>
+                      ))}
+                    </Tabs.List>
+                  </Tabs.ListContainer>
+                  {["overview", "activity", "settings"].map((t) => (
+                    <Tabs.Panel key={t} id={t} className="px-0">
+                      <p className="rounded-2xl bg-surface-secondary p-4 text-sm text-muted capitalize">
+                        {variant} · {t} panel
+                      </p>
+                    </Tabs.Panel>
+                  ))}
+                </Tabs>
+              ))}
             </Demo>
 
             <Demo
               id="accordion"
               title="Accordion"
-              description="FAQ-style disclosure. The plus rotates into an ×, filling with the gradient when open."
-              code={`<Accordion type="single" collapsible>
-  <AccordionItem value="a">
-    <AccordionTrigger>How fast is settlement?</AccordionTrigger>
-    <AccordionContent>…</AccordionContent>
-  </AccordionItem>
-</Accordion>`}
+              description="For FAQs with questions real users ask. Items expand one at a time unless you set allowsMultipleExpanded."
               previewClassName="block"
+              code={`import { Accordion } from "@heroui/react"
+
+<Accordion defaultExpandedKeys={["provider"]}>
+  <Accordion.Item id="provider">
+    <Accordion.Heading>
+      <Accordion.Trigger>Do I need a provider?<Accordion.Indicator /></Accordion.Trigger>
+    </Accordion.Heading>
+    <Accordion.Panel>
+      <Accordion.Body>No. HeroUI v3 works without one.</Accordion.Body>
+    </Accordion.Panel>
+  </Accordion.Item>
+</Accordion>`}
             >
-              <Accordion type="single" collapsible defaultValue="a" className="mx-auto w-full max-w-xl">
-                <AccordionItem value="a">
-                  <AccordionTrigger>Can I use these outside React?</AccordionTrigger>
-                  <AccordionContent>The tokens in aiyo.css are plain CSS variables, so any stack can read them. The components themselves are React.</AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="b">
-                  <AccordionTrigger>Does it support dark mode?</AccordionTrigger>
-                  <AccordionContent>Add the dark class to html. It's the same palette used by inverted sections.</AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="c">
-                  <AccordionTrigger>How do AI agents learn the rules?</AccordionTrigger>
-                  <AccordionContent>Point them at DESIGN.md, AGENTS.md or llms.txt, or install the aiyo-design Claude skill.</AccordionContent>
-                </AccordionItem>
+              <Accordion defaultExpandedKeys={["provider"]} className="mx-auto w-full max-w-xl">
+                {[
+                  ["provider", "Do I need a provider around the app?", "No. HeroUI v3 works without one. Mount <Toast.Provider /> once if you use toasts."],
+                  ["dark", "How does dark mode work?", "Call useTheme from @heroui/react, or put the dark class on html. aiyo.css holds the dark palette, and one section can go dark with the inverted class."],
+                  ["agents", "How do AI agents learn the rules?", "Point them at AGENTS.md and DESIGN.md, or the llms.txt index, or install the aiyo-design Claude skill."],
+                ].map(([id, q, a]) => (
+                  <Accordion.Item key={id} id={id}>
+                    <Accordion.Heading>
+                      <Accordion.Trigger>
+                        {q}
+                        <Accordion.Indicator />
+                      </Accordion.Trigger>
+                    </Accordion.Heading>
+                    <Accordion.Panel>
+                      <Accordion.Body>{a}</Accordion.Body>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
               </Accordion>
             </Demo>
 
             <Demo
               id="dropdown"
-              title="Dropdown Menu"
-              description="Floating card menu with mono group labels and keyboard shortcuts."
-              code={`<DropdownMenu>
-  <DropdownMenuTrigger asChild><Button variant="secondary" size="icon"><MoreHorizontal /></Button></DropdownMenuTrigger>
-  <DropdownMenuContent align="end">
-    <DropdownMenuLabel>Account</DropdownMenuLabel>
-    <DropdownMenuItem><User /> Profile</DropdownMenuItem>
-    <DropdownMenuSeparator />
-    <DropdownMenuItem variant="destructive"><LogOut /> Log out</DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>`}
+              title="Dropdown"
+              description="A menu in a popover. Handle choices with onAction on the menu, and mark destructive items with the danger variant."
+              code={`import { Button, Dropdown, Label } from "@heroui/react"
+
+<Dropdown>
+  <Button variant="secondary">Account</Button>
+  <Dropdown.Popover>
+    <Dropdown.Menu onAction={(key) => run(key)}>
+      <Dropdown.Item id="profile" textValue="Profile"><Person /><Label>Profile</Label></Dropdown.Item>
+      <Dropdown.Item id="settings" textValue="Settings"><Gear /><Label>Settings</Label></Dropdown.Item>
+      <Dropdown.Item id="logout" textValue="Log out" variant="danger"><Label>Log out</Label></Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown.Popover>
+</Dropdown>`}
             >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="secondary">
-                    Account <MoreHorizontal />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="center">
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuItem>
-                    <User /> Profile <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell /> Notifications
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings /> Settings <DropdownMenuShortcut>⌘,</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem variant="destructive">
-                    <LogOut /> Log out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Dropdown>
+                <Button variant="secondary">Account</Button>
+                <Dropdown.Popover>
+                  <Dropdown.Menu onAction={(key) => toast(`Menu: ${String(key)}`)}>
+                    <Dropdown.Item id="profile" textValue="Profile">
+                      <Person aria-hidden className="size-4" />
+                      <Label>Profile</Label>
+                    </Dropdown.Item>
+                    <Dropdown.Item id="notifications" textValue="Notifications">
+                      <Bell aria-hidden className="size-4" />
+                      <Label>Notifications</Label>
+                    </Dropdown.Item>
+                    <Dropdown.Item id="settings" textValue="Settings">
+                      <Gear aria-hidden className="size-4" />
+                      <Label>Settings</Label>
+                    </Dropdown.Item>
+                    <Dropdown.Item id="logout" textValue="Log out" variant="danger">
+                      <ArrowRightFromSquare aria-hidden className="size-4" />
+                      <Label>Log out</Label>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown.Popover>
+              </Dropdown>
             </Demo>
 
             <Demo
               id="alert"
               sample
               title="Alert"
-              description="Notices carry a 3px colour bar on the left. Info uses the brand gradient."
-              code={`<Alert>
-  <Info />
-  <AlertTitle>Settlement scheduled</AlertTitle>
-  <AlertDescription>Funds arrive tomorrow at 09:00.</AlertDescription>
-</Alert>
-<Alert variant="warning">…</Alert>`}
+              description="Page-level messages. The status colours the icon and title; the description stays muted. Add role status or alert when the message appears after an action."
               previewClassName="grid w-full gap-4 md:grid-cols-2"
+              code={`import { Alert } from "@heroui/react"
+
+<Alert status="accent">
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Settlement scheduled</Alert.Title>
+    <Alert.Description>Funds arrive tomorrow at 09:00 WIB.</Alert.Description>
+  </Alert.Content>
+</Alert>`}
             >
-              <Alert>
-                <Info />
-                <AlertTitle>Settlement scheduled</AlertTitle>
-                <AlertDescription>Funds arrive tomorrow at 09:00 WIB.</AlertDescription>
-              </Alert>
-              <Alert variant="success">
-                <CircleCheck />
-                <AlertTitle>Payment received</AlertTitle>
-                <AlertDescription>Invoice [number] is now paid.</AlertDescription>
-              </Alert>
-              <Alert variant="warning">
-                <TriangleAlert />
-                <AlertTitle>KYC expiring</AlertTitle>
-                <AlertDescription>Renew documents within 7 days.</AlertDescription>
-              </Alert>
-              <Alert variant="destructive">
-                <TriangleAlert />
-                <AlertTitle>Transfer failed</AlertTitle>
-                <AlertDescription>The destination account was rejected.</AlertDescription>
-              </Alert>
+              {(
+                [
+                  ["accent", "Settlement scheduled", "Funds arrive tomorrow at 09:00 WIB."],
+                  ["success", "Payment received", "Invoice [number] is now paid."],
+                  ["warning", "KYC expiring", "Renew the documents within 7 days."],
+                  ["danger", "Transfer failed", "The bank rejected the destination account."],
+                ] as const
+              ).map(([status, title, body]) => (
+                <Alert key={status} status={status}>
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Title>{title}</Alert.Title>
+                    <Alert.Description>{body}</Alert.Description>
+                  </Alert.Content>
+                </Alert>
+              ))}
+            </Demo>
+
+            <Demo
+              id="toast"
+              title="Toast"
+              description="Short confirmations after an action. Mount Toast.Provider once at the app root, then call toast from anywhere."
+              code={`import { Toast, toast } from "@heroui/react"
+
+// once, next to the app
+<Toast.Provider placement="bottom end" />
+
+toast.success("Invoice sent", { description: "The customer gets an email with the PDF." })
+toast.danger("Couldn't send the invoice", { description: "Check the email address, then try again." })`}
+            >
+              <Button variant="secondary" onPress={() => toast.success("Invoice sent", { description: "The customer gets an email with the PDF." })}>
+                Show success toast
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={() => toast.danger("Couldn't send the invoice", { description: "Check the email address, then try again." })}
+              >
+                Show error toast
+              </Button>
             </Demo>
 
             <Demo
               id="progress"
               sample
-              title="Progress, Spinner & Skeleton"
-              description="Progress fills with the gradient. Skeletons mirror the real layout's shape."
-              code={`<Progress value={64} />
-<Spinner className="text-primary" />
-<Skeleton className="h-4 w-48" />`}
+              title="Progress, Spinner and Skeleton"
+              description="ProgressBar fills with the accent. Spinner marks a wait you cannot measure. Skeletons copy the shape of the real content they stand in for."
               previewClassName="block"
+              code={`import { Label, ProgressBar, Skeleton, Spinner } from "@heroui/react"
+
+<ProgressBar value={64}>
+  <Label>Onboarding</Label>
+  <ProgressBar.Output />
+  <ProgressBar.Track><ProgressBar.Fill /></ProgressBar.Track>
+</ProgressBar>
+<Spinner size="sm" aria-label="Syncing transactions" />
+<Skeleton aria-hidden className="h-4 w-48 rounded-lg" />`}
             >
               <div className="mx-auto grid w-full max-w-xl gap-8 sm:grid-cols-2">
                 <div className="flex flex-col gap-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Onboarding</span>
-                    <span className="text-muted-foreground">64%</span>
-                  </div>
-                  <Progress value={64} />
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <Spinner className="text-primary" /> Syncing transactions…
+                  <ProgressBar value={64}>
+                    <Label>Onboarding</Label>
+                    <ProgressBar.Output />
+                    <ProgressBar.Track>
+                      <ProgressBar.Fill />
+                    </ProgressBar.Track>
+                  </ProgressBar>
+                  <div className="flex items-center gap-3 text-sm text-muted">
+                    <Spinner size="sm" aria-label="Syncing transactions" /> Syncing transactions
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Skeleton className="size-12 rounded-full" />
+                <div className="flex items-center gap-4" aria-hidden>
+                  <Skeleton className="size-12 shrink-0 rounded-full" />
                   <div className="flex flex-1 flex-col gap-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-3/4 rounded-lg" />
+                    <Skeleton className="h-4 w-1/2 rounded-lg" />
                   </div>
                 </div>
               </div>
@@ -607,25 +780,31 @@ export function Gallery() {
 
             <Demo
               id="tooltip"
-              title="Tooltip & Kbd"
-              description="Tooltips are always deep slate, whatever they float over. Wrap the app once in TooltipProvider."
-              code={`<Tooltip>
-  <TooltipTrigger asChild><Button size="icon" variant="secondary" aria-label="Mail"><Mail /></Button></TooltipTrigger>
-  <TooltipContent>Inbox</TooltipContent>
+              title="Tooltip and Kbd"
+              description="Tooltips name icon-only buttons on hover and focus, after HeroUI's default delay. The button still needs its own aria-label."
+              code={`import { Button, Kbd, Tooltip } from "@heroui/react"
+
+<Tooltip>
+  <Button isIconOnly variant="secondary" aria-label="Inbox"><Envelope /></Button>
+  <Tooltip.Content showArrow><Tooltip.Arrow />Inbox, 3 unread</Tooltip.Content>
 </Tooltip>
-<Kbd>⌘</Kbd><Kbd>K</Kbd>`}
+<Kbd><Kbd.Abbr keyValue="command" /><Kbd.Content>K</Kbd.Content></Kbd>`}
             >
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button size="icon" variant="secondary" aria-label="Inbox">
-                    <Mail />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Inbox · 3 unread</TooltipContent>
+                <Button isIconOnly variant="secondary" aria-label="Inbox">
+                  <Envelope aria-hidden />
+                </Button>
+                <Tooltip.Content showArrow>
+                  <Tooltip.Arrow />
+                  Inbox, 3 unread
+                </Tooltip.Content>
               </Tooltip>
-              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                Search <Kbd>⌘</Kbd>
-                <Kbd>K</Kbd>
+              <span className="flex items-center gap-2 text-sm text-muted">
+                Search
+                <Kbd>
+                  <Kbd.Abbr keyValue="command" />
+                  <Kbd.Content>K</Kbd.Content>
+                </Kbd>
               </span>
             </Demo>
 
@@ -633,92 +812,114 @@ export function Gallery() {
               id="stat"
               sample
               title="Stat"
-              description="Metrics in Calistoga at display size, with a gradient trend badge. Looks best inside an inverted section."
-              code={`<Stat label="Monthly volume" value="Rp 4,2M" trend="+18%" />
-<Stat label="Refund rate" value="0.8%" trend="-0.3%" trendDirection="down" />`}
-              previewClassName="grid gap-8 sm:grid-cols-3 justify-items-start"
+              description="AiYO block (stat.tsx): mono label, large Geist numeral, optional trend chip. Show a trend only when the comparison period is real, and name it in the hint. trendTone says whether the movement is good news."
+              previewClassName="grid justify-items-start gap-8 sm:grid-cols-3"
+              code={`import { Stat } from "@/components/aiyo/stat"
+
+<Stat label="Monthly volume" value="Rp 4,2M" trend="+18%" hint="vs. September" />
+<Stat label="Refund rate" value="0.8%" trend="+0.3%" trendTone="negative" hint="vs. September" />`}
             >
-              <Stat label="Monthly volume" value="Rp 4,2M" trend="+18%" />
-              <Stat label="Merchants" value="12.480" trend="+6%" />
-              <Stat label="Refund rate" value="0.8%" trend="-0.3%" trendDirection="down" />
+              <Stat label="Monthly volume" value="Rp 4,2M" trend="+18%" hint="vs. September" />
+              <Stat label="Merchants" value="12.480" trend="+6%" hint="vs. September" />
+              <Stat label="Refund rate" value="0.8%" trend="+0.3%" trendTone="negative" hint="vs. September" />
             </Demo>
 
             <Demo
               id="table"
               sample
               title="Table"
-              description="Tables float in a card. Mono uppercase column heads; rows get a faint primary wash on hover."
-              code={`<Table>
-  <TableHeader>
-    <TableRow><TableHead>Invoice</TableHead><TableHead>Status</TableHead></TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow><TableCell>INV-0412</TableCell><TableCell><Badge variant="success">Paid</Badge></TableCell></TableRow>
-  </TableBody>
-</Table>`}
+              description="React Aria table with keyboard navigation. Mark one column isRowHeader and give every row an id. Status cells use Chip."
               previewClassName="block"
+              code={`import { Chip, Table } from "@heroui/react"
+
+<Table>
+  <Table.ScrollContainer>
+    <Table.Content aria-label="Invoices">
+      <Table.Header>
+        <Table.Column isRowHeader>Invoice</Table.Column>
+        <Table.Column>Status</Table.Column>
+      </Table.Header>
+      <Table.Body>
+        <Table.Row id="INV-0003">
+          <Table.Cell>INV-0003</Table.Cell>
+          <Table.Cell><Chip color="success" variant="soft">Paid</Chip></Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table.Content>
+  </Table.ScrollContainer>
+</Table>`}
             >
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Invoice</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {[
-                    ["INV-0003", "Sample customer C", "success", "Paid", "Rp 1.250.000"],
-                    ["INV-0002", "Sample customer B", "warning", "Pending", "Rp 480.000"],
-                    ["INV-0001", "Sample customer A", "destructive", "Failed", "Rp 2.100.000"],
-                  ].map(([id, cust, v, s, amt]) => (
-                    <TableRow key={id}>
-                      <TableCell className="font-mono text-xs">{id}</TableCell>
-                      <TableCell className="font-medium">{cust}</TableCell>
-                      <TableCell>
-                        <Badge variant={v as "success"}>{s}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">{amt}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+                <Table.ScrollContainer>
+                  <Table.Content aria-label="Invoices">
+                    <Table.Header>
+                      <Table.Column isRowHeader>Invoice</Table.Column>
+                      <Table.Column>Customer</Table.Column>
+                      <Table.Column>Status</Table.Column>
+                      <Table.Column className="text-end">Amount</Table.Column>
+                    </Table.Header>
+                    <Table.Body>
+                      {INVOICES.map((r) => (
+                        <Table.Row key={r.id} id={r.id}>
+                          <Table.Cell className="font-mono text-xs">{r.id}</Table.Cell>
+                          <Table.Cell className="font-medium">{r.customer}</Table.Cell>
+                          <Table.Cell>
+                            <Chip color={r.color} variant="soft" size="sm">
+                              {r.status}
+                            </Chip>
+                          </Table.Cell>
+                          <Table.Cell className="text-end tabular-nums">{r.amount}</Table.Cell>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table.Content>
+                </Table.ScrollContainer>
               </Table>
             </Demo>
 
             <Demo
               id="pagination"
               sample
-              title="Pagination"
-              description="Mandatory under every data table, even with one page. Shows the range, rows per page, and pages with ellipses. The current page wears the gradient."
-              code={`<Pagination
+              title="Data Pagination"
+              description="AiYO block (data-pagination.tsx) on HeroUI's Pagination. Mandatory under every data table, even with one page: the row range, rows per page, and pages with ellipses."
+              previewClassName="block"
+              code={`import { DataPagination } from "@/components/aiyo/data-pagination"
+
+const [page, setPage] = useState(1)
+const [pageSize, setPageSize] = useState(10)
+
+<DataPagination
   page={page}
   pageSize={pageSize}
   total={248}
   onPageChange={setPage}
   onPageSizeChange={setPageSize}
 />`}
-              previewClassName="block"
             >
-              <Pagination page={page} pageSize={pageSize} total={248} onPageChange={setPage} onPageSizeChange={setPageSize} />
+              <DataPagination page={page} pageSize={pageSize} total={248} onPageChange={setPage} onPageSizeChange={setPageSize} />
             </Demo>
 
             <Demo
               id="avatar"
               title="Avatar"
-              description="Initials sit on the gradient. Groups overlap with a card-coloured ring."
-              code={`<Avatar><AvatarImage src={url} /><AvatarFallback>AP</AvatarFallback></Avatar>
-<AvatarGroup>…</AvatarGroup>`}
+              description="Initials on a soft accent fill until an approved photo exists. Groups overlap with a surface ring."
+              code={`import { Avatar, AvatarGroup } from "@heroui/react"
+
+<Avatar color="accent" variant="soft"><Avatar.Fallback>AP</Avatar.Fallback></Avatar>
+<AvatarGroup aria-label="Reviewers" role="group">…</AvatarGroup>`}
             >
-              <Avatar className="size-12">
-                <AvatarFallback>AP</AvatarFallback>
+              <Avatar size="lg" color="accent" variant="soft">
+                <Avatar.Fallback>AP</Avatar.Fallback>
               </Avatar>
-              <AvatarGroup>
-                {["RS", "DW", "MN", "+5"].map((i) => (
-                  <Avatar key={i}>
-                    <AvatarFallback className={i.startsWith("+") ? "bg-muted bg-none text-foreground" : undefined}>{i}</AvatarFallback>
+              <AvatarGroup aria-label="Reviewers" role="group">
+                {["RS", "DW", "MN"].map((i) => (
+                  <Avatar key={i} color="accent" variant="soft">
+                    <Avatar.Fallback>{i}</Avatar.Fallback>
                   </Avatar>
                 ))}
+                <Avatar>
+                  <Avatar.Fallback>+5</Avatar.Fallback>
+                </Avatar>
               </AvatarGroup>
             </Demo>
           </div>

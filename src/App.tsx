@@ -1,21 +1,30 @@
 import * as React from "react"
-import { ArrowRight, Bot, Braces, Columns2, FileText, Layers, Menu, MousePointerClick, Package, Palette, Terminal, X } from "lucide-react"
-import { Container, Section, SectionHeader } from "@/components/blocks/section"
-import { HeroGraphic } from "@/components/blocks/hero-graphic"
-import { PricingCard } from "@/components/blocks/pricing-card"
-import { Steps } from "@/components/blocks/steps"
-import { TestimonialCard } from "@/components/blocks/testimonial-card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { GradientText } from "@/components/ui/gradient-text"
-import { IconTile } from "@/components/ui/icon-tile"
-import { Input } from "@/components/ui/input"
-import { SectionLabel } from "@/components/ui/section-label"
-import { Stat } from "@/components/ui/stat"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import {
+  ArrowRight,
+  Bars,
+  Book,
+  CurlyBrackets,
+  Cube,
+  FileText,
+  Font,
+  Globe,
+  HandPointUp,
+  Layers,
+  Palette,
+  Xmark,
+} from "@gravity-ui/icons"
+import { Button, Card, Chip, Input, Link, Toast, buttonVariants, cn } from "@heroui/react"
+import { GradientText } from "@/components/aiyo/gradient-text"
+import { HeroGraphic } from "@/components/aiyo/hero-graphic"
+import { IconTile } from "@/components/aiyo/icon-tile"
+import { PricingCard } from "@/components/aiyo/pricing-card"
+import { Container, Section, SectionHeader } from "@/components/aiyo/section"
+import { SectionLabel } from "@/components/aiyo/section-label"
+import { Stat } from "@/components/aiyo/stat"
+import { Steps } from "@/components/aiyo/steps"
+import { TestimonialCard } from "@/components/aiyo/testimonial-card"
+import { ThemeToggle } from "@/components/aiyo/theme-toggle"
 import { Reveal, RevealGroup, RevealItem } from "@/lib/motion"
-import { cn } from "@/lib/utils"
 import { AppPatterns } from "./showcase/app-patterns"
 import { Gallery } from "./showcase/gallery"
 import { CodeBlock, CopyButton, Logo, useCopy } from "./showcase/shared"
@@ -23,12 +32,11 @@ import { CodeBlock, CopyButton, Logo, useCopy } from "./showcase/shared"
 const NAV = [
   ["Foundations", "#foundations"],
   ["Components", "#components"],
-  ["App Patterns", "#app-patterns"],
-  ["Landing", "#patterns"],
-  ["For AI Agents", "#agents"],
+  ["App patterns", "#app-patterns"],
+  ["Blocks", "#blocks"],
+  ["For AI agents", "#agents"],
 ] as const
 
-/* ------------------------------------------------------------------ Navbar */
 function Navbar() {
   const [scrolled, setScrolled] = React.useState(false)
   const [open, setOpen] = React.useState(false)
@@ -41,87 +49,90 @@ function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-all duration-300",
-        scrolled ? "border-b border-border bg-background/80 backdrop-blur-xl" : "border-b border-transparent",
+        "fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300",
+        // The one backdrop blur in the system: the sticky navbar.
+        scrolled || open ? "border-separator bg-background/80 backdrop-blur-xl" : "border-transparent",
       )}
     >
-      <Container className="flex h-18 items-center justify-between">
-        <a href="#top" aria-label="AiYO Design System home">
+      <Container className="flex h-16 items-center justify-between gap-4">
+        <a href="#top" aria-label="AiYO Design System, back to top" className="inline-flex min-h-11 items-center rounded-lg">
           <Logo />
         </a>
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Sections" className="hidden items-center gap-1 lg:flex">
           {NAV.map(([label, href]) => (
-            <a key={href} href={href} className="rounded-lg px-3.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <a key={href} href={href} className="rounded-full px-3.5 py-2 text-sm text-muted transition-colors hover:bg-default hover:text-foreground">
               {label}
             </a>
           ))}
         </nav>
-        <div className="hidden md:block">
-          <Button asChild size="sm">
-            <a href="./DESIGN.md">
-              DESIGN.md
-            </a>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <Link href="./DESIGN.md" className={cn(buttonVariants({ size: "sm" }), "hidden lg:inline-flex")}>
+            DESIGN.md
+          </Link>
+          <Button
+            isIconOnly
+            variant="ghost"
+            className="lg:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onPress={() => setOpen((o) => !o)}
+          >
+            {open ? <Xmark aria-hidden /> : <Bars aria-hidden />}
           </Button>
         </div>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Menu" onClick={() => setOpen((o) => !o)}>
-          {open ? <X /> : <Menu />}
-        </Button>
       </Container>
       {open && (
-        <div className="border-t border-border bg-background md:hidden">
+        <nav aria-label="Sections" className="border-t border-separator lg:hidden">
           <Container className="flex flex-col py-3">
-            {NAV.map(([label, href]) => (
-              <a key={href} href={href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-base font-medium hover:bg-muted">
+            {[...NAV, ["DESIGN.md", "./DESIGN.md"] as const].map(([label, href]) => (
+              <a key={href} href={href} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-default">
                 {label}
               </a>
             ))}
           </Container>
-        </div>
+        </nav>
       )}
     </header>
   )
 }
 
-/* -------------------------------------------------------------------- Hero */
 function Hero() {
   return (
-    <section id="top" className="relative isolate overflow-hidden pb-16 pt-28 md:pb-32 md:pt-44">
+    <section id="top" className="relative isolate overflow-hidden pt-28 pb-16 md:pt-44 md:pb-32">
       <Container className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
         <RevealGroup className="flex flex-col items-start gap-8">
           <RevealItem>
-            <SectionLabel>AiYO Design System · v1.0</SectionLabel>
+            <SectionLabel>Version 2 · a HeroUI v3 theme</SectionLabel>
           </RevealItem>
           <RevealItem>
-            <h1 className="font-display text-[2.75rem] leading-[1.05] tracking-[-0.02em] sm:text-6xl lg:text-[5.25rem]">
+            <h1 className="heading-hero">
               Every AiYO product, one confident <GradientText underline>voice</GradientText>
             </h1>
           </RevealItem>
           <RevealItem>
-            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Tokens, React components and patterns for building AiYO interfaces, written so both your team and your AI agents can follow them.
+            <p className="max-w-xl text-lg leading-relaxed text-muted md:text-xl">
+              The AiYO theme for HeroUI v3, plus the blocks and app patterns every AiYO product shares. Written so your team and your AI agents
+              build screens the same way.
             </p>
           </RevealItem>
           <RevealItem className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <Button asChild size="xl" className="w-full sm:w-auto">
-              <a href="#components">
-                Browse components <ArrowRight data-arrow />
-              </a>
-            </Button>
-            <Button asChild size="xl" variant="secondary" className="w-full sm:w-auto">
-              <a href="#agents">
-                <Bot /> Use with AI agents
-              </a>
-            </Button>
+            <Link href="#components" className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}>
+              Browse components <ArrowRight data-arrow aria-hidden />
+            </Link>
+            <Link href="#setup" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-auto")}>
+              Set up a project
+            </Link>
           </RevealItem>
-          <RevealItem className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-2 text-sm text-muted-foreground">
-            {["React 19 + Tailwind v4", "shadcn/ui compatible", "AA text contrast"].map((t) => (
-              <span key={t} className="inline-flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-primary" /> {t}
-              </span>
-            ))}
+          <RevealItem>
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
+              {["React 19 and Tailwind CSS v4", "HeroUI 3.2 on React Aria", "AA contrast, light and dark"].map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
           </RevealItem>
         </RevealGroup>
-        <Reveal className="hidden lg:block" transition={{ delay: 0.3 }}>
+        <Reveal className="hidden lg:block">
           <HeroGraphic />
         </Reveal>
       </Container>
@@ -129,16 +140,27 @@ function Hero() {
   )
 }
 
-/* -------------------------------------------------------------- Principles */
 const PRINCIPLES = [
   {
     icon: Layers,
-    title: "Clarity through structure",
-    body: "Generous whitespace directs attention. Every element on screen has earned its place, and the ones that remain are executed with confidence.",
+    title: "HeroUI does the components",
+    body: "Buttons, fields, overlays and tables come from HeroUI v3 as they ship: React Aria behaviour, HeroUI shapes and sizes. AiYO never forks a component. It themes them through one CSS file of variables.",
   },
-  { icon: Palette, title: "One electric accent", body: "Colour is concentrated into the Electric Blue gradient, so wherever it appears, the eye follows." },
-  { icon: MousePointerClick, title: "Motion answers the user", body: "Content eases in once as you scroll, and controls respond to hover and press. Nothing moves on a loop." },
-  { icon: Columns2, title: "Asymmetry on purpose", body: "1.1fr / 0.9fr heroes, offset cards, elevated tiers. Break the grid deliberately to guide the eye." },
+  {
+    icon: Palette,
+    title: "One electric accent",
+    body: "Electric Blue carries every primary action, focus ring and selected state. The gradient is kept for a few brand moments: one headline word, the leading icon, a single data highlight.",
+  },
+  {
+    icon: Font,
+    title: "One family, two voices",
+    body: "Geist Sans sets headlines and interface text. Geist Mono, small and uppercase, labels sections, table heads and metadata.",
+  },
+  {
+    icon: HandPointUp,
+    title: "Motion answers the user",
+    body: "Content rises in once as you scroll, and controls respond to hover and press with HeroUI's own feedback. Nothing loops for decoration.",
+  },
 ]
 
 function Principles() {
@@ -150,23 +172,24 @@ function Principles() {
             label="Principles"
             title={
               <>
-                Minimalism that makes a <GradientText>statement</GradientText>
+                HeroUI builds it, AiYO <GradientText>brands</GradientText> it
               </>
             }
-            description="Restraint in quantity, confidence in execution. Four rules decide every design call."
+            description="Four rules decide every design call in an AiYO product."
           />
         </Reveal>
-        <RevealGroup className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {/* The first principle frames the other three, so it gets the full row and the gradient tile. */}
+        <RevealGroup className="mt-16 grid gap-5 md:grid-cols-3">
           {PRINCIPLES.map((p, i) => (
-            <RevealItem key={p.title} className={cn(i === 0 && "lg:col-span-2 lg:row-span-1")}>
-              <Card variant="interactive" className={cn("h-full", i === 0 && "lg:flex-row lg:items-center")}>
-                <CardHeader className="gap-4">
-                  <IconTile size={i === 0 ? "lg" : "md"}>
-                    <p.icon />
-                  </IconTile>
-                  <CardTitle className={cn(i === 0 && "md:text-2xl")}>{p.title}</CardTitle>
-                  <CardDescription className="text-base">{p.body}</CardDescription>
-                </CardHeader>
+            <RevealItem key={p.title} className={cn(i === 0 && "md:col-span-3")}>
+              <Card className={cn("h-full gap-5 p-6 md:p-8", i === 0 && "md:flex-row md:items-center md:gap-8")}>
+                <IconTile variant={i === 0 ? "gradient" : "soft"} size={i === 0 ? "lg" : "md"}>
+                  <p.icon />
+                </IconTile>
+                <Card.Header className="gap-2">
+                  <Card.Title className={cn("text-lg font-semibold tracking-[-0.02em]", i === 0 && "text-2xl md:text-3xl")}>{p.title}</Card.Title>
+                  <Card.Description className={cn("text-base leading-relaxed", i === 0 && "max-w-2xl md:text-lg")}>{p.body}</Card.Description>
+                </Card.Header>
               </Card>
             </RevealItem>
           ))}
@@ -176,59 +199,60 @@ function Principles() {
   )
 }
 
-/* ------------------------------------------------------------- Foundations */
 const COLORS = [
-  { name: "primary", hex: "#0052FF", note: "Electric Blue. CTAs, links, focus" },
-  { name: "primary-end", hex: "#3366FF", note: "Gradient endpoint" },
+  { name: "accent", hex: "#0052FF", note: "Brand. Primary buttons, links, focus, selection" },
+  { name: "accent-end", hex: "#3366FF", note: "Gradient endpoint" },
   { name: "foreground", hex: "#0F172A", note: "Text, inverted sections" },
-  { name: "background", hex: "#FAFAFA", note: "Canvas" },
-  { name: "card", hex: "#FFFFFF", note: "Elevated surfaces" },
-  { name: "muted", hex: "#F1F5F9", note: "Fills, hover surface" },
-  { name: "muted-foreground", hex: "#5B6B80", note: "Secondary text" },
-  { name: "border", hex: "#E2E8F0", note: "Hairlines" },
-]
-const STATUS = [
-  { name: "success", hex: "#059669" },
-  { name: "warning", hex: "#D97706" },
-  { name: "destructive", hex: "#DC2626" },
-  { name: "info", hex: "#0052FF" },
+  { name: "background", hex: "#FAFAFA", note: "Page canvas" },
+  { name: "surface", hex: "#FFFFFF", note: "Cards, tables, accordions" },
+  { name: "default", hex: "#F1F5F9", note: "Neutral fills, secondary buttons" },
+  { name: "muted", hex: "#5B6B80", note: "Secondary text" },
+  { name: "field-border", hex: "#7C8BA1", note: "Field and control edges, 3:1" },
 ]
 
-function Swatch({ name, hex, note }: { name: string; hex: string; note?: string }) {
+function Swatch({ name, hex, note }: { name: string; hex: string; note: string }) {
   const { copied, copy } = useCopy()
   return (
     <button
       type="button"
       onClick={() => copy(hex)}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:focus-ring"
+      aria-label={`Copy ${name} ${hex}`}
+      className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl bg-surface text-left shadow-surface transition-transform duration-200 hover:-translate-y-0.5"
     >
-      <span className="h-24 w-full border-b border-border" style={{ background: hex }} />
+      <span className="h-20 w-full border-b border-separator outline-1 -outline-offset-1 outline-separator" style={{ background: hex }} />
       <span className="flex flex-col gap-1 p-4">
         <span className="font-mono text-xs text-foreground">{name}</span>
-        <span className="font-mono text-xs uppercase text-muted-foreground">{copied ? "Copied!" : hex}</span>
-        {note && <span className="mt-1 text-xs leading-snug text-muted-foreground">{note}</span>}
+        <span className="font-mono text-xs text-muted uppercase">{copied ? "Copied" : hex}</span>
+        <span className="mt-1 text-xs leading-snug text-muted">{note}</span>
       </span>
     </button>
   )
 }
 
+const TYPE_SCALE: [string, React.ReactNode][] = [
+  ["Hero · Geist 600 · 80px", <span className="heading-hero">Bold and calm</span>],
+  ["Section · Geist 600 · 48px", <span className="heading-section">Built to be trusted</span>],
+  ["App page title · Geist 600 · 30px", <span className="text-3xl font-semibold tracking-[-0.03em]">Merchants</span>],
+  ["Body · Geist 400 · 18px", <span className="text-lg leading-relaxed text-muted">A 1.6 line height keeps long copy calm and readable.</span>],
+  ["Label · Geist Mono 500 · 12px", <span className="label-caps text-accent">Section label</span>],
+]
+
 function Foundations() {
   return (
-    <Section id="foundations" className="border-t border-border">
+    <Section id="foundations" className="border-t border-separator">
       <Container className="flex flex-col gap-24">
         <Reveal>
           <SectionHeader
             label="Foundations"
             title={
               <>
-                Tokens are the <GradientText>DNA</GradientText>
+                Tokens on HeroUI's own <GradientText>variables</GradientText>
               </>
             }
-            description="A warm, near-monochrome palette amplified by one dual-tone gradient. Click any swatch to copy its value."
+            description="aiyo.css writes the AiYO palette into the variables HeroUI already reads, so every component re-themes without a per-component override. Click a swatch to copy its value. These are the light values; the dark palette is in DESIGN.md."
           />
         </Reveal>
 
-        {/* Colour */}
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <RevealGroup className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {COLORS.map((c) => (
@@ -238,102 +262,101 @@ function Foundations() {
             ))}
           </RevealGroup>
           <Reveal className="flex flex-col gap-4">
-            <div className="relative flex min-h-56 flex-1 flex-col justify-end overflow-hidden rounded-tl-[4rem] rounded-br-[4rem] rounded-tr-2xl rounded-bl-2xl bg-gradient-primary-diagonal p-8 text-primary-foreground shadow-accent-lg">
-              <span className="font-mono text-xs uppercase tracking-[0.15em] text-white">The signature gradient</span>
-              <span className="mt-2 font-display text-3xl">#0052FF → #3366FF</span>
-              <code className="mt-3 font-mono text-xs text-white">bg-gradient-primary · text-gradient</code>
+            <div className="flex min-h-56 flex-1 flex-col justify-end rounded-3xl bg-gradient-accent-diagonal p-8 text-accent-foreground">
+              <span className="label-caps">The signature gradient</span>
+              <span className="mt-3 text-3xl font-semibold tracking-[-0.03em]">#0052FF → #3366FF</span>
+              <code className="mt-3 font-mono text-xs">bg-gradient-accent · text-gradient</code>
             </div>
-            <div className="grid grid-cols-4 gap-3">
-              {STATUS.map((s) => (
-                <div key={s.name} className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-3 shadow-sm">
-                  <span className="size-8 rounded-full" style={{ background: s.hex }} />
-                  <span className="font-mono text-[10px] text-muted-foreground">{s.name}</span>
-                </div>
-              ))}
-            </div>
+            <Card className="gap-4 p-5">
+              <Card.Description>Status colours are for status only, always with a word or an icon.</Card.Description>
+              <div className="flex flex-wrap gap-2">
+                <Chip color="success" variant="soft">
+                  Paid
+                </Chip>
+                <Chip color="warning" variant="soft">
+                  Pending
+                </Chip>
+                <Chip color="danger" variant="soft">
+                  Failed
+                </Chip>
+                <Chip color="accent" variant="soft">
+                  Info
+                </Chip>
+              </div>
+            </Card>
           </Reveal>
         </div>
 
-        {/* Type */}
         <Reveal className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="flex flex-col gap-4">
-            <h3 className="text-2xl font-semibold tracking-[-0.01em]">Typography</h3>
-            <p className="leading-relaxed text-muted-foreground">
-              A conversation between personality and precision: Calistoga speaks the headlines, Inter does the work, and JetBrains Mono adds the
-              technical accent.
+            <h3 className="text-2xl font-semibold tracking-[-0.02em]">Typography</h3>
+            <p className="leading-relaxed text-muted">
+              One family with two voices. Geist Sans carries headlines and UI; hierarchy comes from size, weight and tight tracking. Geist Mono,
+              small and uppercase, is the label voice and the system's identity motif.
             </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Badge variant="outline" className="font-display text-sm">Calistoga</Badge>
-              <Badge variant="outline" className="text-sm">Inter 400–700</Badge>
-              <Badge variant="outline" className="font-mono text-sm">JetBrains Mono</Badge>
-            </div>
           </div>
-          <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-md">
-            {[
-              ["Hero · Calistoga · 84px", <span className="font-display text-5xl leading-[1.05] tracking-[-0.02em] md:text-7xl">Bold & calm</span>],
-              ["Section · Calistoga · 52px", <span className="font-display text-4xl leading-[1.15] md:text-[3.25rem]">Built to be trusted</span>],
-              ["Card title · Inter 600 · 20px", <span className="text-xl font-semibold tracking-[-0.01em]">Instant settlement for every merchant</span>],
-              ["Body · Inter 400 · 18px", <span className="text-lg leading-relaxed text-muted-foreground">Relaxed 1.7 line height keeps long copy calm and readable.</span>],
-              ["Label · JetBrains Mono · 12px", <span className="font-mono text-xs uppercase tracking-[0.15em] text-primary">Section label</span>],
-            ].map(([meta, sample], i) => (
-              <div key={i} className="flex flex-col gap-2 p-6">
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{meta}</span>
+          <Card className="gap-0 divide-y divide-separator p-0">
+            {TYPE_SCALE.map(([meta, sample]) => (
+              <div key={meta} className="flex min-w-0 flex-col gap-3 p-6">
+                <span className="label-caps text-muted">{meta}</span>
                 {sample}
               </div>
             ))}
-          </div>
+          </Card>
         </Reveal>
 
-        {/* Shadow, radius, motion */}
         <div className="grid gap-5 md:grid-cols-3">
-          <Reveal className="flex flex-col gap-4 rounded-2xl border border-border bg-muted/50 p-6">
-            <h3 className="font-semibold">Shadows</h3>
-            <div className="grid grid-cols-3 gap-4">
-              {["shadow-sm", "shadow-md", "shadow-lg", "shadow-xl", "shadow-accent", "shadow-accent-lg"].map((s) => (
-                <div key={s} className="flex flex-col items-center gap-2">
-                  <span className={cn("size-14 rounded-xl bg-card", s)} />
-                  <span className="text-center font-mono text-[10px] text-muted-foreground">{s.replace("shadow-", "")}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-          <Reveal className="flex flex-col gap-4 rounded-2xl border border-border bg-muted/50 p-6">
-            <h3 className="font-semibold">Radius</h3>
+          <Reveal className="flex flex-col gap-4 rounded-3xl bg-surface-secondary p-6">
+            <h3 className="font-semibold">Shape</h3>
             <div className="grid grid-cols-3 gap-4">
               {[
-                ["md", "rounded-md", "8"],
-                ["xl", "rounded-xl", "12"],
-                ["2xl", "rounded-2xl", "16"],
-                ["3xl", "rounded-3xl", "24"],
-                ["full", "rounded-full", "∞"],
-                ["organic", "rounded-tl-[2rem] rounded-br-[2rem] rounded-md", "4rem"],
-              ].map(([n, c, px]) => (
+                ["Field", "rounded-xl", "12px"],
+                ["Card", "rounded-3xl", "24px"],
+                ["Button", "rounded-full", "pill"],
+              ].map(([n, c, v]) => (
                 <div key={n} className="flex flex-col items-center gap-2">
-                  <span className={cn("size-14 border-2 border-primary/40 bg-primary/10", c)} />
-                  <span className="font-mono text-[10px] text-muted-foreground">
-                    {n} · {px}
+                  <span className={cn("size-14 border border-field-border bg-surface", c)} />
+                  <span className="text-center text-xs text-muted">
+                    {n} · {v}
                   </span>
                 </div>
               ))}
             </div>
+            <p className="text-xs leading-relaxed text-muted">HeroUI's scale from --radius: 0.5rem. Radius marks the kind of thing, not decoration.</p>
           </Reveal>
-          <Reveal className="flex flex-col gap-4 rounded-2xl border border-border bg-muted/50 p-6">
+          <Reveal className="flex flex-col gap-4 rounded-3xl bg-surface-secondary p-6">
+            <h3 className="font-semibold">Elevation</h3>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                ["Field", "shadow-field"],
+                ["Surface", "shadow-surface"],
+                ["Overlay", "shadow-overlay"],
+              ].map(([n, s]) => (
+                <div key={n} className="flex flex-col items-center gap-2">
+                  <span className={cn("size-14 rounded-2xl bg-surface", s)} />
+                  <span className="text-xs text-muted">{n}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs leading-relaxed text-muted">Three levels, from HeroUI. Overlays float; cards sit just above the canvas.</p>
+          </Reveal>
+          <Reveal className="flex flex-col gap-4 rounded-3xl bg-surface-secondary p-6">
             <h3 className="font-semibold">Motion</h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col items-center gap-2">
-                <span className="size-14 animate-fade-in-up rounded-xl bg-gradient-primary-diagonal" />
-                <span className="font-mono text-[10px] text-muted-foreground">enter 700ms</span>
+                <span className="size-14 rounded-2xl bg-gradient-accent-diagonal" />
+                <span className="text-center text-xs text-muted">Enter 0.7s</span>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <span className="size-14 cursor-pointer rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" />
-                <span className="font-mono text-[10px] text-muted-foreground">hover lift</span>
+                <span className="size-14 rounded-2xl bg-surface shadow-surface transition-transform duration-200 hover:-translate-y-1" />
+                <span className="text-center text-xs text-muted">Hover lift</span>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <span className="size-14 cursor-pointer rounded-xl bg-primary transition-transform duration-200 active:scale-[0.92]" />
-                <span className="font-mono text-[10px] text-muted-foreground">press 0.98</span>
+                <span className="size-14 rounded-2xl bg-accent transition-transform duration-200 active:scale-[0.97]" />
+                <span className="text-center text-xs text-muted">Press 0.97</span>
               </div>
             </div>
-            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">ease [0.16, 1, 0.3, 1] · enter once, 700ms · hover 200 to 300ms · no loops</p>
+            <p className="text-xs leading-relaxed text-muted">Ease [0.16, 1, 0.3, 1] for entrances, once. HeroUI's own timing for controls. No loops.</p>
           </Reveal>
         </div>
       </Container>
@@ -341,17 +364,16 @@ function Foundations() {
   )
 }
 
-/* ------------------------------------------------------- Inverted stats */
 function Stats() {
   return (
     <Section inverted spacing="sm">
       <Container>
-        <RevealGroup className="grid grid-cols-2 gap-y-12 md:grid-cols-4 md:divide-x md:divide-border">
+        <RevealGroup className="grid grid-cols-2 gap-y-12 md:grid-cols-4 md:divide-x md:divide-separator">
           {[
-            { label: "Components", value: "30+", hint: "Radix-based, typed" },
-            { label: "Accent colour", value: "1", hint: "Electric Blue gradient" },
-            { label: "Typefaces", value: "3", hint: "Display · UI · Mono" },
-            { label: "Text contrast", value: "AA", hint: "Every token pair checked, 4.5 : 1 or more" },
+            { label: "AiYO blocks", value: "16", hint: "Components in src/components/aiyo, on top of HeroUI" },
+            { label: "Accent colour", value: "1", hint: "Electric Blue, light and dark" },
+            { label: "Type family", value: "1", hint: "Geist Sans and Geist Mono" },
+            { label: "Text contrast", value: "AA", hint: "Every token pair checked, 4.5:1 or more" },
           ].map((s) => (
             <RevealItem key={s.label} className="md:px-8 md:first:pl-0">
               <Stat label={s.label} value={s.value} hint={s.hint} />
@@ -363,65 +385,91 @@ function Stats() {
   )
 }
 
-/* ---------------------------------------------------------------- Patterns */
-function Patterns() {
+function PatternTitle({ name, file }: { name: string; file: string }) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-separator pb-4">
+      <h3 className="text-2xl font-semibold tracking-[-0.02em]">{name}</h3>
+      <code className="font-mono text-xs text-muted">components/aiyo/{file}</code>
+    </div>
+  )
+}
+
+function Blocks() {
   const [plan, setPlan] = React.useState<string | null>(null)
   return (
-    <Section id="patterns" className="border-t border-border">
-      <Container className="flex flex-col gap-28">
+    <Section id="blocks" className="border-t border-separator">
+      <Container className="flex flex-col gap-24">
         <Reveal>
           <SectionHeader
-            label="Landing Patterns"
+            label="Landing blocks"
             title={
               <>
                 Blocks that compose into <GradientText>pages</GradientText>
               </>
             }
-            description="Ready-made sections for landing and product pages: timeline, pricing, testimonials, inverted CTA. Content below is sample copy."
+            description="Sections for landing and product pages, built from HeroUI parts. The content below is sample copy; in a product these blocks show real data or are left out."
           />
         </Reveal>
 
         <div className="flex flex-col gap-10">
-          <PatternTitle name="Steps" file="blocks/steps.tsx" />
+          <PatternTitle name="Steps" file="steps.tsx" />
           <Reveal>
             <Steps
               steps={[
-                { title: "Copy the tokens", description: "Drop aiyo.css into your Tailwind v4 project and import it once." },
-                { title: "Add components", description: "Copy what you need from components/ui. Same API as shadcn/ui." },
-                { title: "Brief your agent", description: "Point Claude or Cursor at AGENTS.md so generated UI follows the rules." },
-                { title: "Ship with confidence", description: "Every AiYO product now looks, moves and reads the same." },
+                { title: "Install HeroUI and Geist", description: "Add @heroui/react, @heroui/styles and the two Geist font packages." },
+                { title: "Copy the AiYO theme", description: "Drop aiyo.css into the project and import it once, in place of Tailwind." },
+                { title: "Add the blocks you need", description: "Copy files from components/aiyo and lib/motion.tsx." },
+                { title: "Brief your agent", description: "Point Claude, Codex or Cursor at AGENTS.md so generated UI follows the rules." },
               ]}
             />
           </Reveal>
         </div>
 
         <div className="flex flex-col gap-10">
-          <PatternTitle name="Pricing" file="blocks/pricing-card.tsx" />
-          <RevealGroup className="grid items-stretch gap-6 pt-4 md:grid-cols-3">
+          <PatternTitle name="Pricing" file="pricing-card.tsx" />
+          <RevealGroup className="grid items-stretch gap-6 md:grid-cols-3">
             <RevealItem>
-              <PricingCard selected={plan === "Starter"} onSelect={() => setPlan("Starter")} name="Starter" price="Rp 0" period="/bulan" description="For trying things out." features={["1 outlet", "QRIS payments", "Email support"]} cta="Start free" />
+              <PricingCard
+                selected={plan === "Starter"}
+                onSelect={() => setPlan("Starter")}
+                name="Starter"
+                price="Rp 0"
+                period="/month"
+                description="Sample tier: one outlet."
+                features={["1 outlet", "QRIS payments", "Email support"]}
+                cta="Choose Starter"
+              />
             </RevealItem>
             <RevealItem>
               <PricingCard
                 highlighted
+                highlightLabel="Fits 2 to 10 outlets"
                 selected={plan === "Growth"}
                 onSelect={() => setPlan("Growth")}
                 name="Growth"
                 price="Rp 249rb"
-                period="/bulan"
-                description="For growing merchants."
+                period="/month"
+                description="Sample tier: a growing merchant."
                 features={["Up to 10 outlets", "All payment methods", "Daily settlement", "Priority support"]}
                 cta="Choose Growth"
               />
             </RevealItem>
             <RevealItem>
-              <PricingCard selected={plan === "Enterprise"} onSelect={() => setPlan("Enterprise")} name="Enterprise" price="Custom" description="For chains and platforms." features={["Unlimited outlets", "Dedicated manager", "Custom SLA"]} cta="Contact sales" />
+              <PricingCard
+                selected={plan === "Enterprise"}
+                onSelect={() => setPlan("Enterprise")}
+                name="Enterprise"
+                price="Custom"
+                description="Sample tier: chains and platforms."
+                features={["Unlimited outlets", "Dedicated manager", "Custom SLA"]}
+                cta="Choose Enterprise"
+              />
             </RevealItem>
           </RevealGroup>
         </div>
 
         <div className="flex flex-col gap-10">
-          <PatternTitle name="Testimonials" file="blocks/testimonial-card.tsx" />
+          <PatternTitle name="Testimonials" file="testimonial-card.tsx" />
           <RevealGroup className="grid gap-6 md:grid-cols-3">
             <RevealItem>
               <TestimonialCard quote="We rebuilt our admin in a week. It finally looks like one product." name="Frontend Lead" role="Sample quote · Bills team" />
@@ -430,7 +478,7 @@ function Patterns() {
               <TestimonialCard quote="My agent now ships screens that pass design review on the first try." name="Product Engineer" role="Sample quote · POS team" />
             </RevealItem>
             <RevealItem>
-              <TestimonialCard quote="One accent colour sounded limiting. It turned out to be freeing." name="Product Designer" role="Sample quote · Design" />
+              <TestimonialCard quote="One accent colour sounded limiting. It made every screen easier to read." name="Product Designer" role="Sample quote · Design" />
             </RevealItem>
           </RevealGroup>
         </div>
@@ -439,94 +487,110 @@ function Patterns() {
   )
 }
 
-function PatternTitle({ name, file }: { name: string; file: string }) {
-  return (
-    <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-4">
-      <h3 className="text-2xl font-semibold tracking-[-0.01em]">{name}</h3>
-      <code className="font-mono text-xs text-muted-foreground">components/{file}</code>
-    </div>
-  )
-}
+const MAIN_FILES = [
+  {
+    icon: FileText,
+    name: "DESIGN.md",
+    href: "./DESIGN.md",
+    body: "The full spec: tokens, the HeroUI component rules, AiYO blocks, page recipes, mandatory app patterns and the anti-slop decisions.",
+  },
+  {
+    icon: Book,
+    name: "AGENTS.md",
+    href: "./AGENTS.md",
+    body: "Install steps, the hard rules and a snippet to paste into any AiYO project's CLAUDE.md or AGENTS.md.",
+  },
+]
 
-/* -------------------------------------------------------------- AI agents */
-const AGENT_FILES = [
-  { icon: FileText, name: "DESIGN.md", href: "./DESIGN.md", body: "The complete spec: tokens, components, patterns and do/don't rules in one Markdown file." },
-  { icon: Bot, name: "AGENTS.md", href: "./AGENTS.md", body: "Short hard rules plus install steps. Paste the snippet into your project's CLAUDE.md or AGENTS.md." },
-  { icon: Terminal, name: "llms.txt", href: "./llms.txt", body: "The llms.txt index, so any agent with web access can discover the docs from this site." },
-  { icon: Braces, name: "aiyo.tokens.json", href: "./aiyo.tokens.json", body: "Tokens in the W3C DTCG format, for Figma plugins, Style Dictionary and code generators." },
-  { icon: Package, name: "Claude skill", href: "./SKILL.md", body: "Drop skills/aiyo-design into .claude/skills and Claude Code applies the system automatically." },
-  { icon: Palette, name: "aiyo.css", href: "#foundations", body: "The source of truth. Tailwind v4 theme plus CSS variables any stack can read." },
+const MORE_FILES = [
+  { icon: Globe, name: "llms.txt", href: "./llms.txt", body: "Index for agents with web access, plus llms-full.txt in one fetch." },
+  { icon: CurlyBrackets, name: "aiyo.tokens.json", href: "./aiyo.tokens.json", body: "Tokens in the W3C DTCG format, for Figma plugins and code generators." },
+  { icon: Cube, name: "SKILL.md", href: "./SKILL.md", body: "A Claude Code skill: copy skills/aiyo-design into .claude/skills." },
+  { icon: Palette, name: "aiyo.css", href: "./aiyo.css", body: "The source of truth: the HeroUI theme, Geist, utilities and the touch layer." },
 ]
 
 const AGENT_PROMPT = `Build this UI with the AiYO Design System.
 Read DESIGN.md and AGENTS.md first, and follow them exactly:
-- tokens from aiyo.css only (primary = Electric Blue gradient)
-- components from @/components/ui (shadcn-style)
-- Calistoga for h1/h2, Inter for UI, JetBrains Mono for labels
-- every section opens with SectionLabel + display headline`
+- components from @heroui/react (v3), themed only by aiyo.css
+- AiYO blocks from @/components/aiyo (Section, PageHeader, DataPagination...)
+- accent = Electric Blue; Geist Sans for text, Geist Mono for labels
+- icons from @gravity-ui/icons`
 
 function Agents() {
   return (
-    <Section id="agents" className="border-t border-border">
+    <Section id="agents" className="border-t border-separator">
       <Container className="grid gap-16 lg:grid-cols-[0.9fr_1.1fr] [&>*]:min-w-0">
         <Reveal className="flex flex-col gap-8 lg:sticky lg:top-28 lg:self-start">
           <SectionHeader
-            label="For AI Agents"
+            label="For AI agents"
             title={
               <>
                 Docs your agent can <GradientText>actually read</GradientText>
               </>
             }
-            description="Markdown is the format every coding agent understands best. The same rules ship in four shapes: full spec, short rules, an llms.txt index and a Claude skill."
+            description="Markdown is the format every coding agent reads best. The same rules ship as a full spec, short rules, an llms.txt index, a token file and a Claude skill."
           />
-          <CodeBlock label="prompt" code={AGENT_PROMPT} />
+          <CodeBlock label="prompt" code={AGENT_PROMPT} wrap />
         </Reveal>
-        <RevealGroup className="grid gap-5 sm:grid-cols-2">
-          {AGENT_FILES.map((f) => (
-            <RevealItem key={f.name}>
-              <a href={f.href} className="block h-full rounded-2xl focus-visible:focus-ring">
-                <Card variant="interactive" className="h-full">
-                  <CardHeader className="gap-4">
-                    <IconTile size="sm">
+        <div className="flex flex-col gap-5">
+          <RevealGroup className="grid gap-5 sm:grid-cols-2">
+            {MAIN_FILES.map((f) => (
+              <RevealItem key={f.name}>
+                <a href={f.href} className="group block h-full rounded-3xl">
+                  <Card className="h-full gap-5 p-6 transition-transform duration-200 group-hover:-translate-y-0.5 md:p-8">
+                    <IconTile variant={f.name === "DESIGN.md" ? "gradient" : "soft"}>
                       <f.icon />
                     </IconTile>
-                    <CardTitle className="font-mono text-base md:text-base">{f.name}</CardTitle>
-                    <CardDescription>{f.body}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </a>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+                    <Card.Header className="gap-2">
+                      <Card.Title className="font-mono text-base">{f.name}</Card.Title>
+                      <Card.Description className="leading-relaxed">{f.body}</Card.Description>
+                    </Card.Header>
+                  </Card>
+                </a>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+          <Reveal>
+            <Card className="gap-0 divide-y divide-separator p-0">
+              {MORE_FILES.map((f) => (
+                <a key={f.name} href={f.href} className="flex items-start gap-4 p-5 transition-colors first:rounded-t-3xl last:rounded-b-3xl hover:bg-surface-hover">
+                  <f.icon aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <span className="flex flex-col gap-1">
+                    <span className="font-mono text-sm font-medium">{f.name}</span>
+                    <span className="text-sm leading-relaxed text-muted">{f.body}</span>
+                  </span>
+                </a>
+              ))}
+            </Card>
+          </Reveal>
+        </div>
       </Container>
     </Section>
   )
 }
 
-/* ---------------------------------------------------------------- Final CTA */
-function FinalCta() {
-  const install = "npm i radix-ui class-variance-authority clsx tailwind-merge lucide-react motion"
+const INSTALL = "npm i @heroui/react @heroui/styles @fontsource-variable/geist @fontsource-variable/geist-mono @gravity-ui/icons"
+
+function Setup() {
   return (
-    <Section inverted spacing="lg">
+    <Section id="setup" inverted spacing="lg">
       <Container>
         <Reveal className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center">
-          <SectionLabel>Get started</SectionLabel>
-          <h2 className="font-display text-[2.5rem] leading-[1.1] tracking-[-0.02em] md:text-6xl">
-            Start building the <GradientText>AiYO way</GradientText>
+          <SectionLabel>Set up a project</SectionLabel>
+          <h2 className="heading-section">
+            Start an AiYO project on <GradientText>HeroUI</GradientText>
           </h2>
-          <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Install the peer dependencies, copy aiyo.css and the components you need, then let your team and your agents build.
+          <p className="max-w-xl text-lg leading-relaxed text-muted">
+            Install HeroUI and Geist, copy aiyo.css and the AiYO blocks you need, then let your team and your agents build.
           </p>
           <div className="flex w-full max-w-2xl flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
-              <Input readOnly value={install} aria-label="Install command" className="pr-12 font-mono text-xs md:text-xs" />
-              <CopyButton value={install} className="absolute right-2 top-1/2 -translate-y-1/2" />
+              <Input readOnly fullWidth value={INSTALL} aria-label="Install command" className="pr-12 font-mono text-xs sm:text-xs" />
+              <CopyButton value={INSTALL} className="absolute top-1/2 right-1.5 -translate-y-1/2" />
             </div>
-            <Button asChild size="lg" className="h-12 w-full sm:w-auto">
-              <a href="./README.md">
-                Read the guide
-              </a>
-            </Button>
+            <Link href="./README.md" className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}>
+              Read the setup guide
+            </Link>
           </div>
         </Reveal>
       </Container>
@@ -536,10 +600,10 @@ function FinalCta() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-10">
-      <Container className="flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
+    <footer className="border-t border-separator py-10">
+      <Container className="flex flex-col items-center justify-between gap-4 text-sm text-muted sm:flex-row">
         <Logo />
-        <span>© {new Date().getFullYear()} AiYO · Minimalist Modern, v1.0</span>
+        <span>© {new Date().getFullYear()} AiYO · Design System v2, on HeroUI v3</span>
       </Container>
     </footer>
   )
@@ -547,10 +611,10 @@ function Footer() {
 
 export default function App() {
   return (
-    <TooltipProvider>
+    <>
       <a
         href="#components"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-card focus:px-4 focus:py-2 focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-overlay focus:px-4 focus:py-2 focus:shadow-overlay"
       >
         Skip to components
       </a>
@@ -562,11 +626,12 @@ export default function App() {
         <Stats />
         <Gallery />
         <AppPatterns />
-        <Patterns />
+        <Blocks />
         <Agents />
-        <FinalCta />
+        <Setup />
       </main>
       <Footer />
-    </TooltipProvider>
+      <Toast.Provider placement="bottom end" />
+    </>
   )
 }

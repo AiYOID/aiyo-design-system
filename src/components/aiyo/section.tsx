@@ -1,14 +1,14 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
-import { SectionLabel } from "@/components/ui/section-label"
+import { cn, tv, type VariantProps } from "@heroui/react"
+import { SectionLabel } from "./section-label"
 
 /** max-w-6xl content column with responsive side gutters. */
 function Container({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="container" className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)} {...props} />
 }
 
-const sectionVariants = cva("relative isolate", {
+const sectionVariants = tv({
+  base: "relative isolate",
   variants: {
     spacing: {
       default: "py-16 md:py-32",
@@ -21,7 +21,7 @@ const sectionVariants = cva("relative isolate", {
 
 type SectionProps = React.ComponentProps<"section"> &
   VariantProps<typeof sectionVariants> & {
-    /** Flip to the solid deep slate palette for the one section that deserves the spotlight. */
+    /** Flip this section to the solid deep-slate palette. HeroUI components inside re-theme too. */
     inverted?: boolean
   }
 
@@ -36,7 +36,7 @@ type SectionHeaderProps = Omit<React.ComponentProps<"div">, "title"> & {
   align?: "left" | "center"
 }
 
-/** Mono label, Calistoga headline, muted lede: the opening of a major marketing section. */
+/** Mono label, Geist headline, muted lede: the opening of every major marketing section. */
 function SectionHeader({ className, label, title, description, align = "left", ...props }: SectionHeaderProps) {
   return (
     <div
@@ -45,8 +45,8 @@ function SectionHeader({ className, label, title, description, align = "left", .
       {...props}
     >
       {label && <SectionLabel>{label}</SectionLabel>}
-      <h2 className="font-display text-[2.25rem] leading-[1.15] tracking-[-0.01em] md:text-[3.25rem]">{title}</h2>
-      {description && <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p>}
+      <h2 className="heading-section">{title}</h2>
+      {description && <p className="max-w-2xl text-lg leading-relaxed text-muted">{description}</p>}
     </div>
   )
 }

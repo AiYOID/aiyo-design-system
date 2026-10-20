@@ -1,198 +1,200 @@
 /* ==========================================================================
-   AiYO Design System: "Minimalist Modern"
-   Single source of truth for tokens. Copy this file into any Tailwind v4
-   project and import it once from your entry CSS.
+   AiYO Design System: brand theme for HeroUI v3
+   Copy this file into a Tailwind CSS v4 project and import it once, in place of
+   any other `@import "tailwindcss"`. It loads Tailwind, HeroUI and Geist, then
+   sets the AiYO palette on HeroUI's own variables, so every HeroUI component
+   wears the brand.
 
-   Naming follows shadcn/ui so existing shadcn components keep working:
-   - `primary`  = Electric Blue brand colour (the spec's "accent")
-   - `accent`   = subtle hover surface (shadcn semantics, NOT the brand)
+   HeroUI naming applies: `accent` IS the brand colour (Electric Blue).
+   `muted` is secondary TEXT, `default` is the neutral fill.
    ========================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
-@import "tailwindcss";
+@layer theme, base, components, utilities;
 
-@custom-variant dark (&:where(.dark, .dark *, .inverted, .inverted *));
+/* @heroui/styles imports Tailwind itself; a second `@import "tailwindcss"` only duplicates preflight. */
+@import "@heroui/styles";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
-/* ---------- Raw palette (light) ---------- */
-:root {
+/* HeroUI's `dark:` variant also follows the OS setting even when the page is
+   light. AiYO themes by class, and `.inverted` sections count as dark. */
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *, .inverted, .inverted *));
+
+/* ---------- Light palette (default) ---------- */
+:root,
+.light,
+[data-theme="light"] {
+  color-scheme: light;
+
   --background: #fafafa;
-  --foreground: #0f172a; /* slate-900 */
+  --foreground: #0f172a; /* slate-900, never pure black */
 
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --surface: #ffffff; /* cards, accordions, tables */
+  --surface-foreground: var(--foreground);
+  --surface-secondary: #f1f5f9;
+  --surface-secondary-foreground: var(--foreground);
+  --surface-tertiary: #e8edf3;
+  --surface-tertiary-foreground: var(--foreground);
 
-  --primary: #0052ff; /* Electric Blue */
-  --primary-end: #3366ff; /* gradient endpoint, white text 4.68:1 */
-  --primary-foreground: #ffffff;
+  --overlay: #ffffff; /* modals, popovers, menus, tooltips */
+  --overlay-foreground: var(--foreground);
 
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --muted: #5b6b80; /* secondary text: 5.21:1 on background, 4.97:1 on default */
 
-  --muted: #f1f5f9; /* slate-100 */
-  --muted-foreground: #5b6b80; /* 4.97:1 on muted, 5.44:1 on white */
+  --default: #f1f5f9; /* neutral fills: secondary buttons, chips, tracks */
+  --default-foreground: var(--foreground);
 
-  --accent: #f1f5f9; /* hover surface (shadcn semantics) */
-  --accent-foreground: #0f172a;
+  /* Electric Blue: the one brand accent */
+  --accent: #0052ff; /* white text 5.75:1 */
+  --accent-end: #3366ff; /* gradient endpoint, white text 4.68:1 */
+  --accent-foreground: #ffffff;
+  --accent-soft-foreground: #0047e0; /* 5.58:1 on accent-soft, 6.44:1 on default */
 
-  --border: #e2e8f0; /* slate-200 */
-  --input: #e2e8f0;
-  --ring: #0052ff;
-
-  /* Status: AiYO extension for app UIs (not in the marketing spec) */
   --success: #059669;
-  --success-foreground: #ffffff;
+  --success-foreground: #0f172a; /* 4.74:1 */
+  --success-soft-foreground: #047857;
   --warning: #d97706;
-  --warning-foreground: #ffffff;
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-  --info: #0052ff;
-  --info-foreground: #ffffff;
-  /* Status text on tinted backgrounds (badges): AA at 12px */
-  --success-text: #047857;
-  --warning-text: #92400e;
-  --destructive-text: #b91c1c;
+  --warning-foreground: #0f172a; /* 5.60:1 */
+  --warning-soft-foreground: #92400e;
+  --danger: #dc2626;
+  --danger-foreground: #ffffff; /* 4.83:1 */
+  --danger-soft-foreground: #b91c1c;
 
-  --radius: 0.75rem; /* 12px, rounded-xl is the default component radius */
+  /* Fields get a real 1px edge: 3.46:1 on white (WCAG 1.4.11 non-text contrast) */
+  --field-background: #ffffff;
+  --field-foreground: var(--foreground);
+  --field-placeholder: var(--muted);
+  --field-border: #7c8ba1;
+  --field-border-width: 1px;
+  /* Read by HeroUI's InputGroup but never defined there; without it an invalid group's edge falls back to currentColor. */
+  --color-field-border-invalid: var(--danger);
 
-  --gradient-primary: linear-gradient(to right, var(--primary), var(--primary-end));
-  --gradient-primary-diagonal: linear-gradient(135deg, var(--primary), var(--primary-end));
+  --border: #e2e8f0;
+  --separator: #e9eef4;
+  --focus: var(--accent);
+  --link: var(--accent);
+  --backdrop: rgb(15 23 42 / 0.5);
+
+  --gradient-accent: linear-gradient(to right, var(--accent), var(--accent-end));
+  --gradient-accent-diagonal: linear-gradient(135deg, var(--accent), var(--accent-end));
 }
 
-/* ---------- Inverted surface ----------
-   Put `.inverted` on any section to flip it to deep slate. Every component
-   inside re-themes automatically because they only read these variables.
-   `.dark` is the same palette, for apps that want a full dark mode. */
-.inverted,
-.dark {
+/* ---------- Dark palette: `.dark` on <html>, or one `.inverted` section ---------- */
+.dark,
+[data-theme="dark"],
+.inverted {
+  color-scheme: dark;
+
   --background: #0f172a;
   --foreground: #f8fafc;
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
+
+  --surface: #1e293b;
+  --surface-foreground: var(--foreground);
+  --surface-secondary: #273449;
+  --surface-secondary-foreground: var(--foreground);
+  --surface-tertiary: #334155;
+  --surface-tertiary-foreground: var(--foreground);
+
+  --overlay: #1e293b;
+  --overlay-foreground: var(--foreground);
+
+  --muted: #a8b5c8; /* 4.98:1 on default, 6.9:1 on surface, 8.5:1 on background */
+
+  --default: #334155;
+  --default-foreground: var(--foreground);
+
   /* On slate no blue passes AA against both white text and the background,
-     so primary turns light and its foreground turns dark. */
-  --primary: #7aa0ff;
-  --primary-end: #9db8ff;
-  --primary-foreground: #0f172a;
-  --secondary: #1e293b;
-  --secondary-foreground: #f8fafc;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
-  --border: rgb(255 255 255 / 0.1);
-  --input: rgb(255 255 255 / 0.14);
-  --ring: #9db8ff;
+     so the accent turns light and its text turns dark (7.06:1 both ways). */
+  --accent: #7aa0ff;
+  --accent-end: #9db8ff;
+  --accent-foreground: #0f172a;
+  --accent-soft-foreground: #9db8ff;
+
   --success: #34d399;
   --success-foreground: #0f172a;
+  --success-soft-foreground: #6ee7b7;
   --warning: #fbbf24;
   --warning-foreground: #0f172a;
-  --destructive: #f87171;
-  --destructive-foreground: #0f172a;
-  --info: #7aa0ff;
-  --info-foreground: #0f172a;
-  --success-text: #6ee7b7;
-  --warning-text: #fcd34d;
-  --destructive-text: #fca5a5;
-  /* Redeclared so the gradients pick up this block's primary, not the :root one. */
-  --gradient-primary: linear-gradient(to right, var(--primary), var(--primary-end));
-  --gradient-primary-diagonal: linear-gradient(135deg, var(--primary), var(--primary-end));
-  color-scheme: dark;
+  --warning-soft-foreground: #fcd34d;
+  --danger: #f87171;
+  --danger-foreground: #0f172a;
+  --danger-soft-foreground: #fca5a5;
+
+  --field-background: #0f172a;
+  --field-foreground: var(--foreground);
+  --field-placeholder: var(--muted);
+  --field-border: #718096; /* 3.64:1 on surface */
+  --field-border-width: 1px;
+  --color-field-border-invalid: var(--danger);
+
+  --border: rgb(255 255 255 / 0.1);
+  --separator: rgb(255 255 255 / 0.08);
+  --focus: var(--accent);
+  --link: var(--accent);
+  --backdrop: rgb(2 6 23 / 0.7);
+
+  --surface-shadow: 0 0 0 0 transparent inset;
+  --overlay-shadow: 0 0 1px 0 rgb(255 255 255 / 0.3) inset;
+  --field-shadow: 0 0 0 0 transparent inset;
+
+  /* Redeclared so the gradients pick up this block's accent. */
+  --gradient-accent: linear-gradient(to right, var(--accent), var(--accent-end));
+  --gradient-accent-diagonal: linear-gradient(135deg, var(--accent), var(--accent-end));
 }
 
-/* ---------- Tailwind theme mapping ---------- */
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-end: var(--primary-end);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-success-text: var(--success-text);
-  --color-warning-text: var(--warning-text);
-  --color-destructive-text: var(--destructive-text);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
+/* HeroUI derives hover, soft and field states from the base colours on <html>.
+   A section deeper in the tree inherits those already-resolved values, so an
+   `.inverted` section recomputes them from its own palette. */
+.inverted {
+  --surface-hover: color-mix(in oklab, var(--surface) 92%, var(--surface-foreground) 8%);
+  --background-secondary: color-mix(in oklab, var(--background) 96%, var(--foreground) 4%);
+  --background-tertiary: color-mix(in oklab, var(--background) 92%, var(--foreground) 8%);
+  --background-inverse: var(--foreground);
+  --default-hover: color-mix(in oklab, var(--default) 96%, var(--default-foreground) 4%);
+  --accent-hover: color-mix(in oklab, var(--accent) 90%, var(--accent-foreground) 10%);
+  --success-hover: color-mix(in oklab, var(--success) 90%, var(--success-foreground) 10%);
+  --warning-hover: color-mix(in oklab, var(--warning) 90%, var(--warning-foreground) 10%);
+  --danger-hover: color-mix(in oklab, var(--danger) 90%, var(--danger-foreground) 10%);
+  --field-hover: color-mix(in oklab, var(--field-background) 90%, var(--field-foreground) 2%);
+  --field-focus: var(--field-background);
+  --field-border-hover: color-mix(in oklab, var(--field-border) 88%, var(--field-foreground) 10%);
+  --field-border-focus: color-mix(in oklab, var(--field-border) 74%, var(--field-foreground) 22%);
+  --default-soft: color-mix(in oklab, var(--default) 50%, transparent);
+  --default-soft-foreground: var(--default-foreground);
+  --default-soft-hover: color-mix(in oklab, var(--default) 60%, transparent);
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, transparent);
+  --accent-soft-hover: color-mix(in oklab, var(--accent) 16%, transparent);
+  --danger-soft: color-mix(in oklab, var(--danger) 15%, transparent);
+  --danger-soft-hover: color-mix(in oklab, var(--danger) 20%, transparent);
+  --warning-soft: color-mix(in oklab, var(--warning) 12%, transparent);
+  --warning-soft-hover: color-mix(in oklab, var(--warning) 16%, transparent);
+  --success-soft: color-mix(in oklab, var(--success) 12%, transparent);
+  --success-soft-hover: color-mix(in oklab, var(--success) 16%, transparent);
+  --separator-secondary: color-mix(in oklab, var(--surface) 85%, var(--surface-foreground) 15%);
+  --separator-tertiary: color-mix(in oklab, var(--surface) 81%, var(--surface-foreground) 19%);
+  --border-secondary: color-mix(in oklab, var(--surface) 78%, var(--surface-foreground) 22%);
+  --border-tertiary: color-mix(in oklab, var(--surface) 66%, var(--surface-foreground) 34%);
+  --scrollbar-thumb: color-mix(in oklch, var(--foreground) 15%, transparent);
 
-  --radius-sm: calc(var(--radius) - 6px); /* 6px */
-  --radius-md: calc(var(--radius) - 4px); /* 8px */
-  --radius-lg: calc(var(--radius) - 2px); /* 10px */
-  --radius-xl: var(--radius); /* 12px */
-  --radius-2xl: calc(var(--radius) + 4px); /* 16px */
-  --radius-3xl: calc(var(--radius) + 12px); /* 24px */
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* ---------- Tailwind theme ---------- */
+@theme inline {
+  --color-accent-end: var(--accent-end);
 }
 
 @theme {
-  --font-display: "Calistoga", Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.06);
-  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.07);
-  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.08);
-  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.1);
-  --shadow-accent: 0 4px 14px rgb(0 82 255 / 0.25);
-  --shadow-accent-lg: 0 8px 24px rgb(0 82 255 / 0.35);
-
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-
-  --animate-fade-in-up: fade-in-up 0.7s var(--ease-out-expo) both;
-  --animate-pop-in: pop-in 0.2s var(--ease-out-expo);
-  --animate-fade-in: fade-in 0.2s ease-out;
-  --animate-accordion-down: accordion-down 0.3s var(--ease-out-expo);
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-
-  @keyframes fade-in-up {
-    from { opacity: 0; transform: translateY(28px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  /* Overlay / popover entrances (small, fast) */
-  @keyframes pop-in {
-    from { opacity: 0; transform: translateY(6px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes accordion-down {
-    from { height: 0; }
-    to { height: var(--radix-accordion-content-height); }
-  }
-  @keyframes accordion-up {
-    from { height: var(--radix-accordion-content-height); }
-    to { height: 0; }
-  }
+  /* The AiYO curve: fast start, long settle. Used by scroll entrances. */
+  --ease-aiyo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ---------- Base ---------- */
 @layer base {
-  *,
-  ::before,
-  ::after {
-    border-color: var(--border);
-  }
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -202,39 +204,165 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    line-height: 1.625;
-  }
-  .inverted {
-    background-color: var(--background);
-    color: var(--foreground);
+    line-height: 1.6;
   }
   ::selection {
-    background: rgb(0 82 255 / 0.18);
+    background: color-mix(in oklab, var(--accent) 20%, transparent);
   }
-  /* One visible focus indicator for every interactive element. It is an outline,
-     so state shadows (checked, active) can never paint over it. */
+  /* Elements HeroUI does not style (plain links, custom controls) still get a
+     visible focus indicator. HeroUI components draw their own ring instead. */
   :focus-visible {
-    outline: 2px solid var(--ring);
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
 }
 
-/* ---------- Signature utilities ---------- */
-@utility bg-gradient-primary {
-  background-image: var(--gradient-primary);
+/* ---------- HeroUI adjustments ---------- */
+@layer components {
+  /* An off switch needs a visible track: 3:1 against the surface, like fields. */
+  .switch {
+    --switch-control-bg: var(--field-border);
+  }
+
+  /* `data-arrow` on an icon slides it right on hover. The ONE primary CTA per screen only. */
+  .button [data-arrow] {
+    transition: translate 200ms var(--ease-aiyo);
+  }
+  @media (hover: hover) {
+    .button:hover [data-arrow] {
+      translate: 0.25rem 0;
+    }
+  }
+  /* A tab panel with nothing focusable inside takes focus itself; HeroUI draws no indicator for it. */
+  .tabs__panel[data-focus-visible="true"] {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* HeroUI leaves the search input's placeholder to the browser default (3.4:1); use the field token. */
+  .search-field__input::placeholder {
+    color: var(--field-placeholder);
+  }
+
+  /* HeroUI resets the gap on a Link styled with buttonVariants; restore the button's. */
+  .link.button {
+    gap: 0.5rem;
+  }
+
+  /* Touch: every control gets a 44 x 44px target. Buttons and other pressables
+     keep HeroUI's visual size and gain an invisible hit area; text fields and
+     menu rows grow, since their box is the target. */
+  @media (max-width: 47.99rem), (pointer: coarse) {
+    .button::after,
+    .pagination__link::after,
+    .tabs__tab::after,
+    .tabs__list-container__scroll-prev::after,
+    .tabs__list-container__scroll-next::after,
+    .close-button::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100%, 2.75rem);
+      height: max(100%, 2.75rem);
+      translate: -50% -50%;
+    }
+    .input,
+    .select__trigger,
+    .search-field__group,
+    .input-group,
+    .menu-item,
+    .list-box-item {
+      min-height: 2.75rem;
+    }
+    /* The input inside a grown search field or input group fills its height, so the whole box is the target. */
+    .search-field__input,
+    .input-group__input {
+      align-self: stretch;
+    }
+    /* The Content part is the pressable row (control plus label). */
+    .checkbox__content,
+    .radio__content,
+    .switch__content {
+      min-height: 2.75rem;
+    }
+  }
 }
-@utility bg-gradient-primary-diagonal {
-  background-image: var(--gradient-primary-diagonal);
+
+/* ---------- Signature utilities ---------- */
+@utility bg-gradient-accent {
+  background-image: var(--gradient-accent);
+}
+@utility bg-gradient-accent-diagonal {
+  background-image: var(--gradient-accent-diagonal);
 }
 @utility text-gradient {
-  background-image: var(--gradient-primary);
+  background-image: var(--gradient-accent);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-@utility focus-ring {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+
+/* Marketing type scale. Geist only: hierarchy comes from size, weight and tracking. */
+@utility heading-hero {
+  font-size: 2.75rem;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  @media (min-width: 40rem) {
+    font-size: 3.75rem;
+  }
+  @media (min-width: 64rem) {
+    font-size: 5rem;
+  }
+}
+@utility heading-section {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  @media (min-width: 48rem) {
+    font-size: 3rem;
+  }
+}
+/* The identity motif: small uppercase Geist Mono. Section labels, table heads, meta. */
+@utility label-caps {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------- Scroll entrance (see src/lib/motion.tsx) ----------
+   Content is visible by default. Only elements that start below the fold are
+   hidden, by JS, until they scroll in, so no-JS, print and screenshots see
+   everything. In `base` so utilities on the same element still win. */
+@layer base {
+  [data-reveal],
+  [data-reveal-group] > [data-reveal-item] {
+    transition:
+      opacity 0.7s var(--ease-aiyo),
+      translate 0.7s var(--ease-aiyo);
+  }
+  [data-reveal-group] > [data-reveal-item] {
+    transition-delay: calc(var(--reveal-index, 0) * 100ms + 100ms);
+  }
+  [data-reveal="hidden"],
+  [data-reveal-group="hidden"] > [data-reveal-item] {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  @media print {
+    [data-reveal="hidden"],
+    [data-reveal-group="hidden"] > [data-reveal-item] {
+      opacity: 1;
+      translate: none;
+    }
+  }
 }
 
 /* ---------- Motion safety ---------- */
