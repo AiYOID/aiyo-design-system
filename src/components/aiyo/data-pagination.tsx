@@ -13,6 +13,30 @@ function getPageItems(page: number, pageCount: number): (number | "ellipsis")[] 
   return items
 }
 
+/** Every word the footer shows or announces. Pass the ones your product's language needs. */
+type DataPaginationLabels = {
+  navigation: string
+  showing: string
+  to: string
+  of: string
+  rows: string
+  previousPage: string
+  nextPage: string
+  /** Also the word before the current page on phones: "Page 3 of 25". */
+  page: string
+}
+
+const DEFAULT_LABELS: DataPaginationLabels = {
+  navigation: "Pagination",
+  showing: "Showing",
+  to: "to",
+  of: "of",
+  rows: "Rows",
+  previousPage: "Previous page",
+  nextPage: "Next page",
+  page: "Page",
+}
+
 type DataPaginationProps = {
   /** Current page, 1-based. */
   page: number
@@ -23,6 +47,8 @@ type DataPaginationProps = {
   /** Omit to hide the rows-per-page select. Changing it jumps back to page 1. */
   onPageSizeChange?: (pageSize: number) => void
   pageSizeOptions?: number[]
+  /** Overrides for the English defaults, e.g. Indonesian copy from the product's content file. */
+  labels?: Partial<DataPaginationLabels>
   className?: string
 }
 
@@ -37,8 +63,10 @@ function DataPagination({
   onPageChange,
   onPageSizeChange,
   pageSizeOptions = [10, 20, 50, 100],
+  labels,
   className,
 }: DataPaginationProps) {
+  const text = { ...DEFAULT_LABELS, ...labels }
   const pageCount = Math.max(1, Math.ceil(total / pageSize))
   const current = Math.min(Math.max(1, page), pageCount)
   const from = total === 0 ? 0 : (current - 1) * pageSize + 1
@@ -46,14 +74,14 @@ function DataPagination({
   const fmt = (n: number) => n.toLocaleString("id-ID")
 
   return (
-    <Pagination data-slot="data-pagination" aria-label="Pagination" className={cn("gap-4", className)}>
+    <Pagination data-slot="data-pagination" aria-label={text.navigation} className={cn("gap-4", className)}>
       <Pagination.Summary className="flex-wrap gap-x-6 gap-y-2">
         <span aria-live="polite">
-          Showing{" "}
+          {text.showing}{" "}
           <span className="font-medium text-foreground tabular-nums">
-            {fmt(from)} to {fmt(to)}
+            {fmt(from)} {text.to} {fmt(to)}
           </span>{" "}
-          of <span className="font-medium text-foreground tabular-nums">{fmt(total)}</span>
+          {text.of} <span className="font-medium text-foreground tabular-nums">{fmt(total)}</span>
         </span>
         {onPageSizeChange && (
           <Select
@@ -64,7 +92,7 @@ function DataPagination({
               onPageChange(1)
             }}
           >
-            <Label className="text-sm font-normal text-muted">Rows</Label>
+            <Label className="text-sm font-normal text-muted">{text.rows}</Label>
             <Select.Trigger className="w-20">
               <Select.Value />
               <Select.Indicator />
@@ -85,7 +113,7 @@ function DataPagination({
 
       <Pagination.Content>
         <Pagination.Item>
-          <Pagination.Previous isDisabled={current <= 1} onPress={() => onPageChange(current - 1)} aria-label="Previous page">
+          <Pagination.Previous isDisabled={current <= 1} onPress={() => onPageChange(current - 1)} aria-label={text.previousPage}>
             <Pagination.PreviousIcon />
           </Pagination.Previous>
         </Pagination.Item>
@@ -96,7 +124,7 @@ function DataPagination({
             </Pagination.Item>
           ) : (
             <Pagination.Item key={item} className="hidden sm:inline-flex">
-              <Pagination.Link isActive={item === current} aria-label={`Page ${item}`} onPress={() => onPageChange(item)}>
+              <Pagination.Link isActive={item === current} aria-label={`${text.page} ${item}`} onPress={() => onPageChange(item)}>
                 {item}
               </Pagination.Link>
             </Pagination.Item>
@@ -105,11 +133,11 @@ function DataPagination({
         {/* Below sm the page numbers do not fit, so the position is spelled out instead. */}
         <Pagination.Item className="sm:hidden">
           <span className="min-w-24 px-2 text-center text-sm text-muted tabular-nums">
-            Page <span className="font-medium text-foreground">{current}</span> of {pageCount}
+            {text.page} <span className="font-medium text-foreground">{current}</span> {text.of} {pageCount}
           </span>
         </Pagination.Item>
         <Pagination.Item>
-          <Pagination.Next isDisabled={current >= pageCount} onPress={() => onPageChange(current + 1)} aria-label="Next page">
+          <Pagination.Next isDisabled={current >= pageCount} onPress={() => onPageChange(current + 1)} aria-label={text.nextPage}>
             <Pagination.NextIcon />
           </Pagination.Next>
         </Pagination.Item>
@@ -118,4 +146,4 @@ function DataPagination({
   )
 }
 
-export { DataPagination, getPageItems, type DataPaginationProps }
+export { DataPagination, getPageItems, type DataPaginationLabels, type DataPaginationProps }

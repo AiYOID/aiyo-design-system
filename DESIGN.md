@@ -466,7 +466,7 @@ Page-level pieces HeroUI does not have. Copy the files you use; each depends onl
 | `PageHeader` | `page-header.tsx` | App page title: `title`, `description?`, `back?: { href, label }`, `actions?` |
 | `FormSection` | `page-header.tsx` | `title`, `description?`, children. Title left (1/3), fields in a Card right (2/3) on lg. |
 | `FormActions` | `page-header.tsx` | Sticky bottom bar on a full-page form: status text, Cancel (`secondary`), Save (primary) |
-| `DataPagination` | `data-pagination.tsx` | `page` (1-based), `pageSize`, `total`, `onPageChange`, `onPageSizeChange?`, `pageSizeOptions?` (default `[10, 20, 50, 100]`). Built on HeroUI `Pagination` + `Select`. |
+| `DataPagination` | `data-pagination.tsx` | `page` (1-based), `pageSize`, `total`, `onPageChange`, `onPageSizeChange?`, `pageSizeOptions?` (default `[10, 20, 50, 100]`), `labels?` (English by default; pass the product language's words from its content file instead of editing the block). Built on HeroUI `Pagination` + `Select`. |
 | `Steps` | `steps.tsx` | `steps: { title, description }[]`. Mono numbers on hairlines. As many steps as the real process has. |
 | `PricingCard` | `pricing-card.tsx` | `name`, `price`, `period?`, `description`, `features`, `cta`, `highlighted?`, `highlightLabel?` (a reason, never "Most popular"), `selected?`, `onSelect?` |
 | `TestimonialCard` | `testimonial-card.tsx` | `quote`, `name`, `role`. Real customers only. |
