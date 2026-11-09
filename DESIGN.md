@@ -806,7 +806,7 @@ const [pageSize, setPageSize] = useState(10)
 ## 14. Anti-slop filter and decisions
 
 ### 14.1 How the filter fits
-AiYO vendors the antislop skills (MIT, release 3.2.21) in `skills/antislop*`.
+AiYO vendors the antislop skills (MIT, release 3.2.26) in `skills/antislop*`.
 
 | File | Role |
 |---|---|
@@ -814,7 +814,11 @@ AiYO vendors the antislop skills (MIT, release 3.2.21) in `skills/antislop*`.
 | `skills/antislop/SKILL.md` + the skill for the task | **Filter**: rejects technique without purpose, requires liveliness, ends with the Delivery Gate |
 | `AGENTS.md` / `CLAUDE.md` | **Routing**: tells the agent to read this file first, then the filter |
 
-Task skills: `antislop-ui` (visual), `antislop-copywriting` (copy), `antislop-human` (contrast, keyboard, focus, states; ships `contrast-check.py`), `antislop-layoutmobile` (breakpoints, tap targets) and `antislop-code` (code comments).
+Task skills: `antislop-ui` (visual and page performance), `antislop-copywriting` (copy), `antislop-human` (contrast, keyboard, focus, states, interaction affordances; ships `contrast-check.py`), `antislop-layoutmobile` (breakpoints, tap targets) and `antislop-code` (code comments). `antislop-ui` and `antislop-human` carry `references/` (Core Web Vitals, a web baseline checklist, WCAG 2.2, accessible markup patterns) to read on demand.
+
+Two Hard Gate rules arrived in release 3.2.24, and this is how they meet HeroUI:
+- **R-39, accessible semantics and affordances.** HeroUI already gives its controls `cursor: var(--cursor-interactive)` (pointer), `var(--cursor-disabled)` when disabled, native elements, roles and hover, pressed and disabled states. What stays with the page: no clickable `div` or `span` (use `Button` or `Link`), an `aria-label` on every icon-only button, `alt` on every image (`alt=""` when decorative), a visible `Label` on every field, and on a whole page `<html lang>`, a unique `<title>`, landmarks, one `h1` and a viewport that allows zoom.
+- **R-40, performance mechanisms.** Every `img`, `video` and `iframe` has `width` and `height` or an aspect ratio; a hero image is an `<img>` in the markup with `fetchpriority="high"`, never lazy; no render-blocking third-party script. Never report a Lighthouse or Web Vitals number that was not measured.
 
 Dials for AiYO products: **ENERGY 2 / RHYTHM 2 / MOTION 2**. Before building, declare a Design Read, for example: *"Reading this as: B2B SaaS landing for small-business owners, in the AiYO Minimalist Modern style on HeroUI, dial ENERGY 2 / RHYTHM 2 / MOTION 2."* Run the Delivery Gate before delivering.
 

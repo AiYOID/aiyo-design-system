@@ -79,10 +79,10 @@ For HeroUI's own API, agents can read [heroui.com/react/llms.txt](https://heroui
 
 `DESIGN.md` gives direction, antislop is the filter, and `AGENTS.md` / `CLAUDE.md` route the agent to both. For UI work an agent reads DESIGN.md, then `skills/antislop/SKILL.md` plus the skill for the task, and runs the antislop Delivery Gate before delivering. The owner's keep/drop decisions are logged in DESIGN.md §14.
 
-The `skills/antislop*` folders are a vendored copy of [anti-slop](https://github.com/miqdadbadjuber/anti-slop) by Miqdad Badjuber, release 3.2.21, under the MIT License (see `skills/antislop/LICENSE`). The release is recorded in `skills/antislop/VERSION`.
+The `skills/antislop*` folders are a vendored copy of [anti-slop](https://github.com/miqdadbadjuber/anti-slop) by Miqdad Badjuber, release 3.2.26, under the MIT License (see `skills/antislop/LICENSE`; the `references/` files in `antislop-ui` and `antislop-human` are adapted from Addy Osmani's web-quality-skills, MIT, see `LICENSE-web-quality-skills` beside them). The release is recorded in `skills/antislop/VERSION`.
 
 To update the vendored copy:
 1. Download the new release from https://github.com/miqdadbadjuber/anti-slop/releases.
-2. Replace every `skills/antislop*` folder with the matching folder from that release, so the core and its skills stay on the same version. Keep `LICENSE` and `VERSION`.
-3. Compare the pointer block in the core's "First-Run Install Wizard" (step 5) with the `## antislop` block at the end of `AGENTS.md`, and copy over any wording changes (keep the `skills/antislop/SKILL.md` core path).
+2. Replace every `skills/antislop*` folder with the matching folder from that release (including `references/` and `LICENSE-web-quality-skills`), so the core and its skills stay on the same version. The release keeps `LICENSE` at its root: copy it to `skills/antislop/LICENSE`. `VERSION` comes with the core folder.
+3. Compare the pointer block the release's installer writes (`pointerBlock()` in `cli/lib/install.mjs`; up to 3.2.24 it was step 5 of the core's "First-Run Install Wizard") with the `## antislop` block at the end of `AGENTS.md`, and copy over any wording changes (keep the `skills/antislop/SKILL.md` core path).
 4. Check DESIGN.md §14 against any new or renumbered rules.

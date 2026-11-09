@@ -29,7 +29,7 @@ Key rules for agents:
 
 ## Anti-slop skills
 
-- [antislop](https://github.com/AiYOID/aiyo-design-system/tree/main/skills/antislop): the core filter (purpose test, liveliness dials, Delivery Gate). Vendored from https://github.com/miqdadbadjuber/anti-slop, release 3.2.21, MIT.
+- [antislop](https://github.com/AiYOID/aiyo-design-system/tree/main/skills/antislop): the core filter (purpose test, liveliness dials, Delivery Gate). Vendored from https://github.com/miqdadbadjuber/anti-slop, release 3.2.26, MIT.
 - [antislop-ui](https://github.com/AiYOID/aiyo-design-system/tree/main/skills/antislop-ui): the UI and visual skill (color, layout, components, decoration, motion).
 
 ## Tokens

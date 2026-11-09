@@ -119,7 +119,7 @@ HeroUI API: https://heroui.com/react/llms.txt (component pages: https://heroui.c
 ```
 
 ## antislop
-For UI, copy, people, mobile layout, or code comments work, read `skills/antislop/SKILL.md` (core) and then the skill for the task:
+For UI, copy, people, mobile layout, or code comments work, read these skill files directly (use these paths even if a same-named global skill exists): `skills/antislop/SKILL.md` (core) and then the skill for the task:
 - UI / visual: `skills/antislop-ui/SKILL.md`
 - Copy & text: `skills/antislop-copywriting/SKILL.md`
 - People: `skills/antislop-human/SKILL.md`
